@@ -29,11 +29,22 @@
     // show a "connection unavailable" message distinct from a wrong passcode.
     verifyPasscode: function (code) {
       var client = getClient();
-      if (!client) return Promise.reject(new Error("supabase-unavailable"));
+      if (!client) {
+        console.error("[WTTAuth] supabase-js did not load (CDN blocked?)");
+        return Promise.reject(new Error("supabase-unavailable"));
+      }
+      // Lower-cased to match the original gate's behaviour: bcrypt is
+      // case-sensitive, and the stored hash is of the lower-case code.
+      var candidate = (code || "").trim().toLowerCase();
       return client
-        .rpc("verify_passcode", { candidate: (code || "").trim() })
+        .rpc("verify_passcode", { candidate: candidate })
         .then(function (res) {
-          if (res.error) throw res.error;
+          if (res.error) {
+            // Surfaced so a missing migration (PGRST202: function not found)
+            // is distinguishable from a genuinely wrong passcode.
+            console.error("[WTTAuth] verify_passcode failed:", res.error);
+            throw res.error;
+          }
           return res.data === true;
         });
     }

@@ -39,11 +39,14 @@ stable
 security definer
 set search_path = public, extensions
 as $$
+  -- Codes are stored and compared lower-cased: bcrypt is case-sensitive, and
+  -- the original gate accepted any capitalisation. Normalising here (not only
+  -- in the browser) keeps that true regardless of the caller.
   select exists (
     select 1
     from public.access_codes ac
     where ac.active
-      and ac.code_hash = crypt(candidate, ac.code_hash)
+      and ac.code_hash = crypt(lower(btrim(candidate)), ac.code_hash)
   );
 $$;
 
@@ -56,10 +59,15 @@ grant execute on function public.verify_passcode(text) to anon, authenticated;
 -- ---------------------------------------------------------------------------
 -- Seed the current atares team passcode
 -- ---------------------------------------------------------------------------
--- Preserves the original code ('atares2026'). Rotate it later with:
+-- Preserves the original code ('atares2026'). Store the hash of the LOWER-CASE
+-- code — verify_passcode() lower-cases the candidate before comparing.
+-- Rotate it later with:
 --   update public.access_codes set active = false;                 -- retire old
 --   insert into public.access_codes (label, code_hash)
---   values ('atares team', extensions.crypt('NEW_CODE', extensions.gen_salt('bf', 10)));
+--   values ('atares team', extensions.crypt(lower('NEW_CODE'), extensions.gen_salt('bf', 10)));
 insert into public.access_codes (label, code_hash)
-select 'atares team', extensions.crypt('atares2026', extensions.gen_salt('bf', 10))
+select 'atares team', extensions.crypt(lower('atares2026'), extensions.gen_salt('bf', 10))
 where not exists (select 1 from public.access_codes);
+
+-- This whole migration is idempotent (guarded creates + a guarded seed), so it
+-- is safe to re-run against a project where it was already applied.
