@@ -1,0 +1,8 @@
+# Supabase project configuration for the WTT Value Lever Simulator.
+# Links this repo to the hosted project so `supabase db push` targets it.
+project_id = "oldfpsvbmwhkbtfrzmdi"
+
+[db]
+# Version of the local Postgres used by `supabase start`; the hosted project
+# runs Postgres 15+ and is unaffected by this value.
+major_version = 15

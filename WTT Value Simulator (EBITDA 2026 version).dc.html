@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Project Vision — EV & Value-Lever Simulator</title>
+<style>
+  html,body{margin:0;padding:0;background:#F5EFEF;-webkit-font-smoothing:antialiased}
+  *{box-sizing:border-box}
+  a{color:#007775;text-decoration:none}
+  a:hover{color:#00C3BF}
+  input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+  input[type=range]::-webkit-slider-runnable-track{height:4px;background:rgba(0,62,95,.14);border-radius:2px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-6px;border-radius:50%;background:#007775;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,62,95,.35)}
+  input[type=range]:hover::-webkit-slider-thumb{background:#00C3BF}
+  input[type=range]::-moz-range-track{height:4px;background:rgba(0,62,95,.14);border-radius:2px}
+  input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#007775;border:2px solid #fff}
+</style>
+</helmet>
+
+<div style="font-family:ui-sans-serif,system-ui,'Segoe UI',Helvetica,Arial,sans-serif;color:#003E5F;background:#F5EFEF;min-height:100vh;min-width:1364px;padding-bottom:40px">
+
+  <div style="background:#003E5F;color:#fff;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+    <div style="display:flex;align-items:center;gap:18px">
+      <img src="atares-logo-white.svg" alt="atares" style="height:34px;width:auto;display:block"/>
+      <span style="width:1px;height:26px;background:rgba(255,255,255,.22)"></span>
+      <span style="font-size:10.5px;color:#00C3BF;letter-spacing:.14em;text-transform:uppercase">the digital M&amp;A boutique</span>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:10px">
+      <span style="font-size:13px;font-weight:600">Project Vision</span>
+      <span style="font-size:13px;color:rgba(255,255,255,.5)">·</span>
+      <span style="font-size:13px;color:rgba(255,255,255,.8)"><span style="display:{{ eEN }}">Enterprise Value &amp; Value-Lever Simulator</span><span style="display:{{ eDE }}">Unternehmenswert- &amp; Werthebel-Simulator</span></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="display:flex;gap:2px;background:rgba(255,255,255,.10);border-radius:3px;padding:2px">
+        <button onClick="{{ setEN }}" style="{{ btnEN }}">EN</button>
+        <button onClick="{{ setDE }}" style="{{ btnDE }}">DE</button>
+      </div>
+      <span style="font-size:10.5px;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase">EnBW / EKB</span>
+      <span style="background:#fff;border-radius:3px;padding:6px 11px;display:flex;align-items:center">
+        <img src="wtt-campusone-logo.png" alt="WTT CampusOne" style="height:22px;width:auto;display:block"/>
+      </span>
+    </div>
+  </div>
+
+  <div style="max-width:1560px;margin:0 auto;padding:24px 32px 0;display:grid;grid-template-columns:minmax(880px,1.6fr) 372px;gap:22px;align-items:start;min-width:1300px">
+
+    <div style="display:flex;flex-direction:column;gap:22px;min-width:0">
+
+      <div style="background:#003E5F;border-radius:4px;padding:24px 26px;display:flex;flex-wrap:wrap;gap:26px;align-items:flex-end;color:#fff">
+        <div style="flex:2 1 300px;min-width:280px">
+          <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#00C3BF;margin-bottom:8px;white-space:nowrap"><span style="display:{{ eEN }}">Indicative enterprise value</span><span style="display:{{ eDE }}">Indikativer Unternehmenswert</span></div>
+          <div style="display:flex;align-items:baseline;gap:14px">
+            <div style="font-size:52px;font-weight:800;letter-spacing:-.035em;line-height:.95;font-variant-numeric:tabular-nums">{{ evLabel }}</div>
+            <div style="font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ deltaColor }}">{{ evDelta }}</div>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,.55);margin-top:8px"><span style="display:{{ eEN }}">vs. base case €87.9m · cash &amp; debt free, 2026E basis</span><span style="display:{{ eDE }}">ggü. Base Case 87,9 Mio. € · cash- und schuldenfrei, Basis 2026E</span></div>
+        </div>
+        <div style="flex:1 1 150px;min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
+          <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px">EBITDA 2026E</div>
+          <div style="font-size:26px;font-weight:700;font-variant-numeric:tabular-nums">{{ ebitdaLabel }}</div>
+        </div>
+        <div style="flex:1 1 150px;min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
+          <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px"><span style="display:{{ eEN }}">Effective multiple</span><span style="display:{{ eDE }}">Effektiver Multiplikator</span></div>
+          <div style="font-size:26px;font-weight:700;font-variant-numeric:tabular-nums">{{ multLabel }}</div>
+        </div>
+        <div style="flex:1 1 150px;min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
+          <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px">Rule of 40</div>
+          <div style="font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ r40Color }}">{{ r40Label }}</div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid rgba(0,62,95,.10);border-radius:4px;padding:22px 26px 18px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Value-driver tree</span><span style="display:{{ eDE }}">Werttreiberbaum</span></div>
+          <div style="font-size:11px;color:#98A6AE"><span style="display:{{ eEN }}">2025A actuals → 2026E, driven live by the levers</span><span style="display:{{ eDE }}">Ist 2025 → 2026E, live über die Hebel gesteuert</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column">
+
+          <div style="display:flex;align-items:center;gap:16px;padding:11px 0;border-bottom:1px solid rgba(0,62,95,.07)">
+            <div style="width:5px;height:26px;background:#003E5F;border-radius:1px"></div>
+            <div style="flex:1;font-size:15px;font-weight:700"><span style="display:{{ eEN }}">Enterprise value</span><span style="display:{{ eDE }}">Unternehmenswert</span></div>
+            <div style="font-size:11px;color:#98A6AE;width:210px"><span style="display:{{ eEN }}">EBITDA 2026E × effective multiple</span><span style="display:{{ eDE }}">EBITDA 2026E × effektiver Multiplikator</span></div>
+            <div style="width:110px;text-align:right;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums">{{ evLabel }}</div>
+            <div style="width:78px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ deltaColorInk }}">{{ evDelta }}</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:10px 0 10px 30px;border-bottom:1px solid rgba(0,62,95,.07);border-left:2px solid rgba(0,195,191,.35);margin-left:2px">
+            <div style="flex:1;font-size:14px;font-weight:600">EBITDA 2026E</div>
+            <div style="font-size:11px;color:#98A6AE;width:210px"><span style="display:{{ eEN }}">revenue × EBITDA margin</span><span style="display:{{ eDE }}">Umsatz × EBITDA-Marge</span></div>
+            <div style="width:110px;text-align:right;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums">{{ ebitdaLabel }}</div>
+            <div style="width:78px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ ebitdaDeltaColor }}">{{ ebitdaDelta }}</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:9px 0 9px 60px;border-bottom:1px solid rgba(0,62,95,.07);border-left:2px solid rgba(0,195,191,.35);margin-left:2px">
+            <div style="flex:1;font-size:13px"><span style="display:{{ eEN }}">Revenue 2026E</span><span style="display:{{ eDE }}">Umsatz 2026E</span></div>
+            <div style="font-size:11px;color:#98A6AE;width:210px"><span style="display:{{ eEN }}">customers × ARPU</span><span style="display:{{ eDE }}">Kunden × ARPU</span></div>
+            <div style="width:110px;text-align:right;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums">{{ revLabel }}</div>
+            <div style="width:78px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ revDeltaColor }}">{{ revDelta }}</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 90px;border-bottom:1px solid rgba(0,62,95,.07);border-left:2px solid rgba(0,195,191,.35);margin-left:2px">
+            <div style="flex:1;font-size:12.5px;color:#3d6377"><span style="display:{{ eEN }}">Customers</span><span style="display:{{ eDE }}">Kunden</span></div>
+            <div style="font-size:11px;color:#98A6AE;width:210px"><span style="display:{{ eEN }}">600 (2025A) − churn + net new</span><span style="display:{{ eDE }}">600 (Ist 2025) − Churn + Neukunden</span></div>
+            <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ custLabel }}</div>
+            <div style="width:78px"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 90px;border-bottom:1px solid rgba(0,62,95,.07);border-left:2px solid rgba(0,195,191,.35);margin-left:2px">
+            <div style="flex:1;font-size:12.5px;color:#3d6377">ARPU</div>
+            <div style="font-size:11px;color:#98A6AE;width:210px"><span style="display:{{ eEN }}">€21.3k (2025A) × price &amp; upsell uplift</span><span style="display:{{ eDE }}">21,3 T€ (Ist 2025) × Preis- &amp; Upsell-Steigerung</span></div>
+            <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ arpuLabel }}</div>
+            <div style="width:78px"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 60px;border-bottom:1px solid rgba(0,62,95,.07);border-left:2px solid rgba(0,195,191,.35);margin-left:2px">
+            <div style="flex:1;font-size:12.5px;color:#3d6377"><span style="display:{{ eEN }}">EBITDA margin</span><span style="display:{{ eDE }}">EBITDA-Marge</span></div>
+            <div style="font-size:11px;color:#98A6AE;width:210px"><span style="display:{{ eEN }}">47% in 2025A</span><span style="display:{{ eDE }}">47 % im Ist 2025</span></div>
+            <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ marginLabel }}</div>
+            <div style="width:78px"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:10px 0 10px 30px;border-bottom:1px solid rgba(0,62,95,.07);border-left:2px solid rgba(243,72,50,.3);margin-left:2px">
+            <div style="flex:1;font-size:14px;font-weight:600"><span style="display:{{ eEN }}">Effective EV/EBITDA multiple</span><span style="display:{{ eDE }}">Effektiver EV/EBITDA-Multiplikator</span></div>
+            <div style="font-size:11px;color:#98A6AE;width:210px"><span style="display:{{ eEN }}">base multiple × quality adjustment</span><span style="display:{{ eDE }}">Basis-Multiplikator × Qualitätsanpassung</span></div>
+            <div style="width:110px;text-align:right;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums">{{ multLabel }}</div>
+            <div style="width:78px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ multDeltaColor }}">{{ multDelta }}</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 60px;border-bottom:1px solid rgba(0,62,95,.07);border-left:2px solid rgba(243,72,50,.3);margin-left:2px">
+            <div style="flex:1;font-size:12.5px;color:#3d6377"><span style="display:{{ eEN }}">Recurring revenue share</span><span style="display:{{ eDE }}">Anteil wiederkehrender Umsätze</span></div>
+            <div style="font-size:11px;color:#98A6AE;width:210px"><span style="display:{{ eEN }}">quality of earnings → multiple</span><span style="display:{{ eDE }}">Ertragsqualität → Multiplikator</span></div>
+            <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ recLabel }}</div>
+            <div style="width:78px"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 60px;border-left:2px solid rgba(243,72,50,.3);margin-left:2px">
+            <div style="flex:1;font-size:12.5px;color:#3d6377"><span style="display:{{ eEN }}">Growth 2026E + margin (Rule of 40)</span><span style="display:{{ eDE }}">Wachstum 2026E + Marge (Rule of 40)</span></div>
+            <div style="font-size:11px;color:#98A6AE;width:210px"><span style="display:{{ eEN }}">{{ growthLabel }} growth + {{ marginLabel }} margin</span><span style="display:{{ eDE }}">{{ growthLabel }} Wachstum + {{ marginLabel }} Marge</span></div>
+            <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ r40Label }}</div>
+            <div style="width:78px"></div>
+          </div>
+
+        </div>
+
+        <div style="display:flex;gap:26px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(0,62,95,.10)">
+          <div style="font-size:11px;color:#98A6AE;flex:1"><span style="display:{{ eEN }}">Trajectory on the same levers · 2028E revenue <b style="color:#003E5F">{{ rev28 }}</b> · EBITDA <b style="color:#003E5F">{{ ebitda28 }}</b> · customers <b style="color:#003E5F">{{ cust28 }}</b></span><span style="display:{{ eDE }}">Fortschreibung mit denselben Hebeln · Umsatz 2028E <b style="color:#003E5F">{{ rev28 }}</b> · EBITDA <b style="color:#003E5F">{{ ebitda28 }}</b> · Kunden <b style="color:#003E5F">{{ cust28 }}</b></span></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:22px">
+
+        <div style="background:#fff;border:1px solid rgba(0,62,95,.10);border-radius:4px;padding:22px 26px;display:flex;flex-direction:column">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px"><span style="display:{{ eEN }}">Revenue → EBITDA bridge</span><span style="display:{{ eDE }}">Brücke Umsatz → EBITDA</span></div>
+          <div style="font-size:11px;color:#98A6AE;margin-bottom:22px"><span style="display:{{ eEN }}">2026E, €m</span><span style="display:{{ eDE }}">2026E, Mio. €</span></div>
+          <div style="display:flex;align-items:flex-end;gap:14px;flex:1;min-height:190px">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+              <div style="font-size:13px;font-weight:700;text-align:center;margin-bottom:6px;font-variant-numeric:tabular-nums">{{ brRecLabel }}</div>
+              <div style="background:#00C3BF;border-radius:2px 2px 0 0;height:{{ brRecH }}%"></div>
+              <div style="font-size:10.5px;color:#3d6377;text-align:center;margin-top:8px;line-height:1.3"><span style="display:{{ eEN }}">Recurring<br/>revenue</span><span style="display:{{ eDE }}">Wieder-<br/>kehrend</span></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+              <div style="font-size:13px;font-weight:700;text-align:center;margin-bottom:6px;font-variant-numeric:tabular-nums">{{ brNonRecLabel }}</div>
+              <div style="background:#98A6AE;border-radius:2px 2px 0 0;height:{{ brNonRecH }}%"></div>
+              <div style="font-size:10.5px;color:#3d6377;text-align:center;margin-top:8px;line-height:1.3"><span style="display:{{ eEN }}">Non-recurring<br/>&amp; services</span><span style="display:{{ eDE }}">Einmalig<br/>&amp; Services</span></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+              <div style="font-size:13px;font-weight:700;text-align:center;margin-bottom:6px;font-variant-numeric:tabular-nums;color:#F34832">{{ brCostLabel }}</div>
+              <div style="background:rgba(243,72,50,.85);border-radius:2px 2px 0 0;height:{{ brCostH }}%"></div>
+              <div style="font-size:10.5px;color:#3d6377;text-align:center;margin-top:8px;line-height:1.3"><span style="display:{{ eEN }}">Cost base<br/>(standalone)</span><span style="display:{{ eDE }}">Kostenbasis<br/>(standalone)</span></div>
+            </div>
+            <div style="width:1px;height:80%;background:rgba(0,62,95,.12)"></div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+              <div style="font-size:13px;font-weight:800;text-align:center;margin-bottom:6px;font-variant-numeric:tabular-nums">{{ ebitdaLabel }}</div>
+              <div style="background:#003E5F;border-radius:2px 2px 0 0;height:{{ brEbitdaH }}%"></div>
+              <div style="font-size:10.5px;color:#3d6377;text-align:center;margin-top:8px;line-height:1.3">EBITDA<br/>2026E</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border:1px solid rgba(0,62,95,.10);border-radius:4px;padding:22px 26px">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Rule of 40</div>
+          <div style="font-size:11px;color:#98A6AE;margin-bottom:26px"><span style="display:{{ eEN }}">Revenue growth + EBITDA margin, 2026E</span><span style="display:{{ eDE }}">Umsatzwachstum + EBITDA-Marge, 2026E</span></div>
+          <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px">
+            <div style="font-size:44px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:{{ r40Color }}">{{ r40Label }}</div>
+            <div style="font-size:12px;font-weight:600;color:{{ r40Color }}">{{ r40Verdict }}</div>
+          </div>
+          <div style="position:relative;height:12px;background:rgba(0,62,95,.08);border-radius:6px;margin-bottom:10px">
+            <div style="position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:{{ r40Color }};width:{{ r40W }}%"></div>
+            <div style="position:absolute;left:40%;top:-5px;bottom:-5px;width:1px;background:rgba(0,62,95,.35)"></div>
+            <div style="position:absolute;left:60%;top:-5px;bottom:-5px;width:1px;background:rgba(0,62,95,.35)"></div>
+          </div>
+          <div style="position:relative;height:14px;font-size:10px;color:#98A6AE">
+            <span style="position:absolute;left:0">0</span>
+            <span style="position:absolute;left:40%;transform:translateX(-50%)">40</span>
+            <span style="position:absolute;left:60%;transform:translateX(-50%)">60</span>
+            <span style="position:absolute;right:0">100</span>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:10px;font-size:10px;color:#98A6AE"><span><span style="display:{{ eEN }}">40 · healthy</span><span style="display:{{ eDE }}">40 · solide</span></span><span><span style="display:{{ eEN }}">60 · top decile</span><span style="display:{{ eDE }}">60 · Top-Dezil</span></span></div>
+          <div style="margin-top:20px;font-size:11.5px;line-height:1.55;color:#3d6377"><span style="display:{{ eEN }}">A score above 60 is the single strongest argument for a double-digit EBITDA multiple. Every point of retention and margin you hold here is what a buyer pays the premium for.</span><span style="display:{{ eDE }}">Ein Wert über 60 ist das stärkste Einzelargument für einen zweistelligen EBITDA-Multiplikator. Jeder Punkt Retention und Marge, den Sie hier halten, ist genau das, wofür ein Käufer die Prämie zahlt.</span></div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid rgba(0,62,95,.10);border-radius:4px;padding:22px 26px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:22px">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Football field · EV €m</span><span style="display:{{ eDE }}">Football Field · EV Mio. €</span></div>
+          <div style="font-size:11px;color:#98A6AE"><span style="display:{{ eEN }}">Indicative band <b style="color:#003E5F">{{ bandLabel }}</b> · marker = live model output</span><span style="display:{{ eDE }}">Indikative Bandbreite <b style="color:#003E5F">{{ bandLabel }}</b> · Markierung = Live-Modellwert</span></div>
+        </div>
+        <div style="position:relative">
+          <div style="position:absolute;left:210px;right:70px;top:0;bottom:26px;pointer-events:none">
+            <div style="position:absolute;top:0;bottom:0;left:{{ bandL }}%;width:{{ bandW }}%;background:rgba(0,195,191,.10);border-left:1px dashed rgba(0,119,117,.45);border-right:1px dashed rgba(0,119,117,.45)"></div>
+            <div style="position:absolute;top:-4px;bottom:-4px;left:{{ evMarkL }}%;width:2px;background:#F34832"></div>
+          </div>
+          <sc-for list="{{ ff }}" as="row" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:0;height:44px;position:relative">
+              <div style="width:210px;flex:none">
+                <div style="font-size:12.5px;font-weight:600">{{ row.name }}</div>
+                <div style="font-size:10px;color:#98A6AE">{{ row.note }}</div>
+              </div>
+              <div style="flex:1;position:relative;height:22px">
+                <div style="position:absolute;top:0;height:22px;border-radius:2px;background:{{ row.color }};left:{{ row.l }}%;width:{{ row.w }}%"></div>
+              </div>
+              <div style="width:70px;flex:none;text-align:right;font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums;color:#3d6377">{{ row.label }}</div>
+            </div>
+          </sc-for>
+          <div style="display:flex;align-items:center;height:26px">
+            <div style="width:210px;flex:none"></div>
+            <div style="flex:1;position:relative;border-top:1px solid rgba(0,62,95,.15)">
+              <sc-for list="{{ ticks }}" as="t" hint-placeholder-count="5">
+                <span style="position:absolute;top:5px;transform:translateX(-50%);font-size:10px;color:#98A6AE;font-variant-numeric:tabular-nums;left:{{ t.l }}%">{{ t.v }}</span>
+              </sc-for>
+            </div>
+            <div style="width:70px;flex:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid rgba(0,62,95,.10);border-radius:4px;padding:22px 26px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Sensitivity · which lever moves EV most</span><span style="display:{{ eDE }}">Sensitivität · welcher Hebel bewegt den EV am stärksten</span></div>
+          <div style="font-size:11px;color:#98A6AE"><span style="display:{{ eEN }}">Δ enterprise value, €m, from the current setting</span><span style="display:{{ eDE }}">Δ Unternehmenswert, Mio. €, ggü. aktueller Einstellung</span></div>
+        </div>
+        <div style="font-size:11px;color:#98A6AE;margin-bottom:18px"><span style="display:{{ eEN }}">Read top-down: this is the order in which a buyer's diligence — and our critical questions — should be prioritised.</span><span style="display:{{ eDE }}">Von oben nach unten lesen: in dieser Reihenfolge sollten die Due Diligence eines Käufers — und unsere kritischen Fragen — priorisiert werden.</span></div>
+        <sc-for list="{{ tornado }}" as="t" hint-placeholder-count="6">
+          <div style="display:flex;align-items:center;height:38px">
+            <div style="width:250px;flex:none">
+              <div style="font-size:12.5px;font-weight:600">{{ t.name }}</div>
+              <div style="font-size:10px;color:#98A6AE">{{ t.note }}</div>
+            </div>
+            <div style="flex:1;position:relative;height:20px;border-left:1px solid rgba(0,62,95,.18);margin-left:0">
+              <div style="position:absolute;top:0;height:20px;background:rgba(243,72,50,.8);border-radius:2px 0 0 2px;right:50%;width:{{ t.negW }}%"></div>
+              <div style="position:absolute;top:0;height:20px;background:#00B167;border-radius:0 2px 2px 0;left:50%;width:{{ t.posW }}%"></div>
+              <div style="position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:rgba(0,62,95,.3)"></div>
+            </div>
+            <div style="width:120px;flex:none;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums">{{ t.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="font-size:10.5px;color:#98A6AE;line-height:1.6;padding:0 2px">
+        <span style="display:{{ eEN }}">Illustrative and preliminary. Anchored on the RFP summary financials (2025A revenue €12.8m, EBITDA €6.0m, 47% margin; plan to €19.5m / €10.5m by 2028E) and outside-in market evidence; cash- and debt-free, pre carve-out normalisation. To be replaced by the integrated financial model and confirmed in due diligence. atares GmbH · Project Vision · strictly confidential.</span><span style="display:{{ eDE }}">Illustrativ und vorläufig. Basierend auf den Eckdaten des RfP (Ist 2025: Umsatz 12,8 Mio. €, EBITDA 6,0 Mio. €, Marge 47 %; Plan 19,5 Mio. € / 10,5 Mio. € bis 2028E) und öffentlich verfügbaren Marktdaten; cash- und schuldenfrei, vor Carve-out-Normalisierung. Wird durch das integrierte Finanzmodell ersetzt und in der Due Diligence bestätigt. atares GmbH · Project Vision · streng vertraulich.</span>
+      </div>
+    </div>
+
+    <div style="position:sticky;top:20px;display:flex;flex-direction:column;gap:16px">
+
+      <div style="background:#fff;border:1px solid rgba(0,62,95,.10);border-radius:4px;padding:18px 20px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#98A6AE;margin-bottom:12px"><span style="display:{{ eEN }}">Scenario</span><span style="display:{{ eDE }}">Szenario</span></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+          <button onClick="{{ setConservative }}" style="{{ btnConservative }}"><span style="display:{{ eEN }}">Conservative</span><span style="display:{{ eDE }}">Konservativ</span></button>
+          <button onClick="{{ setBase }}" style="{{ btnBase }}">Base</button>
+          <button onClick="{{ setUpside }}" style="{{ btnUpside }}"><span style="display:{{ eEN }}">Upside</span><span style="display:{{ eDE }}">Upside</span></button>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid rgba(0,62,95,.10);border-radius:4px;padding:20px 20px 22px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#98A6AE"><span style="display:{{ eEN }}">Value levers</span><span style="display:{{ eDE }}">Werthebel</span></div>
+          <button onClick="{{ reset }}" style="background:none;border:none;padding:0;font:inherit;font-size:11px;color:#007775;cursor:pointer;text-decoration:underline"><span style="display:{{ eEN }}">reset</span><span style="display:{{ eDE }}">zurücksetzen</span></button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Net new customers p.a.</span><span style="display:{{ eDE }}">Netto-Neukunden p. a.</span></span>
+            <span style="font-size:13px;font-weight:800;color:#007775;font-variant-numeric:tabular-nums">{{ netNew }}</span>
+          </div>
+          <input type="range" min="20" max="120" step="5" value="{{ netNew }}" onChange="{{ onNetNew }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#98A6AE"><span>20</span><span><span style="display:{{ eEN }}">gross new logos won</span><span style="display:{{ eDE }}">gewonnene Brutto-Neukunden</span></span><span>120</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">ARPU / price uplift p.a.</span><span style="display:{{ eDE }}">ARPU / Preissteigerung p. a.</span></span>
+            <span style="font-size:13px;font-weight:800;color:#007775;font-variant-numeric:tabular-nums">{{ arpuPct }}</span>
+          </div>
+          <input type="range" min="0" max="18" step="0.5" value="{{ arpu }}" onChange="{{ onArpu }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#98A6AE"><span>0%</span><span><span style="display:{{ eEN }}">price realisation + upsell</span><span style="display:{{ eDE }}">Preisdurchsetzung + Upsell</span></span><span>18%</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Gross customer churn p.a.</span><span style="display:{{ eDE }}">Brutto-Kundenchurn p. a.</span></span>
+            <span style="font-size:13px;font-weight:800;color:#007775;font-variant-numeric:tabular-nums">{{ churnPct }}</span>
+          </div>
+          <input type="range" min="1" max="14" step="0.5" value="{{ churn }}" onChange="{{ onChurn }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#98A6AE"><span>1%</span><span><span style="display:{{ eEN }}">logo churn</span><span style="display:{{ eDE }}">Kundenabgänge</span></span><span>14%</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Recurring revenue share</span><span style="display:{{ eDE }}">Anteil wiederkehrender Umsätze</span></span>
+            <span style="font-size:13px;font-weight:800;color:#007775;font-variant-numeric:tabular-nums">{{ recPct }}</span>
+          </div>
+          <input type="range" min="60" max="95" step="1" value="{{ rec }}" onChange="{{ onRec }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#98A6AE"><span>60%</span><span><span style="display:{{ eEN }}">quality of earnings</span><span style="display:{{ eDE }}">Ertragsqualität</span></span><span>95%</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">EBITDA margin 2026E</span><span style="display:{{ eDE }}">EBITDA-Marge 2026E</span></span>
+            <span style="font-size:13px;font-weight:800;color:#007775;font-variant-numeric:tabular-nums">{{ marginPct }}</span>
+          </div>
+          <input type="range" min="35" max="60" step="0.5" value="{{ margin }}" onChange="{{ onMargin }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#98A6AE"><span>35%</span><span><span style="display:{{ eEN }}">standalone, carve-out adj.</span><span style="display:{{ eDE }}">standalone, Carve-out-bereinigt</span></span><span>60%</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px;padding-top:16px;border-top:1px solid rgba(0,62,95,.10)">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Base EV/EBITDA multiple</span><span style="display:{{ eDE }}">Basis-EV/EBITDA-Multiplikator</span></span>
+            <span style="font-size:13px;font-weight:800;color:#F34832;font-variant-numeric:tabular-nums">{{ multBaseLabel }}</span>
+          </div>
+          <input type="range" min="7" max="18" step="0.25" value="{{ mult }}" onChange="{{ onMult }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#98A6AE"><span>7.0x</span><span><span style="display:{{ eEN }}">before quality adjustment</span><span style="display:{{ eDE }}">vor Qualitätsanpassung</span></span><span>18.0x</span></div>
+        </div>
+      </div>
+
+      <div style="background:#003E5F;border-radius:4px;padding:18px 20px;color:#fff">
+        <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#00C3BF;margin-bottom:10px"><span style="display:{{ eEN }}">Quality adjustment to the multiple</span><span style="display:{{ eDE }}">Qualitätsanpassung des Multiplikators</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.12)">
+          <span style="color:rgba(255,255,255,.75)"><span style="display:{{ eEN }}">Recurring share vs. 82%</span><span style="display:{{ eDE }}">Wiederkehrender Anteil ggü. 82 %</span></span>
+          <span style="font-weight:700;font-variant-numeric:tabular-nums">{{ adjRec }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.12)">
+          <span style="color:rgba(255,255,255,.75)"><span style="display:{{ eEN }}">Rule of 40 vs. 62</span><span style="display:{{ eDE }}">Rule of 40 ggü. 62</span></span>
+          <span style="font-weight:700;font-variant-numeric:tabular-nums">{{ adjR40 }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0 0">
+          <span style="font-weight:600"><span style="display:{{ eEN }}">Effective multiple</span><span style="display:{{ eDE }}">Effektiver Multiplikator</span></span>
+          <span style="font-weight:800;font-variant-numeric:tabular-nums;color:#00C3BF">{{ multLabel }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1660,&quot;height&quot;:1400}}">
+const C25 = 600, R25 = 12.8, A25 = R25 * 1000 / C25;
+const NEUTRAL_REC = 82, NEUTRAL_R40 = 62.4;
+const PRESETS = {
+  Conservative: { netNew: 40, churn: 8, arpu: 5, rec: 76, margin: 44, mult: 9.5 },
+  Base:         { netNew: 60, churn: 5, arpu: 9, rec: 82, margin: 48, mult: 12.5 },
+  Upside:       { netNew: 80, churn: 3, arpu: 12.5, rec: 88, margin: 52, mult: 15.5 }
+};
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+function model(l) {
+  let c = C25, a = A25;
+  const rows = [];
+  for (let y = 2026; y <= 2028; y++) {
+    c = c * (1 - l.churn / 100) + l.netNew;
+    a = a * (1 + l.arpu / 100);
+    const rev = c * a / 1000;
+    const m = Math.min(62, l.margin + (y - 2026) * 3);
+    rows.push({ y, c, a, rev, m, ebitda: rev * m / 100 });
+  }
+  const y26 = rows[0];
+  const growth = (y26.rev / R25 - 1) * 100;
+  const r40 = growth + y26.m;
+  const adjRec = 0.012 * (l.rec - NEUTRAL_REC);
+  const adjR40 = 0.006 * (r40 - NEUTRAL_R40);
+  const eff = clamp(l.mult * (1 + adjRec + adjR40), 4, 24);
+  return { rows, y26, growth, r40, adjRec: adjRec * l.mult, adjR40: adjR40 * l.mult, eff, ev: y26.ebitda * eff };
+}
+function dcf(rows, w) {
+  let pv = 0;
+  rows.forEach((r, i) => { pv += r.ebitda * 0.72 / Math.pow(1 + w, i + 1); });
+  return pv + (rows[2].ebitda * 0.72 * 1.03 / (w - 0.03)) / Math.pow(1 + w, 3);
+}
+const BASE_EV = model(PRESETS.Base).ev;
+const BASE_M = model(PRESETS.Base);
+
+let LANG = 'en';
+const dec = (v, d) => { const s = v.toFixed(d); return LANG === 'de' ? s.replace('.', ',') : s; };
+const m1 = v => LANG === 'de' ? dec(v, 1) + ' Mio. €' : '€' + v.toFixed(1) + 'm';
+const pct = (v, d) => dec(v, d === undefined ? 1 : d) + (LANG === 'de' ? ' %' : '%');
+const mx = v => dec(v, 1) + 'x';
+const signed = v => (v >= 0 ? '+' : '−') + m1(Math.abs(v));
+const STR = {
+  en: {
+    ffDCF: 'DCF', ffDCFn: 'WACC 9.5–12.0%, TG 3.0%',
+    ffEbitda: 'EV / EBITDA — trading comps', ffEbitdan: '9.0x – 16.0x on 2026E EBITDA',
+    ffRev: 'EV / Revenue — trading comps', ffRevn: '4.0x – 7.5x on 2026E revenue',
+    ffPrec: 'Precedent transactions', ffPrecn: '8.0x – 15.0x on 2026E EBITDA',
+    tMult: 'Exit multiple', tMultn: '± 2.0x on the base multiple',
+    tMargin: 'EBITDA margin', tMarginn: '± 3pp standalone margin',
+    tArpu: 'ARPU / price uplift', tArpun: '± 3pp p.a.',
+    tNew: 'Net new customers', tNewn: '± 15 logos p.a.',
+    tChurn: 'Gross churn', tChurnn: '∓ 2pp p.a.',
+    tRec: 'Recurring revenue share', tRecn: '± 5pp',
+    v1: 'top-decile software profile', v2: 'healthy, but not premium', v3: 'below the premium threshold'
+  },
+  de: {
+    ffDCF: 'DCF', ffDCFn: 'WACC 9,5–12,0 %, ewiges Wachstum 3,0 %',
+    ffEbitda: 'EV / EBITDA — Börsen-Comps', ffEbitdan: '9,0x – 16,0x auf EBITDA 2026E',
+    ffRev: 'EV / Umsatz — Börsen-Comps', ffRevn: '4,0x – 7,5x auf Umsatz 2026E',
+    ffPrec: 'Vergleichstransaktionen', ffPrecn: '8,0x – 15,0x auf EBITDA 2026E',
+    tMult: 'Exit-Multiplikator', tMultn: '± 2,0x auf den Basis-Multiplikator',
+    tMargin: 'EBITDA-Marge', tMarginn: '± 3 PP Standalone-Marge',
+    tArpu: 'ARPU / Preissteigerung', tArpun: '± 3 PP p. a.',
+    tNew: 'Netto-Neukunden', tNewn: '± 15 Kunden p. a.',
+    tChurn: 'Brutto-Churn', tChurnn: '∓ 2 PP p. a.',
+    tRec: 'Anteil wiederkehrender Umsätze', tRecn: '± 5 PP',
+    v1: 'Top-Dezil-Softwareprofil', v2: 'solide, aber keine Prämie', v3: 'unter der Prämienschwelle'
+  }
+};
+
+class Component extends DCLogic {
+  state = { ...PRESETS.Base, active: 'Base', lang: 'en' };
+
+  setLang(v) { return () => this.setState({ lang: v }); }
+  langBtn(v) {
+    const on = this.state.lang === v;
+    return 'font:inherit;font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:4px 9px;border:none;border-radius:2px;cursor:pointer;'
+      + (on ? 'background:#00C3BF;color:#003E5F;' : 'background:transparent;color:rgba(255,255,255,.6);');
+  }
+
+  set(k) { return e => this.setState({ [k]: parseFloat(e.target.value), active: null }); }
+  preset(n) { return () => this.setState({ ...PRESETS[n], active: n }); }
+
+  btn(n) {
+    const on = this.state.active === n;
+    return 'font:inherit;font-size:11.5px;font-weight:700;padding:9px 4px;border-radius:3px;cursor:pointer;transition:all .12s;'
+      + (on ? 'background:#003E5F;color:#fff;border:1px solid #003E5F;' : 'background:#fff;color:#3d6377;border:1px solid rgba(0,62,95,.20);');
+  }
+
+  renderVals() {
+    LANG = this.state.lang;
+    const l = this.state;
+    const M = model(l);
+    const y26 = M.y26, y28 = M.rows[2];
+    const ev = M.ev;
+    const dEv = ev - BASE_EV;
+    const dEb = y26.ebitda - BASE_M.y26.ebitda;
+    const dRev = y26.rev - BASE_M.y26.rev;
+    const dMult = M.eff - BASE_M.eff;
+
+    const S = STR[LANG];
+    const green = '#00B167', red = '#F34832';
+    const col = v => Math.abs(v) < 0.05 ? 'rgba(255,255,255,.45)' : (v > 0 ? '#00C3BF' : '#F34832');
+    const colInk = v => Math.abs(v) < 0.05 ? '#98A6AE' : (v > 0 ? green : red);
+
+    // bridge
+    const recRev = y26.rev * l.rec / 100, nonRec = y26.rev - recRev, cost = y26.rev - y26.ebitda;
+    const bMax = Math.max(recRev, nonRec, cost, y26.ebitda, 1);
+
+    // football field
+    const lo = [], hi = [];
+    const raw = [
+      { name: S.ffDCF, note: S.ffDCFn, lo: dcf(M.rows, 0.12), hi: dcf(M.rows, 0.095), color: '#003E5F' },
+      { name: S.ffEbitda, note: S.ffEbitdan, lo: y26.ebitda * 9, hi: y26.ebitda * 16, color: '#007775' },
+      { name: S.ffRev, note: S.ffRevn, lo: y26.rev * 4, hi: y26.rev * 7.5, color: '#00C3BF' },
+      { name: S.ffPrec, note: S.ffPrecn, lo: y26.ebitda * 8, hi: y26.ebitda * 15, color: '#98A6AE' }
+    ];
+    raw.forEach(r => { lo.push(r.lo); hi.push(r.hi); });
+    const sMin = Math.min(0, Math.floor(Math.min(...lo, ev) / 20) * 20);
+    const sMax = Math.ceil(Math.max(...hi, ev) / 20) * 20 || 20;
+    const span = sMax - sMin;
+    const P = v => (v - sMin) / span * 100;
+    const ff = raw.map(r => ({
+      name: r.name, note: r.note, color: r.color,
+      l: P(r.lo), w: Math.max(0.6, P(r.hi) - P(r.lo)),
+      label: Math.round(r.lo) + '–' + Math.round(r.hi)
+    }));
+    const sl = [...lo].sort((a, b) => a - b), sh = [...hi].sort((a, b) => a - b);
+    const bandLo = (sl[1] + sl[2]) / 2, bandHi = (sh[1] + sh[2]) / 2;
+    const ticks = [0, 1, 2, 3, 4].map(i => {
+      const v = sMin + span * i / 4;
+      return { v: Math.round(v), l: i * 25 };
+    });
+
+    // tornado
+    const steps = [
+      { name: S.tMult, note: S.tMultn, k: 'mult', d: 2 },
+      { name: S.tMargin, note: S.tMarginn, k: 'margin', d: 3 },
+      { name: S.tArpu, note: S.tArpun, k: 'arpu', d: 3 },
+      { name: S.tNew, note: S.tNewn, k: 'netNew', d: 15 },
+      { name: S.tChurn, note: S.tChurnn, k: 'churn', d: -2 },
+      { name: S.tRec, note: S.tRecn, k: 'rec', d: 5 }
+    ].map(s => {
+      const up = model({ ...l, [s.k]: l[s.k] + s.d }).ev - ev;
+      const dn = model({ ...l, [s.k]: l[s.k] - s.d }).ev - ev;
+      return { ...s, up: Math.max(up, dn), dn: Math.min(up, dn), mag: Math.max(Math.abs(up), Math.abs(dn)) };
+    }).sort((a, b) => b.mag - a.mag);
+    const tMax = Math.max(...steps.map(s => s.mag), 1);
+    const tornado = steps.map(s => ({
+      name: s.name, note: s.note,
+      posW: Math.abs(s.up) / tMax * 48,
+      negW: Math.abs(s.dn) / tMax * 48,
+      label: (s.dn >= 0 ? '+' : '−') + dec(Math.abs(s.dn), 1) + '  /  ' + (s.up >= 0 ? '+' : '−') + dec(Math.abs(s.up), 1)
+    }));
+
+    const r40Color = M.r40 >= 60 ? '#00B167' : M.r40 >= 40 ? '#00C3BF' : '#F34832';
+
+    return {
+      netNew: l.netNew, churn: l.churn, arpu: l.arpu, rec: l.rec, margin: l.margin, mult: l.mult,
+      arpuPct: pct(l.arpu), churnPct: pct(l.churn), recPct: pct(l.rec, 0), marginPct: pct(l.margin),
+      multBaseLabel: mx(l.mult),
+      eEN: LANG === 'en' ? 'inline' : 'none', eDE: LANG === 'de' ? 'inline' : 'none',
+      setEN: this.setLang('en'), setDE: this.setLang('de'),
+      btnEN: this.langBtn('en'), btnDE: this.langBtn('de'),
+
+      onNetNew: this.set('netNew'), onChurn: this.set('churn'), onArpu: this.set('arpu'),
+      onRec: this.set('rec'), onMargin: this.set('margin'), onMult: this.set('mult'),
+      setConservative: this.preset('Conservative'), setBase: this.preset('Base'), setUpside: this.preset('Upside'),
+      reset: this.preset('Base'),
+      btnConservative: this.btn('Conservative'), btnBase: this.btn('Base'), btnUpside: this.btn('Upside'),
+
+      evLabel: m1(ev), evDelta: Math.abs(dEv) < 0.05 ? '—' : signed(dEv),
+      deltaColor: col(dEv), deltaColorInk: colInk(dEv),
+      ebitdaLabel: m1(y26.ebitda), ebitdaDelta: Math.abs(dEb) < 0.05 ? '—' : signed(dEb), ebitdaDeltaColor: colInk(dEb),
+      revLabel: m1(y26.rev), revDelta: Math.abs(dRev) < 0.05 ? '—' : signed(dRev), revDeltaColor: colInk(dRev),
+      custLabel: Math.round(y26.c).toLocaleString(LANG === 'de' ? 'de-DE' : 'en-GB'),
+      arpuLabel: LANG === 'de' ? dec(y26.a, 1) + ' T€' : '€' + y26.a.toFixed(1) + 'k',
+      marginLabel: pct(y26.m),
+      multLabel: mx(M.eff),
+      multDelta: Math.abs(dMult) < 0.05 ? '—' : (dMult > 0 ? '+' : '−') + mx(Math.abs(dMult)),
+      multDeltaColor: colInk(dMult),
+      recLabel: pct(l.rec, 0),
+      growthLabel: pct(M.growth),
+      r40Label: dec(M.r40, 1), r40Color, r40W: clamp(M.r40, 0, 100),
+      r40Verdict: M.r40 >= 60 ? S.v1 : M.r40 >= 40 ? S.v2 : S.v3,
+
+      rev28: m1(y28.rev), ebitda28: m1(y28.ebitda), cust28: Math.round(y28.c).toLocaleString('de-DE'),
+
+      brRecLabel: dec(recRev, 1), brNonRecLabel: dec(nonRec, 1),
+      brCostLabel: '−' + dec(cost, 1),
+      brRecH: recRev / bMax * 100, brNonRecH: nonRec / bMax * 100,
+      brCostH: cost / bMax * 100, brEbitdaH: y26.ebitda / bMax * 100,
+
+      ff, ticks,
+      bandL: P(bandLo), bandW: Math.max(0.5, P(bandHi) - P(bandLo)),
+      bandLabel: LANG === 'de' ? Math.round(bandLo) + '–' + Math.round(bandHi) + ' Mio. €' : '€' + Math.round(bandLo) + '–' + Math.round(bandHi) + 'm',
+      evMarkL: clamp(P(ev), 0, 100),
+
+      tornado,
+      adjRec: (M.adjRec >= 0 ? '+' : '−') + dec(Math.abs(M.adjRec), 2) + 'x',
+      adjR40: (M.adjR40 >= 0 ? '+' : '−') + dec(Math.abs(M.adjR40), 2) + 'x'
+    };
+  }
+}
+</script>
+</body>
+</html>
