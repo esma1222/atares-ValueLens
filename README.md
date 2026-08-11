@@ -66,12 +66,22 @@ service-role key or a database password.
 
 ## Deployment
 
-Static hosting (Vercel, Netlify, GitHub Pages, S3, …). `index.html` at the root
-redirects to `WTT Value Simulator.dc.html`, so visiting the site root loads the
-simulator — without it, hosts return **404 NOT_FOUND** at `/` because the app
-files use spaces and a `.dc.html` extension and are never served as the default
-document. To pin the root URL to a specific file on Vercel instead, add a
-`vercel.json` rewrite from `/` to the chosen `.dc.html`.
+Static hosting (Vercel, Netlify, GitHub Pages, S3, …).
+
+The app files use spaces and a `.dc.html` extension, so they are never served as
+a host's default document — without routing config the site root returns
+**404 NOT_FOUND**. On Vercel, `vercel.json` rewrites the root to the simulator
+so the URL stays clean:
+
+| URL | Serves |
+| --- | --- |
+| `/` | `WTT Value Simulator.dc.html` |
+| `/ebitda` | `WTT Value Simulator (EBITDA 2026 version).dc.html` |
+
+Rewrites are applied *after* the filesystem check, so do not add a root
+`index.html` — it would shadow the `/` rewrite. On a host without rewrite
+support (e.g. GitHub Pages), add an `index.html` at the root that redirects to
+`./WTT%20Value%20Simulator.dc.html` instead.
 
 ## Notes
 

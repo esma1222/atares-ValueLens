@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/WTT%20Value%20Simulator.dc.html"
+    },
+    {
+      "source": "/ebitda",
+      "destination": "/WTT%20Value%20Simulator%20(EBITDA%202026%20version).dc.html"
+    }
+  ]
+}
