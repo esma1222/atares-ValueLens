@@ -17,9 +17,30 @@ to any static host. EN/DE toggle in the header.
 | `user` | sign-in modal (name + email + company) | unrestricted sliders |
 | `admin` | passcode | unrestricted, plus the saved-project library |
 
-Roles, the guest allowance and the saved-project library are held in
-`localStorage` (`valuelens.session.v1`, `valuelens.guest.v1`,
-`valuelens.projects.v1`).
+Roles and the guest allowance are held in `localStorage`
+(`valuelens.session.v1`, `valuelens.guest.v1`).
+
+## Data captured in Supabase
+
+| Feature | Table | Who can write | Who can read |
+| --- | --- | --- | --- |
+| Sign-in lead capture | `leads` | anyone, via `capture_lead()` | passcode holders, via `list_leads()` |
+| Scenario library | `projects` | passcode holders | passcode holders |
+| Admin passcode | `access_codes` | nobody (seeded by migration) | nobody — only compared inside the RPCs |
+
+No table is readable through the publishable key directly; every path goes
+through a `SECURITY DEFINER` function. Because the app has no Supabase Auth
+session, the privileged project calls re-present the admin passcode and the
+database re-verifies it on each call. The passcode is therefore held in the
+admin's own `localStorage` session (`valuelens.session.v1`) until sign-out.
+
+**Sign-in captures a name, email and company to a server.** The hero copy was
+updated accordingly — it previously claimed "no data leaves the device", which
+is no longer true. Make sure your privacy notice covers this before going live.
+
+The scenario library still writes to `localStorage` first, so the tool keeps
+working offline; for admins it mirrors to Supabase and reconciles on sign-in,
+with the most recent write winning per scenario name.
 
 ## Admin passcode (Supabase-backed)
 
@@ -46,12 +67,13 @@ supabase link --project-ref oldfpsvbmwhkbtfrzmdi
 supabase db push
 ```
 
-…or paste `supabase/migrations/0001_passcode_gate.sql` into the Supabase
-dashboard **SQL Editor** and run it. The migration is idempotent, so re-running
-it is safe. Verify with:
+…or paste the migrations in `supabase/migrations/` into the Supabase dashboard
+**SQL Editor** and run them in order (`0001` then `0002`). Both are idempotent,
+so re-running them is safe. Verify with:
 
 ```sql
 select public.verify_passcode('atares2026');  -- expect: true
+select count(*) from public.list_projects('atares2026');
 ```
 
 ### Rotate the passcode

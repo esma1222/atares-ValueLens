@@ -1,11 +1,16 @@
-// Supabase browser client for the WTT Value Simulator passcode gate.
+// Supabase browser client for atares ValueLens.
 //
-// The passcode is NOT stored in this file or anywhere in the client bundle.
-// Verification is delegated to the `verify_passcode` Postgres RPC, which
-// compares the entered code against a bcrypt hash held in a locked-down table
-// (see supabase/migrations). The publishable key below is safe to ship in the
-// browser — it grants only what row-level security allows, and the access-code
-// table is readable by no one.
+// Exposes window.WTTAuth with three groups of calls:
+//   verifyPasscode()                  — admin gate
+//   captureLead()                     — sign-in lead capture (write-only)
+//   listProjects/saveProject/deleteProject — admin scenario library
+//
+// No secret lives in this file. The admin passcode is verified server-side by
+// the `verify_passcode` RPC, and every privileged project call re-presents the
+// passcode for the database to check (the app has no Supabase Auth session).
+// The publishable key below is designed to be public: it can only do what RLS
+// and the granted RPCs allow, and neither `access_codes`, `leads` nor
+// `projects` is readable through it directly.
 (function () {
   "use strict";
 
@@ -23,30 +28,76 @@
     return window.__wttSupabase;
   }
 
-  window.WTTAuth = {
-    // Resolves true for a correct passcode, false for a wrong one.
-    // Throws if Supabase is unreachable or the RPC errors, so the caller can
-    // show a "connection unavailable" message distinct from a wrong passcode.
-    verifyPasscode: function (code) {
-      var client = getClient();
-      if (!client) {
-        console.error("[WTTAuth] supabase-js did not load (CDN blocked?)");
-        return Promise.reject(new Error("supabase-unavailable"));
+  function norm(code) {
+    return (code || "").trim().toLowerCase();
+  }
+
+  // Runs an RPC and rejects with the underlying error, logging it so a missing
+  // migration (PGRST202) is distinguishable from a genuine negative result.
+  function call(fn, params) {
+    var client = getClient();
+    if (!client) {
+      console.error("[WTTAuth] supabase-js did not load (CDN blocked?)");
+      return Promise.reject(new Error("supabase-unavailable"));
+    }
+    return client.rpc(fn, params).then(function (res) {
+      if (res.error) {
+        console.error("[WTTAuth] " + fn + " failed:", res.error);
+        throw res.error;
       }
-      // Lower-cased to match the original gate's behaviour: bcrypt is
-      // case-sensitive, and the stored hash is of the lower-case code.
-      var candidate = (code || "").trim().toLowerCase();
-      return client
-        .rpc("verify_passcode", { candidate: candidate })
-        .then(function (res) {
-          if (res.error) {
-            // Surfaced so a missing migration (PGRST202: function not found)
-            // is distinguishable from a genuinely wrong passcode.
-            console.error("[WTTAuth] verify_passcode failed:", res.error);
-            throw res.error;
-          }
-          return res.data === true;
+      return res.data;
+    });
+  }
+
+  window.WTTAuth = {
+    // ---- admin gate ------------------------------------------------------
+    // true = correct passcode, false = wrong. Rejects if Supabase is
+    // unreachable, so callers can distinguish that from a wrong code.
+    verifyPasscode: function (code) {
+      return call("verify_passcode", { candidate: norm(code) }).then(function (d) {
+        return d === true;
+      });
+    },
+
+    // ---- lead capture ----------------------------------------------------
+    // Write-only. Callers should treat failure as non-fatal: a visitor must
+    // never be blocked from using the tool because capture failed.
+    captureLead: function (lead) {
+      return call("capture_lead", {
+        p_name: lead.name,
+        p_email: lead.email,
+        p_company: lead.company || null,
+        p_lang: lead.lang || null
+      });
+    },
+
+    // ---- admin scenario library -----------------------------------------
+    // Resolves to a { name: {name, savedAt, data} } map matching the shape the
+    // app already keeps in localStorage.
+    listProjects: function (code) {
+      return call("list_projects", { passcode: norm(code) }).then(function (rows) {
+        var out = {};
+        (rows || []).forEach(function (r) {
+          out[r.name] = {
+            name: r.name,
+            savedAt: new Date(r.saved_at).getTime(),
+            data: r.data
+          };
         });
+        return out;
+      });
+    },
+
+    saveProject: function (code, name, data) {
+      return call("save_project", {
+        passcode: norm(code),
+        p_name: name,
+        p_data: data
+      });
+    },
+
+    deleteProject: function (code, name) {
+      return call("delete_project", { passcode: norm(code), p_name: name });
     }
   };
 })();

@@ -82,7 +82,7 @@
           <a href="#model" style="display:inline-flex;align-items:center;gap:12px;background:var(--acc);color:var(--onAcc);font-size:16px;font-weight:700;padding:17px 34px;border-radius:999px;text-decoration:none"><span style="display:{{ eEN }}">Open the model</span><span style="display:{{ eDE }}">Modell öffnen</span><span style="font-size:17px">→</span></a>
           <a href="#assumptions" style="font-size:14px;font-weight:600;color:var(--acc)"><span style="display:{{ eEN }}">See the assumptions</span><span style="display:{{ eDE }}">Annahmen ansehen</span></a>
         </div>
-        <div style="font-size:12.5px;color:rgba(255,255,255,.80);margin-top:30px"><span style="display:{{ eEN }}">Three saved scenarios · seven live levers · full audit trail · no data leaves the device</span><span style="display:{{ eDE }}">Drei gespeicherte Szenarien · sieben Live-Hebel · vollständiger Prüfpfad · keine Datenübertragung</span></div>
+        <div style="font-size:12.5px;color:rgba(255,255,255,.80);margin-top:30px"><span style="display:{{ eEN }}">Three saved scenarios · seven live levers · full audit trail · confidential and access-controlled</span><span style="display:{{ eDE }}">Drei gespeicherte Szenarien · sieben Live-Hebel · vollständiger Prüfpfad · vertraulich und zugangsgeschützt</span></div>
       </div>
 
       <div style="background:rgba(2,30,44,.55);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:32px 34px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)">
@@ -963,10 +963,14 @@ class Component extends DCLogic {
     if (this.state.modal === 'admin') {
       const auth = window.WTTAuth;
       if (!auth) { this.setState({ modalError: de ? 'Verbindung nicht verfügbar' : 'Connection unavailable' }); return; }
-      auth.verifyPasscode(this.state.formCode).then(ok => {
+      const code = this.state.formCode;
+      auth.verifyPasscode(code).then(ok => {
         if (!ok) { this.setState({ modalError: de ? 'Falscher Zugangscode' : 'Incorrect passcode' }); return; }
-        writeSession({ role: 'admin' });
+        // The passcode is kept in the session so the scenario-library RPCs can
+        // re-present it; the database re-checks it on every privileged call.
+        writeSession({ role: 'admin', code: code });
         this.setState({ role: 'admin', runSpent: false, locked: {}, activeKey: '', modal: '', formCode: '', modalError: '', saved: readStore() });
+        this.syncProjects(code);
       }).catch(() => {
         this.setState({ modalError: de ? 'Verbindung nicht verfügbar' : 'Connection unavailable' });
       });
@@ -977,8 +981,14 @@ class Component extends DCLogic {
       this.setState({ modalError: de ? 'Name und eine gültige E-Mail-Adresse erforderlich' : 'Name and a valid email address are required' });
       return;
     }
-    writeSession({ role: 'user', name: name, email: email, company: this.state.formCompany.trim() });
+    const company = this.state.formCompany.trim();
+    writeSession({ role: 'user', name: name, email: email, company: company });
     this.setState({ role: 'user', runSpent: false, locked: {}, activeKey: '', modal: '', modalError: '' });
+    // Fire-and-forget: a capture failure must never block someone signing in.
+    if (window.WTTAuth) {
+      window.WTTAuth.captureLead({ name: name, email: email, company: company, lang: this.state.lang })
+        .catch(() => {});
+    }
   };
   signOut = () => { writeSession({ role: 'guest' }); this.setState({ role: 'guest', touched: {}, locked: {}, activeKey: '', runSpent: guestUsed(), modal: '' }); };
   exportLibrary = () => {
@@ -1019,6 +1029,33 @@ class Component extends DCLogic {
     };
     fr.readAsText(file);
   };
+  // The scenario library lives in localStorage so it keeps working offline;
+  // for admins it is mirrored to Supabase and reconciled on sign-in, with the
+  // most recent write winning for any given name.
+  adminCode() {
+    const s = readSession();
+    return (s && s.role === 'admin' && s.code) ? s.code : '';
+  }
+  syncProjects = (code) => {
+    const auth = window.WTTAuth;
+    const key = code || this.adminCode();
+    if (!auth || !key) return;
+    auth.listProjects(key).then(cloud => {
+      const local = readStore();
+      const merged = { ...cloud };
+      const push = [];
+      Object.keys(local).forEach(n => {
+        if (!cloud[n] || (local[n].savedAt || 0) > (cloud[n].savedAt || 0)) {
+          merged[n] = local[n];
+          push.push(n);
+        }
+      });
+      writeStore(merged);
+      this.setState({ saved: merged });
+      push.forEach(n => auth.saveProject(key, n, merged[n].data).catch(() => {}));
+    }).catch(() => {});
+  };
+
   saveProject = () => {
     const name = (this.state.label || '').trim();
     if (!name) { this.setState({ note: this.state.lang === 'de' ? 'Bitte zuerst eine Referenz eingeben' : 'Enter a reference first' }); return; }
@@ -1031,6 +1068,12 @@ class Component extends DCLogic {
       saved: all, pick: name,
       note: ok ? (this.state.lang === 'de' ? 'Gespeichert' : 'Saved') : (this.state.lang === 'de' ? 'Speichern fehlgeschlagen' : 'Could not save')
     });
+    const key = this.adminCode();
+    if (key && window.WTTAuth) {
+      window.WTTAuth.saveProject(key, name, data).catch(() => {
+        this.setState({ note: this.state.lang === 'de' ? 'Lokal gespeichert - Cloud nicht erreichbar' : 'Saved locally - cloud unavailable' });
+      });
+    }
   };
   loadProject = () => {
     const rec = this.state.saved[this.state.pick];
@@ -1044,6 +1087,8 @@ class Component extends DCLogic {
     delete all[name];
     writeStore(all);
     this.setState({ saved: all, pick: '', note: (this.state.lang === 'de' ? 'Gelöscht: ' : 'Deleted: ') + name });
+    const key = this.adminCode();
+    if (key && window.WTTAuth) window.WTTAuth.deleteProject(key, name).catch(() => {});
   };
   setPick(k) { return e => { if (k !== 'pick' && !this.allow(k)) return; this.setState({ [k]: e.target.value }); }; }
   setNum(k, min, max, fallback) {
@@ -1071,6 +1116,7 @@ class Component extends DCLogic {
     if (sess && sess.role && sess.role !== 'guest') this.setState({ role: sess.role });
     else if (guestUsed()) this.setState({ runSpent: true });
     this.setState({ saved: readStore() });
+    if (sess && sess.role === 'admin' && sess.code) this.syncProjects(sess.code);
     this._keys = e => {
       if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
         e.preventDefault();
