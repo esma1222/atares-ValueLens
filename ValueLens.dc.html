@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-client.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>atares ValueLens - see how operational upside translates into deal value</title>
+<style>
+  html,body{margin:0;padding:0;background:#00263A;-webkit-font-smoothing:antialiased}
+  *{box-sizing:border-box}
+  .vl{--bg:#F5EFEF;--card:#ffffff;--panel:#003E5F;--ink:#003E5F;--ink2:#3d6377;--mut:#5C7686;
+      --line:rgba(0,62,95,.10);--line2:rgba(0,62,95,.06);--fieldBg:#ffffff;--fieldBd:rgba(0,62,95,.20);
+      --trk:rgba(0,62,95,.14);--acc:#00C3BF;--acc2:#007775;--onAcc:#003E5F;--onNeg:#ffffff;--pos:#0A8A55;--neg:#C9351F;
+      --bar1:#003E5F;--bar2:rgba(243,72,50,.75);--bar3:#007775;--bar4:#00C3BF;--bar5:rgba(0,62,95,.35);
+      --headBg:rgba(243,72,50,.05);--onHot:#003E5F;
+      --scrim:linear-gradient(rgba(0,32,48,.58), rgba(0,32,48,.58))}
+  @keyframes vlWave{
+    0%{background-position:50% 50%, 18% 38%;background-size:cover,132% 132%}
+    25%{background-position:50% 50%, 46% 62%;background-size:cover,146% 146%}
+    50%{background-position:50% 50%, 82% 44%;background-size:cover,138% 138%}
+    75%{background-position:50% 50%, 44% 24%;background-size:cover,150% 150%}
+    100%{background-position:50% 50%, 18% 38%;background-size:cover,132% 132%}
+  }
+  @keyframes vlWaveSlow{
+    0%{background-position:50% 50%, 70% 60%;background-size:cover,140% 140%}
+    50%{background-position:50% 50%, 26% 34%;background-size:cover,158% 158%}
+    100%{background-position:50% 50%, 70% 60%;background-size:cover,140% 140%}
+  }
+  @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+  a{color:var(--acc);text-decoration:none}
+  a:hover{opacity:.72}
+  input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+  input[type=range]::-webkit-slider-runnable-track{height:4px;background:var(--trk);border-radius:2px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-6px;border-radius:50%;background:var(--acc);border:2px solid var(--card);box-shadow:0 1px 4px rgba(0,0,0,.35)}
+  input[type=range]:hover::-webkit-slider-thumb{filter:brightness(1.12)}
+  input[type=range]::-moz-range-track{height:4px;background:var(--trk);border-radius:2px}
+  input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+  input[type=number]{font:inherit;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:2px;padding:6px 8px;width:100%;text-align:right;font-variant-numeric:tabular-nums}
+  input[type=number]:focus{outline:none;border-color:var(--acc)}
+</style>
+</helmet>
+
+<div class="vl" style="font-family:ui-sans-serif,system-ui,'Segoe UI',Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;min-width:1364px;zoom:{{ zoom }}">
+
+  <div style="position:sticky;top:0;z-index:60;background-color:{{ hdrColor }};background-image:{{ hdrImage }};background-size:cover;background-position:center 22%;background-attachment:fixed;-webkit-backdrop-filter:blur(16px) saturate(1.25);backdrop-filter:blur(16px) saturate(1.25);box-shadow:{{ hdrShadow }};transition:background-color .45s ease,box-shadow .45s ease;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+    <div style="display:flex;align-items:center;gap:18px">
+      <a href="https://atares.team/en/" target="_blank" rel="noopener" style="display:block">
+        <img src="atares-logo-white.svg" alt="atares" style="height:34px;width:auto;display:{{ hdrDark }}"/>
+        <img src="atares-logo-navy.svg" alt="atares" style="height:34px;width:auto;display:{{ hdrLight }}"/>
+      </a>
+      <span style="width:1px;height:26px;background:{{ hdrLine }}"></span>
+      <span style="font-size:10.5px;color:{{ hdrMuted }};letter-spacing:.14em;text-transform:uppercase">the digital M&amp;A boutique</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+      <div style="display:flex;align-items:baseline">
+        <span style="font-size:22px;font-weight:300;letter-spacing:-.01em;color:{{ hdrInk }}">Value</span><span style="font-size:22px;font-weight:800;letter-spacing:-.01em;color:#00C3BF">Lens</span>
+      </div>
+      <span style="font-size:10px;letter-spacing:.1em;color:{{ hdrMuted }}"><span style="display:{{ eEN }}">See how operational upside translates into deal value</span><span style="display:{{ eDE }}">Wie operatives Potenzial zu Transaktionswert wird</span></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <span style="font-size:9.5px;font-weight:800;letter-spacing:.12em;padding:4px 9px;border-radius:2px;background:{{ roleBg }};color:{{ roleInk }};display:{{ roleShow }}">{{ roleLabel }}</span>
+      <div style="display:flex;gap:2px;background:{{ hdrChip }};border-radius:3px;padding:2px">
+        <button onClick="{{ setEN }}" style="{{ btnEN }}">EN</button>
+        <button onClick="{{ setDE }}" style="{{ btnDE }}">DE</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="background-color:#00303F;background-image:linear-gradient(rgba(0,32,48,.74), rgba(0,32,48,.74)),url('bg-hero.jpg');background-size:cover;background-position:center;background-attachment:fixed;animation:vlWave 34s ease-in-out infinite;color:#fff">
+    <div style="max-width:1560px;margin:0 auto;padding:92px 32px 100px;display:grid;grid-template-columns:1.06fr .94fr;gap:70px;align-items:center">
+      <div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#00C3BF"><span style="display:{{ eEN }}">ValueLens - value-lever &amp; price simulator</span><span style="display:{{ eDE }}">ValueLens - Werthebel- &amp; Preissimulator</span></div>
+        <div style="font-size:62px;font-weight:800;line-height:1.03;letter-spacing:-.035em;margin-top:20px;max-width:14ch;text-wrap:balance"><span style="display:{{ eEN }}">Know what a buyer can pay</span><span style="display:{{ eDE }}">Wissen, was ein Käufer zahlen kann</span></div>
+        <div style="font-size:18px;line-height:1.62;color:rgba(255,255,255,.84);margin-top:26px;max-width:54ch;text-wrap:pretty"><span style="display:{{ eEN }}">Most valuations end with a number. ValueLens starts with the levers behind it - pricing, customer growth, cost synergies - and runs the chain a financial sponsor runs backwards: forward the plan, value the exit, strip out the debt, and solve for the highest price they could still justify today.</span><span style="display:{{ eDE }}">Die meisten Bewertungen enden mit einer Zahl. ValueLens beginnt bei den Hebeln dahinter - Preis, Kundenwachstum, Kostensynergien - und rechnet die Kette, die ein Finanzinvestor rückwärts geht: Plan fortschreiben, Exit bewerten, Verschuldung abziehen und den höchsten heute vertretbaren Preis lösen.</span></div>
+        <div style="display:flex;align-items:center;gap:18px;margin-top:36px">
+          <a href="#model" style="display:inline-flex;align-items:center;gap:12px;background:var(--acc);color:var(--onAcc);font-size:16px;font-weight:700;padding:17px 34px;border-radius:999px;text-decoration:none"><span style="display:{{ eEN }}">Open the model</span><span style="display:{{ eDE }}">Modell öffnen</span><span style="font-size:17px">→</span></a>
+          <a href="#assumptions" style="font-size:14px;font-weight:600;color:var(--acc)"><span style="display:{{ eEN }}">See the assumptions</span><span style="display:{{ eDE }}">Annahmen ansehen</span></a>
+        </div>
+        <div style="font-size:12.5px;color:rgba(255,255,255,.80);margin-top:30px"><span style="display:{{ eEN }}">Three saved scenarios · seven live levers · full audit trail · no data leaves the device</span><span style="display:{{ eDE }}">Drei gespeicherte Szenarien · sieben Live-Hebel · vollständiger Prüfpfad · keine Datenübertragung</span></div>
+      </div>
+
+      <div style="background:rgba(2,30,44,.55);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:32px 34px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.62);text-align:center"><span style="display:{{ eEN }}">The backsolve, live</span><span style="display:{{ eDE }}">Der Backsolve, live</span></div>
+        <div style="text-align:center;margin-top:26px">
+          <div style="font-size:64px;font-weight:800;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;color:#00C3BF">{{ maxMultLabel }}</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.72);margin-top:12px"><span style="display:{{ eEN }}">maximum entry EV / EBITDA - {{ maxEvLabel }}</span><span style="display:{{ eDE }}">maximaler Einstiegs-EV / EBITDA - {{ maxEvLabel }}</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.14);border-radius:10px;overflow:hidden;margin-top:30px">
+          <div style="background:rgba(2,30,44,.45);padding:18px 20px">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.62)"><span style="display:{{ eEN }}">Exit EV</span><span style="display:{{ eDE }}">Exit-EV</span></div>
+            <div style="font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:6px">{{ exitEvLabel }}</div>
+          </div>
+          <div style="background:rgba(2,30,44,.45);padding:18px 20px">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.62)"><span style="display:{{ eEN }}">Equity IRR</span><span style="display:{{ eDE }}">Equity-IRR</span></div>
+            <div style="font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:6px">{{ irrLabel }}</div>
+          </div>
+          <div style="background:rgba(2,30,44,.45);padding:18px 20px">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.62)">EBITDA {{ exitYear }}E</div>
+            <div style="font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:6px">{{ ebitdaExitLabel }}</div>
+          </div>
+          <div style="background:rgba(2,30,44,.45);padding:18px 20px">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.62)"><span style="display:{{ eEN }}">Target MOIC</span><span style="display:{{ eDE }}">Ziel-MOIC</span></div>
+            <div style="font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:6px">{{ moicLabel }}</div>
+          </div>
+        </div>
+        <div style="font-size:11.5px;line-height:1.6;color:rgba(255,255,255,.62);margin-top:22px;text-align:center;text-wrap:pretty"><span style="display:{{ eEN }}">Move any lever below and every figure here moves with it.</span><span style="display:{{ eDE }}">Jeder Hebel unten bewegt sofort jede Zahl hier.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="model" style="scroll-margin-top:88px;max-width:1560px;margin:0 auto;padding:38px 32px 0;display:grid;grid-template-columns:minmax(880px,1.6fr) 372px;gap:22px;align-items:start">
+
+    <div style="display:flex;flex-direction:column;gap:22px;min-width:0">
+
+      <div style="background-color:#00263A;background-image:var(--scrim),url('bg-kpi.jpg');background-size:cover;background-position:center;background-attachment:fixed;animation:vlWaveSlow 46s ease-in-out infinite;border-radius:4px;padding:26px;display:flex;flex-wrap:wrap;gap:26px;align-items:flex-end;color:#fff">
+        <div style="flex:2 1 320px;min-width:300px">
+          <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.80);margin-bottom:8px;white-space:nowrap"><span style="display:{{ eEN }}">Maximum entry multiple a sponsor could pay</span><span style="display:{{ eDE }}">Maximaler Einstiegsmultiplikator für einen Finanzinvestor</span></div>
+          <div style="display:flex;align-items:baseline;gap:16px">
+            <div style="font-size:52px;font-weight:800;letter-spacing:-.035em;line-height:.95;font-variant-numeric:tabular-nums">{{ maxMultLabel }}</div>
+            <div style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:rgba(255,255,255,.75)">= {{ maxEvLabel }}</div>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,.72);margin-top:8px"><span style="display:{{ eEN }}">On base-year EBITDA of {{ eb0Label }} · at {{ moicLabel }} equity MOIC over {{ holdLabel }} years · {{ levLabel }} entry leverage · {{ structureLine }}</span><span style="display:{{ eDE }}">Auf Basisjahr-EBITDA von {{ eb0Label }} · bei {{ moicLabel }} Equity-MOIC über {{ holdLabel }} Jahre · {{ levLabel }} Einstiegs-Leverage · {{ structureLine }}</span></div>
+        </div>
+        <div style="flex:1 1 150px;min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
+          <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.68);margin-bottom:6px">EBITDA {{ exitYear }}E</div>
+          <div style="font-size:26px;font-weight:700;font-variant-numeric:tabular-nums">{{ ebitdaExitLabel }}</div>
+          <div style="font-size:10.5px;color:rgba(255,255,255,.62);margin-top:4px;font-variant-numeric:tabular-nums">{{ ebitdaExitDelta }} <span style="display:{{ eEN }}">vs. base</span><span style="display:{{ eDE }}">ggü. Base</span></div>
+        </div>
+        <div style="flex:1 1 150px;min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
+          <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.68);margin-bottom:6px"><span style="display:{{ eEN }}">Exit EV (DCF)</span><span style="display:{{ eDE }}">Exit-EV (DCF)</span></div>
+          <div style="font-size:26px;font-weight:700;font-variant-numeric:tabular-nums">{{ exitEvLabel }}</div>
+          <div style="font-size:10.5px;color:rgba(255,255,255,.62);margin-top:4px;font-variant-numeric:tabular-nums">{{ exitMultLabel }} EV/EBITDA</div>
+        </div>
+        <div style="flex:1 1 150px;min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
+          <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.68);margin-bottom:6px"><span style="display:{{ eEN }}">Implied equity IRR</span><span style="display:{{ eDE }}">Impliziter Equity-IRR</span></div>
+          <div style="font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:#00C3BF">{{ irrLabel }}</div>
+          <div style="font-size:10.5px;color:rgba(255,255,255,.62);margin-top:4px"><span style="display:{{ eEN }}">at the target MOIC</span><span style="display:{{ eDE }}">beim Ziel-MOIC</span></div>
+        </div>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px 18px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Value-driver tree - EBITDA at exit</span><span style="display:{{ eDE }}">Werttreiberbaum - EBITDA im Exit-Jahr</span></div>
+          <div style="font-size:11px;color:var(--mut)"><span style="display:{{ eEN }}">Base year held fixed; the levers act from {{ firstYear }} onwards</span><span style="display:{{ eDE }}">Basisjahr unverändert; die Hebel wirken ab {{ firstYear }}</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column">
+
+          <div style="display:flex;align-items:center;gap:16px;padding:11px 0;border-bottom:1px solid var(--line2)">
+            <div style="width:5px;height:26px;background:var(--panel);border-radius:1px"></div>
+            <div style="flex:1;font-size:15px;font-weight:700"><span style="display:{{ eEN }}">Exit enterprise value {{ exitYear }}</span><span style="display:{{ eDE }}">Exit-Unternehmenswert {{ exitYear }}</span></div>
+            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">terminal DCF: UFCF {{ tvYear }} / (WACC − g)</span><span style="display:{{ eDE }}">Terminal-DCF: UFCF {{ tvYear }} / (WACC − g)</span></div>
+            <div style="width:110px;text-align:right;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums">{{ exitEvLabel }}</div>
+            <div style="width:78px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ exitEvDeltaColor }}">{{ exitEvDelta }}</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:10px 0 10px 30px;border-bottom:1px solid var(--line2);border-left:2px solid var(--acc);margin-left:2px">
+            <div style="flex:1;font-size:14px;font-weight:600">EBITDA {{ exitYear }}E</div>
+            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">revenue − Opex after cost synergies</span><span style="display:{{ eDE }}">Umsatz − Opex nach Kostensynergien</span></div>
+            <div style="width:110px;text-align:right;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums">{{ ebitdaExitLabel }}</div>
+            <div style="width:78px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ ebitdaExitDeltaColor }}">{{ ebitdaExitDelta }}</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:9px 0 9px 60px;border-bottom:1px solid var(--line2);border-left:2px solid var(--acc);margin-left:2px">
+            <div style="flex:1;font-size:13px"><span style="display:{{ eEN }}">Revenue {{ exitYear }}E</span><span style="display:{{ eDE }}">Umsatz {{ exitYear }}E</span></div>
+            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">customers × ARPU</span><span style="display:{{ eDE }}">Kunden × ARPU</span></div>
+            <div style="width:110px;text-align:right;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums">{{ revExitLabel }}</div>
+            <div style="width:78px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ revExitDeltaColor }}">{{ revExitDelta }}</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 90px;border-bottom:1px solid var(--line2);border-left:2px solid var(--acc);margin-left:2px">
+            <div style="flex:1;font-size:12.5px;color:var(--ink2)"><span style="display:{{ eEN }}">Paying customers</span><span style="display:{{ eDE }}">Zahlende Kunden</span></div>
+            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">{{ cust0Label }} in base year, {{ custPct }} p.a.</span><span style="display:{{ eDE }}">{{ cust0Label }} im Basisjahr, {{ custPct }} p. a.</span></div>
+            <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ custExitLabel }}</div>
+            <div style="width:78px"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 90px;border-bottom:1px solid var(--line2);border-left:2px solid var(--acc);margin-left:2px">
+            <div style="flex:1;font-size:12.5px;color:var(--ink2)">ARPU</div>
+            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">{{ arpu0Label }} in base year, uplift {{ arpuPct }} p.a.</span><span style="display:{{ eDE }}">{{ arpu0Label }} im Basisjahr, Steigerung {{ arpuPct }} p. a.</span></div>
+            <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ arpuExitLabel }}</div>
+            <div style="width:78px"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:9px 0 9px 60px;border-bottom:1px solid var(--line2);border-left:2px solid var(--neg);margin-left:2px">
+            <div style="flex:1;font-size:13px"><span style="display:{{ eEN }}">Opex {{ exitYear }}E after synergies</span><span style="display:{{ eDE }}">Opex {{ exitYear }}E nach Synergien</span></div>
+            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">{{ varSharePct }} customer-variable, {{ fixedSharePct }} fixed, {{ inflPct }} inflation p.a.</span><span style="display:{{ eDE }}">{{ varSharePct }} kundenvariabel, {{ fixedSharePct }} fix, {{ inflPct }} Inflation p. a.</span></div>
+            <div style="width:110px;text-align:right;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums">{{ opexExitLabel }}</div>
+            <div style="width:78px"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 90px;border-bottom:1px solid var(--line2);border-left:2px solid var(--neg);margin-left:2px">
+            <div style="flex:1;font-size:12.5px;color:var(--ink2)"><span style="display:{{ eEN }}">of which cost synergies</span><span style="display:{{ eDE }}">davon Kostensynergien</span></div>
+            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">{{ synPct }} of pre-synergy Opex, {{ rampProfile }}</span><span style="display:{{ eDE }}">{{ synPct }} der Opex vor Synergien, {{ rampProfile }}</span></div>
+            <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--pos)">{{ synExitLabel }}</div>
+            <div style="width:78px"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 60px;border-left:2px solid var(--neg);margin-left:2px">
+            <div style="flex:1;font-size:12.5px;color:var(--ink2)"><span style="display:{{ eEN }}">EBITDA margin {{ exitYear }}E</span><span style="display:{{ eDE }}">EBITDA-Marge {{ exitYear }}E</span></div>
+            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">{{ margin0Label }} in base year · {{ marginDelta }} from the levers</span><span style="display:{{ eDE }}">{{ margin0Label }} im Basisjahr · {{ marginDelta }} aus den Hebeln</span></div>
+            <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ marginExitLabel }}</div>
+            <div style="width:78px"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Operating plan</span><span style="display:{{ eDE }}">Operativer Plan</span></div>
+          <div style="font-size:11px;color:var(--mut)"><span style="display:{{ eEN }}">{{ curUnit }} unless stated · debt schedule on a {{ sweepPct }} cash sweep</span><span style="display:{{ eDE }}">{{ curUnit }} sofern nicht anders angegeben · Schuldenplan mit {{ sweepPct }} Cash Sweep</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0;padding-bottom:8px;border-bottom:1px solid var(--line)">
+          <div style="flex:1;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span style="display:{{ eEN }}">Metric</span><span style="display:{{ eDE }}">Kennzahl</span></div>
+          <sc-for list="{{ cols }}" as="c" hint-placeholder-count="5">
+            <div style="width:104px;text-align:right;font-size:11.5px;font-weight:{{ c.weight }};color:{{ c.ink }}">{{ c.label }}</div>
+          </sc-for>
+        </div>
+        <sc-for list="{{ planRows }}" as="r" hint-placeholder-count="7">
+          <div style="display:flex;align-items:center;gap:0;padding:8px 0;border-bottom:1px solid var(--line2)">
+            <div style="flex:1;font-size:12.5px;font-weight:{{ r.weight }};color:{{ r.ink }}">{{ r.label }}</div>
+            <sc-for list="{{ r.cells }}" as="v" hint-placeholder-count="5">
+              <div style="width:104px;text-align:right;font-size:12.5px;font-weight:{{ v.weight }};font-variant-numeric:tabular-nums;color:{{ v.ink }}">{{ v.t }}</div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Backsolve - from exit value to today's price</span><span style="display:{{ eDE }}">Backsolve - vom Exit-Wert zum heutigen Preis</span></div>
+          <div style="font-size:11px;color:var(--mut)">{{ curUnit }}</div>
+        </div>
+        <div style="font-size:11px;color:var(--mut);margin-bottom:20px"><span style="display:{{ eEN }}">The chain a financial sponsor runs backwards: what the asset is worth at exit, what debt is left, and therefore the most they can pay today and still clear the return.</span><span style="display:{{ eDE }}">Die Kette, die ein Finanzinvestor rückwärts rechnet: Wert des Assets im Exit, verbleibende Verschuldung - und daraus der heute maximal zahlbare Preis bei erreichter Zielrendite.</span></div>
+        <sc-for list="{{ waterfall }}" as="w" hint-placeholder-count="7">
+          <div style="display:flex;align-items:center;gap:14px;padding:7px 0">
+            <div style="width:290px;flex:none">
+              <div style="font-size:12.5px;font-weight:{{ w.weight }};color:{{ w.ink }}">{{ w.label }}</div>
+              <div style="font-size:10px;color:var(--mut)">{{ w.note }}</div>
+            </div>
+            <div style="flex:1;position:relative;height:22px;background:var(--line2);border-radius:2px">
+              <div style="position:absolute;top:0;bottom:0;left:0;border-radius:2px;background:{{ w.color }};width:{{ w.width }}%"></div>
+            </div>
+            <div style="width:96px;flex:none;text-align:right;font-size:13px;font-weight:{{ w.weight }};font-variant-numeric:tabular-nums;color:{{ w.ink }}">{{ w.value }}</div>
+          </div>
+        </sc-for>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:14px;padding:14px 18px;background:var(--panel);border-radius:3px;color:#fff">
+          <div style="flex:1;font-size:13px;font-weight:700"><span style="display:{{ eEN }}">Maximum entry EV / base-year EBITDA - the multiple a sponsor could justify</span><span style="display:{{ eDE }}">Maximaler Einstiegs-EV / Basisjahr-EBITDA - der vertretbare Multiplikator</span></div>
+          <div style="font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--acc)">{{ maxMultLabel }}</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:22px">
+
+        <sc-if value="{{ showGrid }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1 1 400px;min-width:380px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px">
+            <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px"><span style="display:{{ eEN }}">Multiple a sponsor could pay</span><span style="display:{{ eDE }}">Zahlbarer Multiplikator</span></div>
+            <div style="font-size:11px;color:var(--mut);margin-bottom:18px"><span style="display:{{ eEN }}">Max. entry EV / base-year EBITDA · target MOIC vs. exit WACC</span><span style="display:{{ eDE }}">Max. Einstiegs-EV / Basisjahr-EBITDA · Ziel-MOIC ggü. Exit-WACC</span></div>
+            <div style="display:flex;align-items:flex-end;gap:0;margin-bottom:4px">
+              <div style="width:74px;flex:none;font-size:9.5px;color:var(--mut);line-height:1.3">MOIC ↓ / WACC →</div>
+              <sc-for list="{{ gridCols }}" as="c" hint-placeholder-count="5">
+                <div style="flex:1;text-align:center;font-size:11px;font-weight:600;color:var(--ink2);padding-bottom:5px">{{ c.label }}</div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ grid }}" as="g" hint-placeholder-count="5">
+              <div style="display:flex;align-items:stretch;gap:0;margin-bottom:3px">
+                <div style="width:74px;flex:none;display:flex;align-items:center;font-size:11px;font-weight:600;color:var(--ink2)">{{ g.label }}</div>
+                <sc-for list="{{ g.cells }}" as="k" hint-placeholder-count="5">
+                  <div style="flex:1;margin:0 2px;padding:9px 0;text-align:center;font-size:12px;font-weight:{{ k.weight }};font-variant-numeric:tabular-nums;border-radius:2px;background:{{ k.bg }};color:{{ k.ink }};outline:{{ k.ring }}">{{ k.v }}</div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <div style="margin-top:16px;font-size:11px;line-height:1.55;color:var(--ink2)"><span style="display:{{ eEN }}">Outlined cell = the live setting. At a lower required return, or a tighter exit WACC, the same plan supports a materially higher entry price.</span><span style="display:{{ eDE }}">Umrandete Zelle = aktuelle Einstellung. Bei geringerer Renditeforderung oder niedrigerem Exit-WACC trägt derselbe Plan einen deutlich höheren Einstiegspreis.</span></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showTornado }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1 1 400px;min-width:380px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px">
+            <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px"><span style="display:{{ eEN }}">Sensitivity · which lever moves the price most</span><span style="display:{{ eDE }}">Sensitivität · welcher Hebel bewegt den Preis am stärksten</span></div>
+            <div style="font-size:11px;color:var(--mut);margin-bottom:20px"><span style="display:{{ eEN }}">Δ maximum entry multiple from the current setting</span><span style="display:{{ eDE }}">Δ maximaler Einstiegsmultiplikator ggü. aktueller Einstellung</span></div>
+            <sc-for list="{{ tornado }}" as="t" hint-placeholder-count="7">
+              <div style="display:flex;align-items:center;height:38px">
+                <div style="width:150px;flex:none">
+                  <div style="font-size:12px;font-weight:600">{{ t.name }}</div>
+                  <div style="font-size:10px;color:var(--mut)">{{ t.note }}</div>
+                </div>
+                <div style="flex:1;position:relative;height:20px">
+                  <div style="position:absolute;top:0;height:20px;background:var(--neg);border-radius:2px 0 0 2px;right:50%;width:{{ t.negW }}%"></div>
+                  <div style="position:absolute;top:0;height:20px;background:var(--pos);border-radius:0 2px 2px 0;left:50%;width:{{ t.posW }}%"></div>
+                  <div style="position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:var(--fieldBd)"></div>
+                </div>
+                <div style="width:104px;flex:none;text-align:right;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums">{{ t.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <div id="assumptions" style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px;scroll-margin-top:96px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Assumptions</span><span style="display:{{ eDE }}">Annahmen</span></div>
+          <div style="font-size:11px;color:var(--mut)"><span style="display:{{ eEN }}">{{ refLine }}Prepared {{ prepDate }} · millions unless stated</span><span style="display:{{ eDE }}">{{ refLine }}Erstellt {{ prepDate }} · Mio., sofern nicht anders vermerkt</span></div>
+        </div>
+
+        <sc-if value="{{ insider }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:14px 16px;background:var(--line2);border-radius:3px;border-left:3px solid var(--acc)">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span style="display:{{ eEN }}">Saved projects</span><span style="display:{{ eDE }}">Gespeicherte Projekte</span></span>
+          <select value="{{ pick }}" onChange="{{ onPick }}" style="font:inherit;font-size:12px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:2px;padding:7px 10px;min-width:200px">
+            <option value="">{{ pickHint }}</option>
+            <sc-for list="{{ savedList }}" as="p" hint-placeholder-count="0">
+              <option value="{{ p.name }}">{{ p.text }}</option>
+            </sc-for>
+          </select>
+          <button onClick="{{ doLoad }}" style="{{ btnLoad }}"><span style="display:{{ eEN }}">Load</span><span style="display:{{ eDE }}">Laden</span></button>
+          <button onClick="{{ doDelete }}" style="{{ btnDelete }}"><span style="display:{{ eEN }}">Delete</span><span style="display:{{ eDE }}">Löschen</span></button>
+          <span style="width:1px;height:22px;background:var(--fieldBd)"></span>
+          <button onClick="{{ doExport }}" style="{{ btnLoad }}"><span style="display:{{ eEN }}">Export library</span><span style="display:{{ eDE }}">Bibliothek exportieren</span></button>
+          <label style="{{ btnLoad }};display:inline-flex;align-items:center">
+            <span style="display:{{ eEN }}">Import</span><span style="display:{{ eDE }}">Importieren</span>
+            <input type="file" accept="application/json,.json" onChange="{{ doImport }}" style="display:none"/>
+          </label>
+          <span style="flex:1"></span>
+          <button onClick="{{ doSave }}" style="{{ btnSave }}"><span style="display:{{ eEN }}">Save current inputs</span><span style="display:{{ eDE }}">Eingaben speichern</span></button>
+          <span style="font-size:11px;color:var(--mut);min-width:160px;text-align:right">{{ saveNote }}</span>
+        </div>
+        <div style="font-size:10.5px;color:var(--mut);margin:-12px 0 20px;padding-left:16px">{{ shareNote }}</div>
+        </sc-if>
+
+        <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px;padding:14px 18px;background:var(--line2);border-radius:3px;border-left:3px solid var(--acc)">
+            <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc2)"><span style="display:{{ eEN }}">Preview</span><span style="display:{{ eDE }}">Vorschau</span></span>
+            <span style="flex:1;min-width:320px;font-size:12px;line-height:1.5;color:var(--ink2)">{{ guestMessage }}</span>
+            <button onClick="{{ openSignIn }}" style="{{ btnSave }}"><span style="display:{{ eEN }}">Sign in for full access</span><span style="display:{{ eDE }}">Anmelden für Vollzugriff</span></button>
+          </div>
+        </sc-if>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px">
+
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:14px"><span style="display:{{ eEN }}">Company &amp; base year</span><span style="display:{{ eDE }}">Unternehmen &amp; Basisjahr</span></div>
+            <div style="display:grid;grid-template-columns:1fr 104px;gap:9px 14px;align-items:center">
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Reference</span><span style="display:{{ eDE }}">Referenz</span></span>
+              <input type="text" placeholder="{{ labelHint }}" value="{{ label }}" onChange="{{ onLabel }}" style="font:inherit;font-size:12px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:2px;padding:6px 8px;width:100%;text-align:right"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Currency</span><span style="display:{{ eDE }}">Währung</span></span>
+              <select value="{{ cur }}" onChange="{{ onCur }}" style="font:inherit;font-size:12px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:2px;padding:6px 8px;width:100%;text-align:right">
+                <option value="€">EUR €</option>
+                <option value="$">USD $</option>
+                <option value="£">GBP £</option>
+                <option value="CHF ">CHF</option>
+              </select>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Base year</span><span style="display:{{ eDE }}">Basisjahr</span></span>
+              <input type="number" min="1990" max="2100" step="1" value="{{ year0 }}" onChange="{{ onYear0 }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Revenue (millions)</span><span style="display:{{ eDE }}">Umsatz (Mio.)</span></span>
+              <input type="number" min="0.1" step="0.1" value="{{ rev0 }}" onChange="{{ onRev0 }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">EBITDA (millions)</span><span style="display:{{ eDE }}">EBITDA (Mio.)</span></span>
+              <input type="number" min="0" step="0.1" value="{{ eb0 }}" onChange="{{ onEb0 }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Customers (#)</span><span style="display:{{ eDE }}">Kunden (#)</span></span>
+              <input type="number" min="1" step="10" value="{{ cust0 }}" onChange="{{ onCust0 }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Holding period (years)</span><span style="display:{{ eDE }}">Halteperiode (Jahre)</span></span>
+              <input type="number" min="1" max="8" step="1" value="{{ hold }}" onChange="{{ onHold }}"/>
+            </div>
+            <div style="margin-top:13px;font-size:10.5px;line-height:1.55;color:var(--mut)"><span style="display:{{ eEN }}">Entered from management information and held fixed; the levers act on later years only. Implied base-year ARPU {{ arpu0Label }}, EBITDA margin {{ margin0Label }}.</span><span style="display:{{ eDE }}">Aus den Management-Informationen übernommen und fix gehalten; die Hebel wirken nur auf die Folgejahre. Impliziter ARPU im Basisjahr {{ arpu0Label }}, EBITDA-Marge {{ margin0Label }}.</span></div>
+          </div>
+
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:14px"><span style="display:{{ eEN }}">Operating &amp; cash-flow conventions</span><span style="display:{{ eDE }}">Operative &amp; Cashflow-Konventionen</span></div>
+            <div style="display:grid;grid-template-columns:1fr 104px;gap:9px 14px;align-items:center">
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Opex customer-variable (%)</span><span style="display:{{ eDE }}">Opex kundenvariabel (%)</span></span>
+              <input type="number" min="0" max="100" step="5" value="{{ varShare }}" onChange="{{ onVarShare }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Tax rate (%)</span><span style="display:{{ eDE }}">Steuersatz (%)</span></span>
+              <input type="number" min="0" max="60" step="0.5" value="{{ tax }}" onChange="{{ onTax }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">D&amp;A (% of revenue)</span><span style="display:{{ eDE }}">Abschreibungen (% Umsatz)</span></span>
+              <input type="number" min="0" max="30" step="0.5" value="{{ da }}" onChange="{{ onDa }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Capex (% of revenue)</span><span style="display:{{ eDE }}">Capex (% Umsatz)</span></span>
+              <input type="number" min="0" max="40" step="0.5" value="{{ capex }}" onChange="{{ onCapex }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Working capital (% of revenue)</span><span style="display:{{ eDE }}">Working Capital (% Umsatz)</span></span>
+              <input type="number" min="-20" max="50" step="0.5" value="{{ nwc }}" onChange="{{ onNwc }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Terminal growth (%)</span><span style="display:{{ eDE }}">Ewiges Wachstum (%)</span></span>
+              <input type="number" min="0" max="5" step="0.25" value="{{ tg }}" onChange="{{ onTg }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Synergy phasing</span><span style="display:{{ eDE }}">Synergie-Stufung</span></span>
+              <select value="{{ ramp }}" onChange="{{ onRamp }}" style="font:inherit;font-size:12px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:2px;padding:6px 8px;width:100%;text-align:right">
+                <option value="immediate">{{ rampImmediate }}</option>
+                <option value="frontloaded">{{ rampFront }}</option>
+                <option value="linear">{{ rampLinear }}</option>
+                <option value="backweighted">{{ rampBack }}</option>
+              </select>
+            </div>
+            <div style="margin-top:13px;font-size:10.5px;line-height:1.55;color:var(--mut)"><span style="display:{{ eEN }}">Cost inflation sits with the operating levers. Synergies: {{ rampProfile }}.</span><span style="display:{{ eDE }}">Die Kosteninflation liegt bei den operativen Hebeln. Synergien: {{ rampProfile }}.</span></div>
+          </div>
+
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:14px"><span style="display:{{ eEN }}">Deal structure</span><span style="display:{{ eDE }}">Transaktionsstruktur</span></div>
+            <div style="display:grid;grid-template-columns:1fr 104px;gap:9px 14px;align-items:center">
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Stake acquired (%)</span><span style="display:{{ eDE }}">Erworbener Anteil (%)</span></span>
+              <input type="number" min="1" max="100" step="1" value="{{ stake }}" onChange="{{ onStake }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Vendor loan (% of EV)</span><span style="display:{{ eDE }}">Verkäuferdarlehen (% EV)</span></span>
+              <input type="number" min="0" max="40" step="1" value="{{ vendor }}" onChange="{{ onVendor }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Management rollover (% of equity)</span><span style="display:{{ eDE }}">Management-Rollover (% Equity)</span></span>
+              <input type="number" min="0" max="60" step="1" value="{{ rollover }}" onChange="{{ onRollover }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Transaction fees (% of EV)</span><span style="display:{{ eDE }}">Transaktionskosten (% EV)</span></span>
+              <input type="number" min="0" max="10" step="0.25" value="{{ fees }}" onChange="{{ onFees }}"/>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Cash sweep (%)</span><span style="display:{{ eDE }}">Cash Sweep (%)</span></span>
+              <input type="number" min="0" max="100" step="5" value="{{ sweep }}" onChange="{{ onSweep }}"/>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line2)">
+              <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--ink2)"><span style="display:{{ eEN }}">Sponsor equity cheque</span><span style="display:{{ eDE }}">Eigenkapitaleinsatz Investor</span></span><span style="font-weight:700;font-variant-numeric:tabular-nums">{{ chequeLabel }}</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--ink2)"><span style="display:{{ eEN }}">Vendor loan</span><span style="display:{{ eDE }}">Verkäuferdarlehen</span></span><span style="font-weight:700;font-variant-numeric:tabular-nums">{{ vendorLabel }}</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--ink2)"><span style="display:{{ eEN }}">Rollover</span><span style="display:{{ eDE }}">Rollover</span></span><span style="font-weight:700;font-variant-numeric:tabular-nums">{{ rolloverLabel }}</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--ink2)"><span style="display:{{ eEN }}">Transaction fees</span><span style="display:{{ eDE }}">Transaktionskosten</span></span><span style="font-weight:700;font-variant-numeric:tabular-nums">{{ feesLabel }}</span></div>
+            </div>
+            <div style="margin-top:12px;font-size:10.5px;line-height:1.55;color:var(--mut)"><span style="display:{{ eEN }}">Leverage, interest and target MOIC sit with the levers. Rollover and a partial stake are pro-rata, so they scale the cheque, not the multiple.</span><span style="display:{{ eDE }}">Leverage, Zins und Ziel-MOIC liegen bei den Hebeln. Rollover und Teilerwerb wirken pro rata und skalieren den Einsatz, nicht den Multiplikator.</span></div>
+          </div>
+        </div>
+
+        <div style="margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:10.5px;color:var(--mut);line-height:1.6"><span style="display:{{ eEN }}">Illustrative and preliminary; prepared for discussion purposes only and not a valuation opinion, fairness opinion or recommendation. All inputs below are editable, so the tool can be pointed at any company. Revenue = customers × ARPU. Opex splits into a customer-variable and a fixed component and inflates annually; cost synergies are a one-off percentage reduction of the pre-synergy cost base, phased across the forecast on the selected profile, and therefore do not offset compounding inflation year on year. Unlevered free cash flow = NOPAT + D&amp;A − capex − change in net working capital. Exit enterprise value = terminal-year UFCF grown at g and capitalised at (WACC − g). Entry debt = leverage × base-year EBITDA, amortised on the stated cash sweep. Purchase price is solved so that sponsor exit proceeds ÷ sponsor equity equals the target money multiple, after transaction fees, any vendor loan (carried at face value, no accrual) and any management rollover; rolled equity and a partial stake share the upside pro-rata, so they scale the cheque rather than the return. Outputs are only as good as the inputs and should be replaced by an integrated financial model and confirmed in due diligence. © atares GmbH - strictly confidential.</span><span style="display:{{ eDE }}">Illustrativ und vorläufig; ausschließlich zu Diskussionszwecken erstellt und weder Wertgutachten noch Fairness Opinion oder Empfehlung. Alle Eingaben unten sind editierbar, sodass das Tool auf jedes Unternehmen angewendet werden kann. Umsatz = Kunden × ARPU. Die Opex teilen sich in einen kundenvariablen und einen fixen Anteil und werden jährlich inflationiert; Kostensynergien sind eine einmalige prozentuale Reduktion der Kostenbasis vor Synergien, gestuft nach dem gewählten Profil, und gleichen die kumulierende Inflation daher nicht Jahr für Jahr aus. Unlevered Free Cash Flow = NOPAT + Abschreibungen − Capex − Veränderung Working Capital. Exit-Unternehmenswert = UFCF des Terminaljahres, mit g fortgeschrieben und mit (WACC − g) kapitalisiert. Einstiegsverschuldung = Leverage × Basisjahr-EBITDA, Tilgung über den angegebenen Cash Sweep. Der Kaufpreis wird so gelöst, dass Exit-Erlös ÷ Eigenkapitaleinsatz des Investors dem Ziel-Kapitalmultiplikator entspricht - nach Transaktionskosten, etwaigem Verkäuferdarlehen (zum Nominalwert, ohne Verzinsung) und etwaigem Management-Rollover; mitrollierendes Equity und ein Teilerwerb partizipieren pro rata am Wertzuwachs und skalieren daher den Einsatz, nicht die Rendite. Die Ergebnisse sind nur so gut wie die Eingaben und sollten durch ein integriertes Finanzmodell ersetzt und in der Due Diligence bestätigt werden. © atares GmbH - streng vertraulich.</span></div>
+      </div>
+
+      <sc-if value="{{ insider }}" hint-placeholder-val="{{ true }}">
+        <div style="background:var(--card);border:1px solid var(--neg);border-radius:4px;padding:22px 26px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="background:var(--neg);color:var(--onNeg);font-size:9.5px;font-weight:800;letter-spacing:.12em;padding:3px 8px;border-radius:2px">INTERNAL</span>
+              <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Calculation control - full audit trail</span><span style="display:{{ eDE }}">Rechenkontrolle - vollständiger Prüfpfad</span></div>
+            </div>
+            <div style="font-size:11px;color:var(--mut)"><span style="display:{{ eEN }}">Hidden by default · not visible on a shared link</span><span style="display:{{ eDE }}">Standardmäßig ausgeblendet · nicht sichtbar im geteilten Link</span></div>
+          </div>
+          <div style="font-size:11px;color:var(--mut);margin-bottom:18px"><span style="display:{{ eEN }}">Every line the model computes, in calculation order, so the arithmetic can be checked against the workbook before anything leaves the building.</span><span style="display:{{ eDE }}">Jede Rechenzeile des Modells in Rechenreihenfolge - zur Abstimmung gegen das Excel-Modell, bevor etwas das Haus verlässt.</span></div>
+
+          <div style="display:flex;align-items:center;gap:0;padding-bottom:8px;border-bottom:1px solid var(--line)">
+            <div style="flex:1;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span style="display:{{ eEN }}">Line item</span><span style="display:{{ eDE }}">Position</span></div>
+            <sc-for list="{{ cols }}" as="c" hint-placeholder-count="5">
+              <div style="width:96px;text-align:right;font-size:11px;font-weight:{{ c.weight }};color:{{ c.ink }}">{{ c.label }}</div>
+            </sc-for>
+          </div>
+          <sc-for list="{{ auditRows }}" as="r" hint-placeholder-count="18">
+            <div style="display:flex;align-items:center;gap:0;padding:5px 0;border-bottom:1px solid var(--line2);background:{{ r.bg }}">
+              <div style="flex:1;display:flex;align-items:baseline;gap:10px;padding-left:{{ r.indent }}px">
+                <span style="font-size:11.5px;font-weight:{{ r.weight }};color:{{ r.ink }}">{{ r.label }}</span>
+                <span style="font-size:10px;color:var(--mut);font-family:ui-monospace,SFMono-Regular,Menlo,monospace">{{ r.formula }}</span>
+              </div>
+              <sc-for list="{{ r.cells }}" as="v" hint-placeholder-count="5">
+                <div style="width:96px;text-align:right;font-size:11.5px;font-weight:{{ v.weight }};font-variant-numeric:tabular-nums;color:{{ v.ink }}">{{ v.t }}</div>
+              </sc-for>
+            </div>
+          </sc-for>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:22px">
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:10px"><span style="display:{{ eEN }}">Backsolve arithmetic</span><span style="display:{{ eDE }}">Backsolve-Rechnung</span></div>
+              <sc-for list="{{ auditCalc }}" as="a" hint-placeholder-count="8">
+                <div style="display:flex;align-items:baseline;gap:10px;padding:5px 0;border-bottom:1px solid var(--line2)">
+                  <span style="flex:1;font-size:11.5px;font-weight:{{ a.weight }};color:{{ a.ink }}">{{ a.label }}</span>
+                  <span style="font-size:10px;color:var(--mut);font-family:ui-monospace,SFMono-Regular,Menlo,monospace">{{ a.formula }}</span>
+                  <span style="width:92px;text-align:right;font-size:12px;font-weight:{{ a.weight }};font-variant-numeric:tabular-nums;color:{{ a.ink }}">{{ a.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:10px"><span style="display:{{ eEN }}">Integrity checks</span><span style="display:{{ eDE }}">Plausibilitätsprüfungen</span></div>
+              <sc-for list="{{ checks }}" as="c" hint-placeholder-count="6">
+                <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--line2)">
+                  <span style="width:8px;height:8px;border-radius:50%;flex:none;background:{{ c.dot }}"></span>
+                  <span style="flex:1;font-size:11.5px;color:var(--ink2)">{{ c.label }}</span>
+                  <span style="font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ c.ink }}">{{ c.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="position:sticky;top:96px;z-index:1;display:flex;flex-direction:column;gap:16px">
+
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px 20px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:12px"><span style="display:{{ eEN }}">Scenario</span><span style="display:{{ eDE }}">Szenario</span></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+          <button onClick="{{ setConservative }}" style="{{ btnConservative }}"><span style="display:{{ eEN }}">Conservative</span><span style="display:{{ eDE }}">Konservativ</span></button>
+          <button onClick="{{ setBase }}" style="{{ btnBase }}">Base</button>
+          <button onClick="{{ setUpside }}" style="{{ btnUpside }}">Upside</button>
+        </div>
+        <div style="margin-top:12px;font-size:10.5px;line-height:1.5;color:var(--mut)">{{ scenarioNote }}</div>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:20px 20px 22px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span style="display:{{ eEN }}">Operating levers</span><span style="display:{{ eDE }}">Operative Hebel</span></div>
+          <button onClick="{{ reset }}" style="background:none;border:none;padding:0;font:inherit;font-size:11px;color:var(--acc2);cursor:pointer;text-decoration:underline"><span style="display:{{ eEN }}">reset</span><span style="display:{{ eDE }}">zurücksetzen</span></button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">ARPU / price uplift p.a.</span><span style="display:{{ eDE }}">ARPU / Preissteigerung p. a.</span></span>
+            <span style="font-size:13px;font-weight:800;color:var(--acc2);font-variant-numeric:tabular-nums">{{ arpuPct }}</span>
+          </div>
+          <input type="range" min="0" max="10" step="0.25" value="{{ arpu }}" onChange="{{ onArpu }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>0%</span><span><span style="display:{{ eEN }}">price realisation + upsell</span><span style="display:{{ eDE }}">Preisdurchsetzung + Upsell</span></span><span>10%</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Net customer growth p.a.</span><span style="display:{{ eDE }}">Netto-Kundenwachstum p. a.</span></span>
+            <span style="font-size:13px;font-weight:800;color:var(--acc2);font-variant-numeric:tabular-nums">{{ custPct }}</span>
+          </div>
+          <input type="range" min="0" max="20" step="0.5" value="{{ cust }}" onChange="{{ onCust }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>0%</span><span><span style="display:{{ eEN }}">new logos net of churn</span><span style="display:{{ eDE }}">Neukunden abzgl. Churn</span></span><span>20%</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Cost synergies by exit</span><span style="display:{{ eDE }}">Kostensynergien bis Exit</span></span>
+            <span style="font-size:13px;font-weight:800;color:var(--acc2);font-variant-numeric:tabular-nums">{{ synPct }}</span>
+          </div>
+          <input type="range" min="0" max="15" step="0.5" value="{{ syn }}" onChange="{{ onSyn }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>0%</span><span><span style="display:{{ eEN }}">of pre-synergy Opex</span><span style="display:{{ eDE }}">der Opex vor Synergien</span></span><span>15%</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Cost inflation p.a.</span><span style="display:{{ eDE }}">Kosteninflation p. a.</span></span>
+            <span style="font-size:13px;font-weight:800;color:var(--acc2);font-variant-numeric:tabular-nums">{{ inflPct }}</span>
+          </div>
+          <input type="range" min="0" max="6" step="0.25" value="{{ infl }}" onChange="{{ onInfl }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>0%</span><span><span style="display:{{ eEN }}">compounds on the whole cost base</span><span style="display:{{ eDE }}">kumuliert auf die gesamte Kostenbasis</span></span><span>6%</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px;padding-top:16px;border-top:1px solid var(--line)">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Target equity MOIC</span><span style="display:{{ eDE }}">Ziel-Equity-MOIC</span></span>
+            <span style="font-size:13px;font-weight:800;color:var(--neg);font-variant-numeric:tabular-nums">{{ moicLabel }}</span>
+          </div>
+          <input type="range" min="1.5" max="5" step="0.1" value="{{ moic }}" onChange="{{ onMoic }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>1.5x</span><span><span style="display:{{ eEN }}">= {{ irrLabel }} IRR over {{ holdLabel }} yrs</span><span style="display:{{ eDE }}">= {{ irrLabel }} IRR über {{ holdLabel }} J.</span></span><span>5.0x</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Entry leverage (debt / EBITDA)</span><span style="display:{{ eDE }}">Einstiegs-Leverage (Debt / EBITDA)</span></span>
+            <span style="font-size:13px;font-weight:800;color:var(--neg);font-variant-numeric:tabular-nums">{{ levLabel }}</span>
+          </div>
+          <input type="range" min="0" max="6" step="0.25" value="{{ lev }}" onChange="{{ onLev }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>0.0x</span><span><span style="display:{{ eEN }}">= {{ entryDebtLabel }} entry debt</span><span style="display:{{ eDE }}">= {{ entryDebtLabel }} Einstiegsdebt</span></span><span>6.0x</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Exit WACC</span><span style="display:{{ eDE }}">Exit-WACC</span></span>
+            <span style="font-size:13px;font-weight:800;color:var(--neg);font-variant-numeric:tabular-nums">{{ waccPct }}</span>
+          </div>
+          <input type="range" min="7" max="14" step="0.25" value="{{ wacc }}" onChange="{{ onWacc }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>7%</span><span><span style="display:{{ eEN }}">terminal growth {{ tgPct }}</span><span style="display:{{ eDE }}">ewiges Wachstum {{ tgPct }}</span></span><span>14%</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Cash interest rate</span><span style="display:{{ eDE }}">Zinssatz (cash)</span></span>
+            <span style="font-size:13px;font-weight:800;color:var(--neg);font-variant-numeric:tabular-nums">{{ intPct }}</span>
+          </div>
+          <input type="range" min="3" max="12" step="0.25" value="{{ int }}" onChange="{{ onInt }}" style="width:100%;height:16px;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>3%</span><span><span style="display:{{ eEN }}">on beginning-of-year debt</span><span style="display:{{ eDE }}">auf Anfangsbestand Debt</span></span><span>12%</span></div>
+        </div>
+      </div>
+
+      <div style="background:var(--panel);border-radius:4px;padding:18px 20px;color:#fff">
+        <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:10px"><span style="display:{{ eEN }}">Deal structure</span><span style="display:{{ eDE }}">Transaktionsstruktur</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.12)">
+          <span style="color:rgba(255,255,255,.78)"><span style="display:{{ eEN }}">Stake acquired</span><span style="display:{{ eDE }}">Erworbener Anteil</span></span>
+          <span style="font-weight:700;font-variant-numeric:tabular-nums">{{ stakePct }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.12)">
+          <span style="color:rgba(255,255,255,.78)"><span style="display:{{ eEN }}">Vendor loan</span><span style="display:{{ eDE }}">Verkäuferdarlehen</span></span>
+          <span style="font-weight:700;font-variant-numeric:tabular-nums">{{ vendorPct }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.12)">
+          <span style="color:rgba(255,255,255,.78)"><span style="display:{{ eEN }}">Rollover</span><span style="display:{{ eDE }}">Rollover</span></span>
+          <span style="font-weight:700;font-variant-numeric:tabular-nums">{{ rolloverPct }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.12)">
+          <span style="color:rgba(255,255,255,.78)"><span style="display:{{ eEN }}">Holding period</span><span style="display:{{ eDE }}">Halteperiode</span></span>
+          <span style="font-weight:700;font-variant-numeric:tabular-nums">{{ holdLabel }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.12)">
+          <span style="color:rgba(255,255,255,.78)"><span style="display:{{ eEN }}">Cash sweep</span><span style="display:{{ eDE }}">Cash Sweep</span></span>
+          <span style="font-weight:700;font-variant-numeric:tabular-nums">{{ sweepPct }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:9px 0 0;margin-top:4px;border-top:1px solid rgba(255,255,255,.18)">
+          <span style="font-weight:600"><span style="display:{{ eEN }}">Sponsor equity cheque</span><span style="display:{{ eDE }}">Eigenkapitaleinsatz</span></span>
+          <span style="font-weight:800;font-variant-numeric:tabular-nums;color:var(--acc)">{{ chequeLabel }}</span>
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,.55);margin-top:8px"><span style="display:{{ eEN }}">Edit any of these in Assumptions below</span><span style="display:{{ eDE }}">Alle Werte unten in den Annahmen editierbar</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:56px;background:#ffffff;border-top:1px solid var(--line)">
+    <div style="max-width:1560px;margin:0 auto;padding:76px 32px;display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:start">
+      <div>
+        <div style="margin-bottom:34px">
+          <img src="atares-logo-navy.svg" alt="atares" style="height:44px;width:auto;display:block"/>
+        </div>
+        <div style="font-size:34px;font-weight:800;line-height:1.18;letter-spacing:-.02em;color:var(--acc);max-width:24ch;text-wrap:balance"><span style="display:{{ eEN }}">Your M&amp;A Partner from First Assessment to Final Closing</span><span style="display:{{ eDE }}">Ihr M&amp;A-Partner von der ersten Einschätzung bis zum Closing</span></div>
+        <div style="display:flex;flex-direction:column;gap:18px;margin-top:26px;max-width:64ch">
+          <p style="margin:0;font-size:15px;line-height:1.68;color:var(--ink2);text-wrap:pretty"><span style="display:{{ eEN }}">atares is the digital M&amp;A boutique for technology-driven midcap companies in Germany, with offices in Munich. In more than 20 years, our team has advised on over 200 tech transactions and built a reputation for combining strategic rigor with founder-level empathy.</span><span style="display:{{ eDE }}">atares ist die digitale M&amp;A-Boutique für technologiegetriebene Midcap-Unternehmen in Deutschland, mit Büros in München. In über 20 Jahren hat unser Team mehr als 200 Tech-Transaktionen begleitet und sich einen Ruf für die Verbindung von strategischer Präzision mit Verständnis auf Augenhöhe erarbeitet.</span></p>
+          <p style="margin:0;font-size:15px;line-height:1.68;color:var(--ink2);text-wrap:pretty"><span style="display:{{ eEN }}">Our deep personal network of strategists, private equity investors, and M&amp;A advisors across Europe, North and South America, and Asia, together with highly specialized market expertise and a strong focus on outcomes, makes atares a sought-after partner for the tech champions of tomorrow.</span><span style="display:{{ eDE }}">Unser enges persönliches Netzwerk aus Strategen, Private-Equity-Investoren und M&amp;A-Beratern in Europa, Nord- und Südamerika sowie Asien macht atares - gemeinsam mit hoch spezialisierter Marktexpertise und klarem Ergebnisfokus - zum gefragten Partner für die Tech-Champions von morgen.</span></p>
+        </div>
+        <a href="https://atares.team/en/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:12px;background:var(--acc);color:var(--onAcc);font-size:16px;font-weight:700;padding:17px 34px;border-radius:999px;text-decoration:none;margin-top:30px"><span style="display:{{ eEN }}">Start a conversation</span><span style="display:{{ eDE }}">Gespräch beginnen</span><span style="font-size:16px">→</span></a>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:18px;padding-top:8px">
+        <div style="display:flex;gap:20px;background:#F5F7F8;border:1px solid var(--line);border-radius:14px;padding:24px 26px">
+          <div style="flex:none;width:52px;height:52px;border-radius:12px;background:var(--panel);display:flex;align-items:center;justify-content:center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"></circle><path d="M8.5 12.5 7 22l5-2.5L17 22l-1.5-9.5"></path></svg>
+          </div>
+          <div>
+            <div style="font-size:15.5px;font-weight:700;margin-bottom:7px"><span style="display:{{ eEN }}">Digital M&amp;A Boutique</span><span style="display:{{ eDE }}">Digitale M&amp;A-Boutique</span></div>
+            <div style="font-size:13.5px;line-height:1.6;color:var(--ink2);text-wrap:pretty"><span style="display:{{ eEN }}">atares is the digital M&amp;A boutique for technology-driven midcap companies in Germany, with offices in Munich.</span><span style="display:{{ eDE }}">atares ist die digitale M&amp;A-Boutique für technologiegetriebene Midcap-Unternehmen in Deutschland, mit Büros in München.</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:20px;background:#F5F7F8;border:1px solid var(--line);border-radius:14px;padding:24px 26px">
+          <div style="flex:none;width:52px;height:52px;border-radius:12px;background:var(--panel);display:flex;align-items:center;justify-content:center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"></path><path d="M15 9h4a1 1 0 0 1 1 1v11"></path><path d="M2 21h20"></path><path d="M7.5 8h3M7.5 12h3M7.5 16h3"></path></svg>
+          </div>
+          <div>
+            <div style="font-size:15.5px;font-weight:700;margin-bottom:7px"><span style="display:{{ eEN }}">200+ Tech Transactions</span><span style="display:{{ eDE }}">200+ Tech-Transaktionen</span></div>
+            <div style="font-size:13.5px;line-height:1.6;color:var(--ink2);text-wrap:pretty"><span style="display:{{ eEN }}">Over the last 20+ years, our team has advised on more than 200 technology transactions across diverse growth stages and sectors.</span><span style="display:{{ eDE }}">In über 20 Jahren hat unser Team mehr als 200 Technologie-Transaktionen über unterschiedliche Wachstumsphasen und Sektoren hinweg begleitet.</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:20px;background:#F5F7F8;border:1px solid var(--line);border-radius:14px;padding:24px 26px">
+          <div style="flex:none;width:52px;height:52px;border-radius:12px;background:var(--panel);display:flex;align-items:center;justify-content:center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.7 2.7L16 9.8"></path></svg>
+          </div>
+          <div>
+            <div style="font-size:15.5px;font-weight:700;margin-bottom:7px"><span style="display:{{ eEN }}">Global Buyer &amp; Investor Access</span><span style="display:{{ eDE }}">Globaler Käufer- &amp; Investorenzugang</span></div>
+            <div style="font-size:13.5px;line-height:1.6;color:var(--ink2);text-wrap:pretty"><span style="display:{{ eEN }}">Deep personal relationships with strategists, private equity investors, and M&amp;A advisors across Europe, the Americas, and Asia.</span><span style="display:{{ eDE }}">Enge persönliche Beziehungen zu Strategen, Private-Equity-Investoren und M&amp;A-Beratern in Europa, Amerika und Asien.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ showModal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:200;background:rgba(0,24,36,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:32px">
+      <div style="width:440px;max-width:100%;background:var(--card);border-radius:8px;box-shadow:0 30px 80px rgba(0,20,30,.45);padding:34px 36px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--acc2);margin-bottom:12px">{{ modalKicker }}</div>
+        <div style="font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.2">{{ modalTitle }}</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--ink2);margin-top:12px;text-wrap:pretty">{{ modalBody }}</div>
+
+        <sc-if value="{{ modalIsSignIn }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px">
+            <input type="text" placeholder="{{ phName }}" value="{{ formName }}" onChange="{{ onFormName }}" style="font:inherit;font-size:13px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:3px;padding:11px 12px;width:100%;text-align:left"/>
+            <input type="text" placeholder="{{ phEmail }}" value="{{ formEmail }}" onChange="{{ onFormEmail }}" style="font:inherit;font-size:13px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:3px;padding:11px 12px;width:100%;text-align:left"/>
+            <input type="text" placeholder="{{ phCompany }}" value="{{ formCompany }}" onChange="{{ onFormCompany }}" style="font:inherit;font-size:13px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:3px;padding:11px 12px;width:100%;text-align:left"/>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ modalIsAdmin }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:22px">
+            <input type="password" placeholder="{{ phCode }}" value="{{ formCode }}" onChange="{{ onFormCode }}" style="font:inherit;font-size:13px;letter-spacing:.2em;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:3px;padding:11px 12px;width:100%;text-align:left"/>
+          </div>
+        </sc-if>
+
+        <div style="font-size:12px;font-weight:600;color:var(--neg);margin-top:12px;min-height:16px">{{ modalError }}</div>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-top:14px">
+          <button onClick="{{ modalSubmit }}" style="{{ btnModalGo }}">{{ modalCta }}</button>
+          <button onClick="{{ closeModal }}" style="{{ btnModalCancel }}">{{ modalCancel }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <div id="footerband" style="background-color:#00263A;background-image:var(--scrim),url('bg-footer.jpg');background-size:cover;background-position:center;background-attachment:fixed;animation:vlWave 52s ease-in-out infinite">
+    <div style="max-width:760px;margin:0 auto;padding:64px 32px 56px;display:flex;flex-direction:column;align-items:center;gap:26px;text-align:center">
+      <a href="https://atares.team/en/" target="_blank" rel="noopener" style="display:block">
+        <img src="atares-logo-white.svg" alt="atares" style="height:46px;width:auto;display:block"/>
+      </a>
+      <div style="font-size:16px;line-height:1.6;color:rgba(255,255,255,.72);max-width:600px;text-wrap:pretty"><span style="display:{{ eEN }}">Developed by atares, the digital M&amp;A boutique, with deep experience in SME transactions.</span><span style="display:{{ eDE }}">Entwickelt von atares, the digital M&amp;A boutique, mit ausgeprägter Erfahrung in SME-Transaktionen.</span></div>
+      <a href="https://atares.team/en/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:12px;background:var(--acc);color:var(--onAcc);font-size:16px;font-weight:700;padding:17px 34px;border-radius:999px;text-decoration:none" style-hover="filter:brightness(1.08)"><span style="display:{{ eEN }}">Talk to atares</span><span style="display:{{ eDE }}">Mit atares sprechen</span><span style="font-size:17px">→</span></a>
+      <div style="font-size:12.5px;color:rgba(255,255,255,.62);margin-top:6px">© 2026 atares M&amp;A Advisory · ValueLens</div>
+      <div style="display:flex;gap:28px">
+        <a href="https://atares.team/en/imprint/" target="_blank" rel="noopener" style="font-size:12.5px;font-weight:600;color:var(--acc)"><span style="display:{{ eEN }}">Imprint</span><span style="display:{{ eDE }}">Impressum</span></a>
+        <a href="https://atares.team/en/privacy-policy/" target="_blank" rel="noopener" style="font-size:12.5px;font-weight:600;color:var(--acc)"><span style="display:{{ eEN }}">Privacy</span><span style="display:{{ eDE }}">Datenschutz</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1660,&quot;height&quot;:1500},&quot;insiderMode&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Access&quot;,&quot;label&quot;:&quot;Internal calculation control&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;compact&quot;,&quot;standard&quot;,&quot;boardroom&quot;],&quot;default&quot;:&quot;standard&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Presentation&quot;},&quot;analytics&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;both&quot;,&quot;grid&quot;,&quot;tornado&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Presentation&quot;}}">
+const CONV = {
+  varShare: 60, tax: 30, da: 3.0, capex: 3.5, nwc: 5.0, tg: 2.0, ramp: 'linear',
+  sweep: 100, stake: 100, vendor: 0, rollover: 0, fees: 0
+};
+const BASEYR = { year0: 2026, rev0: 14.0, eb0: 7.0, cust0: 600, hold: 4, cur: '\u20ac', label: '' };
+const RAMPS = { immediate: 0, frontloaded: 0.55, linear: 1, backweighted: 1.7 };
+const STORE = 'valuelens.projects.v1';
+const ROLE_STORE = 'valuelens.session.v1';
+// The admin passcode is not stored in this file: it is verified server-side by
+// the Supabase `verify_passcode` RPC (see supabase-client.js and
+// supabase/migrations/0001_passcode_gate.sql).
+const GUEST_STORE = 'valuelens.guest.v1';
+function guestUsed() {
+  try { return JSON.parse(window.localStorage.getItem(GUEST_STORE) || 'null')?.used === true; } catch (e) { return false; }
+}
+function markGuestUsed() {
+  try { window.localStorage.setItem(GUEST_STORE, JSON.stringify({ used: true, at: Date.now() })); } catch (e) {}
+}
+function readSession() {
+  try { const r = JSON.parse(window.localStorage.getItem(ROLE_STORE) || 'null'); return (r && r.role) ? r : null; }
+  catch (e) { return null; }
+}
+function writeSession(o) {
+  try { window.localStorage.setItem(ROLE_STORE, JSON.stringify(o)); } catch (e) {}
+}
+const FIELDS = ['label','cur','year0','rev0','eb0','cust0','hold','varShare','tax','da','capex','nwc','tg','ramp',
+  'stake','vendor','rollover','fees','sweep','arpu','cust','syn','infl','moic','lev','wacc','int','active'];
+function readStore() {
+  try { const r = JSON.parse(window.localStorage.getItem(STORE) || '{}'); return (r && typeof r === 'object') ? r : {}; }
+  catch (e) { return {}; }
+}
+function writeStore(o) {
+  try { window.localStorage.setItem(STORE, JSON.stringify(o)); return true; } catch (e) { return false; }
+}
+
+const PRESETS = {
+  Conservative: { arpu: 0, cust: 0, syn: 0, infl: 0 },
+  Base: { arpu: 3.5, cust: 10.5, syn: 5.0, infl: 2.5 },
+  Upside: { arpu: 4.5, cust: 13.0, syn: 6.5, infl: 2.0 }
+};
+const FIN = { moic: 3.0, lev: 4.0, wacc: 10.0, int: 6.0 };
+
+function ramp(i, n, mode) {
+  const e = RAMPS[mode] === undefined ? 1 : RAMPS[mode];
+  if (e === 0) return 1;
+  return Math.pow((i + 1) / n, e);
+}
+
+function model(l) {
+  const P = k => { const v = l[k]; return (v === undefined || v === '' || !isFinite(v)) ? CONV[k] : Number(v); };
+  const wacc = l.wacc / 100, g = P('tg') / 100, infl = l.infl / 100;
+  const TAX = P('tax') / 100, DA = P('da') / 100, CAPEX = P('capex') / 100, NWC = P('nwc') / 100;
+  const SWEEP = P('sweep') / 100, VAR_SHARE = P('varShare') / 100;
+  const stake = P('stake') / 100, vlPct = P('vendor') / 100, rollPct = P('rollover') / 100, feePct = P('fees') / 100;
+  const rampMode = l.ramp || CONV.ramp;
+  const n = Math.max(1, Math.round(l.hold));
+  const arpu0 = l.rev0 * 1000 / l.cust0;
+  const opex0 = l.rev0 - l.eb0;
+  const varBase = opex0 * VAR_SHARE, fixBase = opex0 * (1 - VAR_SHARE);
+  const rows = [{ y: l.year0, cust: l.cust0, arpu: arpu0, rev: l.rev0, pre: opex0, syn: 0, opex: opex0, ebitda: l.eb0, margin: l.eb0 / l.rev0 }];
+  let cust = l.cust0, arpu = arpu0;
+  for (let i = 0; i < n; i++) {
+    cust *= (1 + l.cust / 100);
+    arpu *= (1 + l.arpu / 100);
+    const rev = cust * arpu / 1000;
+    const pre = (varBase * (cust / l.cust0) + fixBase) * Math.pow(1 + infl, i + 1);
+    const syn = pre * (l.syn / 100) * ramp(i, n, rampMode);
+    const opex = pre - syn;
+    const ebitda = rev - opex;
+    rows.push({ y: l.year0 + i + 1, cust, arpu, rev, pre, syn, opex, ebitda, margin: ebitda / rev });
+  }
+  rows.forEach((r, i) => {
+    r.da = r.rev * DA; r.ebit = r.ebitda - r.da;
+    r.capex = r.rev * CAPEX; r.nwc = r.rev * NWC;
+    r.dNwc = i === 0 ? 0 : r.nwc - rows[i - 1].nwc;
+    r.tax = Math.max(0, r.ebit * TAX);
+    r.nopat = r.ebit - r.tax;
+    r.ufcf = r.nopat + r.da - r.capex - r.dNwc;
+  });
+  const fc = rows.slice(1);
+  fc.forEach((r, i) => { r.df = 1 / Math.pow(1 + wacc, i + 1); r.pv = r.ufcf * r.df; });
+  const pvOps = fc.reduce((a, r) => a + r.pv, 0);
+  const yE = rows[rows.length - 1];
+  const exitEv = wacc > g ? yE.ufcf * (1 + g) / (wacc - g) : yE.ufcf * 100;
+  const exitDf = 1 / Math.pow(1 + wacc, n);
+
+  const entryDebt = l.lev * l.eb0;
+  let debt = entryDebt;
+  fc.forEach(r => {
+    r.beginDebt = debt;
+    r.interest = debt * l.int / 100;
+    r.levTax = Math.max(0, (r.ebit - r.interest) * TAX);
+    r.lfcf = r.ebitda - r.levTax - r.capex - r.dNwc - r.interest;
+    r.repay = Math.min(debt, Math.max(0, r.lfcf) * SWEEP);
+    debt -= r.repay;
+    r.endDebt = debt;
+  });
+  rows[0].endDebt = entryDebt;
+  const exitDebt = debt;
+  const m = l.moic;
+  // solve EV so that sponsor proceeds / sponsor equity = target MOIC
+  const X = exitEv - exitDebt;
+  // rolled equity and a partial stake share the upside pro-rata, so they scale the
+  // cheque but not the return: only leverage, fees and the vendor loan move the multiple
+  const denom = m * (1 + feePct) + vlPct * (1 - m);
+  const maxEntryEv = denom > 0.01 ? (X + m * entryDebt) / denom : 0;
+  const fees = maxEntryEv * feePct;
+  const entryEquity100 = maxEntryEv + fees - entryDebt;
+  const vendorLoan = maxEntryEv * vlPct;
+  const equityTotal = Math.max(0, entryEquity100 - vendorLoan);
+  const rollover = equityTotal * rollPct;
+  const sponsorEquity100 = Math.max(0, equityTotal - rollover);
+  const exitEquity = X - vendorLoan;
+  return {
+    rows, fc, yE, n, exitEv, exitDf, exitDebt, exitEquity, entryDebt,
+    fees, entryEquity100, vendorLoan, rollover, equityTotal, sponsorEquity100, stake,
+    maxEntryEquity: sponsorEquity100, sponsorCheque: sponsorEquity100 * stake,
+    sponsorProceeds: exitEquity * stake,
+    maxEntryEv, maxMult: maxEntryEv / l.eb0,
+    exitMult: exitEv / yE.ebitda, pvOps, dcfToday: pvOps + exitEv * exitDf,
+    totalRepaid: entryDebt - exitDebt, arpu0, opex0
+  };
+}
+const BASE = model({ ...BASEYR, ...CONV, ...PRESETS.Base, ...FIN });
+
+let LANG = 'en', CUR = '\u20ac';
+const dec = (v, d) => { const s = v.toFixed(d); return LANG === 'de' ? s.replace('.', ',') : s; };
+const m1 = v => LANG === 'de' ? dec(v, 1) + ' Mio. ' + CUR : CUR + v.toFixed(1) + 'm';
+const kk = v => LANG === 'de' ? dec(v, 1) + ' T' + CUR : CUR + v.toFixed(1) + 'k';
+const mn = (v, d) => dec(v, d === undefined ? 1 : d);
+const pct = (v, d) => dec(v, d === undefined ? 1 : d) + (LANG === 'de' ? ' %' : '%');
+const mx = (v, d) => dec(v, d === undefined ? 1 : d) + 'x';
+const sgn = (v, f) => (v >= 0 ? '+' : '−') + f(Math.abs(v));
+const num = v => v.toLocaleString(LANG === 'de' ? 'de-DE' : 'en-GB');
+
+const STR = {
+  en: {
+    rCust: 'Paying customers (#)', rArpu: 'ARPU (per customer, 000s)', rRev: 'Revenue', rEbitda: 'EBITDA',
+    rMargin: 'EBITDA margin', rUfcf: 'Unlevered FCF', rDebt: 'Ending debt',
+    wExit: 'Exit enterprise value', wExitN: 'terminal DCF at {w} WACC, {g} growth',
+    wDebt: 'less: exit debt', wDebtN: '{d} entry debt less {r} swept',
+    wEq: 'Exit equity value', wEqN: 'what the sponsor sells',
+    wDisc: 'divided by target MOIC', wDiscN: '{m} over {h} years = {i} IRR',
+    wEntryEq: 'Maximum entry equity', wEntryEqN: 'the sponsor equity cheque',
+    wAddDebt: 'plus: entry debt', wAddDebtN: '{l} × base-year EBITDA of {e}',
+    wEv: 'Maximum purchase EV', wEvN: 'cash and debt free',
+    tArpu: 'ARPU uplift', tArpuN: '± 1pp p.a.', tCust: 'Customer growth', tCustN: '± 2pp p.a.',
+    tSyn: 'Cost synergies', tSynN: '± 2pp of Opex', tInfl: 'Cost inflation', tInflN: '∓ 1pp p.a.',
+    tWacc: 'Exit WACC', tWaccN: '∓ 0.5pp', tMoic: 'Target MOIC', tMoicN: '∓ 0.25x',
+    tLev: 'Entry leverage', tLevN: '± 0.5x', tInt: 'Interest rate', tIntN: '∓ 1pp',
+    sCons: 'No growth, no synergies, no cost inflation - the do-nothing anchor.',
+    sBase: 'Management information as provided.',
+    sUps: 'Operating levers c. 25% better than base; cost inflation c. 25% lower.',
+    sCustom: 'Custom setting - not one of the saved scenarios.',
+    aOp: 'OPERATING', aCf: 'CASH FLOW', aDcf: 'DCF', aDebt: 'DEBT SCHEDULE',
+    aCustG: 'Customers', aArpuG: 'ARPU (000s)', aRev: 'Revenue', aPre: 'Opex before synergies',
+    aSyn: 'Cost synergies', aOpex: 'Opex after synergies', aEbitda: 'EBITDA', aMarg: 'EBITDA margin (%)',
+    aDa: 'D&A', aEbit: 'EBIT', aTax: 'Unlevered tax', aNopat: 'NOPAT', aCapex: 'Capex',
+    aNwcB: 'Net working capital', aDNwc: 'Δ net working capital', aUfcf: 'Unlevered FCF',
+    aDf: 'Discount factor', aPv: 'PV of UFCF', aBegin: 'Opening debt', aInt: 'Interest',
+    aLtax: 'Levered tax', aLfcf: 'Levered FCF', aRepay: 'Debt repaid (sweep)', aEnd: 'Closing debt',
+    cPvOps: 'PV of forecast UFCF', cPvOpsF: 'Σ UFCF × df',
+    cTv: 'Exit EV (terminal value)', cTvF: 'UFCF×(1+g)/(WACC−g)',
+    cTvPv: 'PV of exit EV today', cTvPvF: 'EV × df(exit)',
+    cDcfToday: 'DCF enterprise value today', cDcfTodayF: 'PV ops + PV exit',
+    cExitDebt: 'Exit net debt', cExitDebtF: 'entry − swept',
+    cExitEq: 'Exit equity', cExitEqF: 'exit EV − debt',
+    cEntryEq: 'Max entry equity', cEntryEqF: 'exit eq ÷ MOIC',
+    cEntryDebt: 'Entry debt', cEntryDebtF: 'lev × EBITDA₀',
+    cMaxEv: 'Max purchase EV', cMaxEvF: 'equity + debt',
+    cMult: 'Max entry multiple', cMultF: 'EV ÷ EBITDA₀',
+    cFees: 'Transaction fees', cFeesF: 'fee% × EV',
+    cVendor: 'Vendor loan', cVendorF: 'vl% × EV',
+    cRoll: 'Management rollover', cRollF: 'roll% × entry equity',
+    cCheque: 'Sponsor equity cheque', cChequeF: '(equity − rollover) × stake',
+    kWacc: 'WACC exceeds terminal growth', kDebt: 'Debt fully repaid by exit',
+    kEbitda: 'EBITDA positive in every year', kEq: 'Exit equity positive',
+    kPrem: 'Max entry multiple vs. exit multiple', kUfcf: 'UFCF positive in every year',
+    kCover: 'Min. interest cover (EBITDA / interest)',
+    vYes: 'pass', vNo: 'check',
+    nOpex: 'Opex split (variable / fixed)', nInfl: 'Cost inflation', nTax: 'Tax rate',
+    nDa: 'D&A (% of revenue)', nCapex: 'Capex (% of revenue)', nNwc: 'Net working capital (% of revenue)',
+    nTg: 'Terminal growth', nSyn: 'Synergy phasing', nSweep: 'Cash sweep', nStake: 'Stake / structure',
+    nStakeV: '100%, no vendor loan'
+  },
+  de: {
+    rCust: 'Zahlende Kunden (#)', rArpu: 'ARPU (je Kunde, Tsd.)', rRev: 'Umsatz', rEbitda: 'EBITDA',
+    rMargin: 'EBITDA-Marge', rUfcf: 'Unlevered FCF', rDebt: 'Verschuldung (Endbestand)',
+    wExit: 'Exit-Unternehmenswert', wExitN: 'Terminal-DCF bei {w} WACC, {g} Wachstum',
+    wDebt: 'abzgl. Verschuldung im Exit', wDebtN: '{d} Einstiegsdebt abzgl. {r} getilgt',
+    wEq: 'Exit-Equity-Wert', wEqN: 'Verkaufswert für den Investor',
+    wDisc: 'geteilt durch Ziel-MOIC', wDiscN: '{m} über {h} Jahre = {i} IRR',
+    wEntryEq: 'Maximales Einstiegs-Equity', wEntryEqN: 'Eigenkapitaleinsatz des Investors',
+    wAddDebt: 'zzgl. Einstiegsverschuldung', wAddDebtN: '{l} × Basisjahr-EBITDA von {e}',
+    wEv: 'Maximaler Kaufpreis-EV', wEvN: 'cash- und schuldenfrei',
+    tArpu: 'ARPU-Steigerung', tArpuN: '± 1 PP p. a.', tCust: 'Kundenwachstum', tCustN: '± 2 PP p. a.',
+    tSyn: 'Kostensynergien', tSynN: '± 2 PP der Opex', tInfl: 'Kosteninflation', tInflN: '∓ 1 PP p. a.',
+    tWacc: 'Exit-WACC', tWaccN: '∓ 0,5 PP', tMoic: 'Ziel-MOIC', tMoicN: '∓ 0,25x',
+    tLev: 'Einstiegs-Leverage', tLevN: '± 0,5x', tInt: 'Zinssatz', tIntN: '∓ 1 PP',
+    sCons: 'Kein Wachstum, keine Synergien, keine Kosteninflation - der Do-nothing-Anker.',
+    sBase: 'Management-Informationen wie bereitgestellt.',
+    sUps: 'Operative Hebel rd. 25 % besser als Base; Kosteninflation rd. 25 % niedriger.',
+    sCustom: 'Individuelle Einstellung - kein gespeichertes Szenario.',
+    aOp: 'OPERATIV', aCf: 'CASHFLOW', aDcf: 'DCF', aDebt: 'SCHULDENPLAN',
+    aCustG: 'Kunden', aArpuG: 'ARPU (Tsd.)', aRev: 'Umsatz', aPre: 'Opex vor Synergien',
+    aSyn: 'Kostensynergien', aOpex: 'Opex nach Synergien', aEbitda: 'EBITDA', aMarg: 'EBITDA-Marge (%)',
+    aDa: 'Abschreibungen', aEbit: 'EBIT', aTax: 'Steuern (unlevered)', aNopat: 'NOPAT', aCapex: 'Capex',
+    aNwcB: 'Working Capital', aDNwc: 'Δ Working Capital', aUfcf: 'Unlevered FCF',
+    aDf: 'Diskontfaktor', aPv: 'Barwert UFCF', aBegin: 'Verschuldung Anfang', aInt: 'Zinsen',
+    aLtax: 'Steuern (levered)', aLfcf: 'Levered FCF', aRepay: 'Tilgung (Sweep)', aEnd: 'Verschuldung Ende',
+    cPvOps: 'Barwert der Plan-UFCF', cPvOpsF: 'Σ UFCF × df',
+    cTv: 'Exit-EV (Terminal Value)', cTvF: 'UFCF×(1+g)/(WACC−g)',
+    cTvPv: 'Barwert des Exit-EV heute', cTvPvF: 'EV × df(Exit)',
+    cDcfToday: 'DCF-Unternehmenswert heute', cDcfTodayF: 'BW operativ + BW Exit',
+    cExitDebt: 'Nettoverschuldung im Exit', cExitDebtF: 'Einstieg − getilgt',
+    cExitEq: 'Exit-Equity', cExitEqF: 'Exit-EV − Debt',
+    cEntryEq: 'Max. Einstiegs-Equity', cEntryEqF: 'Exit-Eq ÷ MOIC',
+    cEntryDebt: 'Einstiegsverschuldung', cEntryDebtF: 'Lev × EBITDA₀',
+    cMaxEv: 'Max. Kaufpreis-EV', cMaxEvF: 'Equity + Debt',
+    cMult: 'Max. Einstiegsmultiplikator', cMultF: 'EV ÷ EBITDA₀',
+    cFees: 'Transaktionskosten', cFeesF: 'Kosten% × EV',
+    cVendor: 'Verkäuferdarlehen', cVendorF: 'VL% × EV',
+    cRoll: 'Management-Rollover', cRollF: 'Roll% × Einstiegs-Equity',
+    cCheque: 'Eigenkapitaleinsatz', cChequeF: '(Equity − Rollover) × Anteil',
+    kWacc: 'WACC über ewigem Wachstum', kDebt: 'Verschuldung bis Exit vollständig getilgt',
+    kEbitda: 'EBITDA in jedem Jahr positiv', kEq: 'Exit-Equity positiv',
+    kPrem: 'Max. Einstiegs- ggü. Exit-Multiplikator', kUfcf: 'UFCF in jedem Jahr positiv',
+    kCover: 'Min. Zinsdeckung (EBITDA / Zinsen)',
+    vYes: 'i. O.', vNo: 'prüfen',
+    nOpex: 'Opex-Split (variabel / fix)', nInfl: 'Kosteninflation', nTax: 'Steuersatz',
+    nDa: 'Abschreibungen (% vom Umsatz)', nCapex: 'Capex (% vom Umsatz)', nNwc: 'Working Capital (% vom Umsatz)',
+    nTg: 'Ewiges Wachstum', nSyn: 'Synergie-Stufung', nSweep: 'Cash Sweep', nStake: 'Anteil / Struktur',
+    nStakeV: '100 %, kein Verkäuferdarlehen'
+  }
+};
+const fill = (s, o) => Object.keys(o).reduce((a, k) => a.split('{' + k + '}').join(o[k]), s);
+
+class Component extends DCLogic {
+  state = { ...BASEYR, ...CONV, ...PRESETS.Base, ...FIN, active: 'Base', lang: 'en', hdrLight: false, pick: '', saved: {}, note: '',
+    role: 'guest', touched: {}, locked: {}, activeKey: '', runSpent: false, modal: '', formName: '', formEmail: '', formCompany: '', formCode: '', modalError: '' };
+
+  allow(key) {
+    if (this.state.role !== 'guest') return true;
+    if (this.state.runSpent || this.state.locked[key]) {
+      this.setState({ modal: 'signin', modalError: '' });
+      return false;
+    }
+    // a control stays adjustable while it is the one being worked on; moving to
+    // another control finalises it, so every assumption can be set exactly once
+    if (this.state.activeKey !== key) {
+      const prev = this.state.activeKey;
+      this.setState(st => ({
+        activeKey: key,
+        locked: prev ? { ...st.locked, [prev]: true } : st.locked,
+        touched: { ...st.touched, [key]: true }
+      }));
+      markGuestUsed();
+    }
+    return true;
+  }
+  set(k) { return e => { if (!this.allow(k)) return; this.setState({ [k]: parseFloat(e.target.value), active: null }); }; }
+  setText(k) { return e => { if (!this.allow(k)) return; this.setState({ [k]: e.target.value }); }; }
+
+  setField(k) { return e => this.setState({ [k]: e.target.value, modalError: '' }); }
+  openSignIn = () => this.setState({ modal: 'signin', modalError: '' });
+  closeModal = () => this.setState({ modal: '', modalError: '', formCode: '' });
+  submitModal = () => {
+    const de = this.state.lang === 'de';
+    if (this.state.modal === 'admin') {
+      const auth = window.WTTAuth;
+      if (!auth) { this.setState({ modalError: de ? 'Verbindung nicht verfügbar' : 'Connection unavailable' }); return; }
+      auth.verifyPasscode(this.state.formCode).then(ok => {
+        if (!ok) { this.setState({ modalError: de ? 'Falscher Zugangscode' : 'Incorrect passcode' }); return; }
+        writeSession({ role: 'admin' });
+        this.setState({ role: 'admin', runSpent: false, locked: {}, activeKey: '', modal: '', formCode: '', modalError: '', saved: readStore() });
+      }).catch(() => {
+        this.setState({ modalError: de ? 'Verbindung nicht verfügbar' : 'Connection unavailable' });
+      });
+      return;
+    }
+    const name = this.state.formName.trim(), email = this.state.formEmail.trim();
+    if (!name || !/.+@.+\..+/.test(email)) {
+      this.setState({ modalError: de ? 'Name und eine gültige E-Mail-Adresse erforderlich' : 'Name and a valid email address are required' });
+      return;
+    }
+    writeSession({ role: 'user', name: name, email: email, company: this.state.formCompany.trim() });
+    this.setState({ role: 'user', runSpent: false, locked: {}, activeKey: '', modal: '', modalError: '' });
+  };
+  signOut = () => { writeSession({ role: 'guest' }); this.setState({ role: 'guest', touched: {}, locked: {}, activeKey: '', runSpent: guestUsed(), modal: '' }); };
+  exportLibrary = () => {
+    const all = readStore();
+    const names = Object.keys(all);
+    if (!names.length) { this.setState({ note: this.state.lang === 'de' ? 'Nichts zu exportieren' : 'Nothing to export' }); return; }
+    try {
+      const blob = new Blob([JSON.stringify({ tool: 'ValueLens', exportedAt: Date.now(), projects: all }, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'valuelens-projects.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      this.setState({ note: (this.state.lang === 'de' ? 'Exportiert: ' : 'Exported: ') + names.length });
+    } catch (e) {
+      this.setState({ note: this.state.lang === 'de' ? 'Export fehlgeschlagen' : 'Export failed' });
+    }
+  };
+  importLibrary = e => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    const de = this.state.lang === 'de';
+    const fr = new FileReader();
+    fr.onload = () => {
+      try {
+        const parsed = JSON.parse(String(fr.result));
+        const incoming = parsed && parsed.projects ? parsed.projects : parsed;
+        const keys = Object.keys(incoming || {}).filter(k => incoming[k] && incoming[k].data);
+        if (!keys.length) throw new Error('empty');
+        const all = readStore();
+        keys.forEach(k => { all[k] = incoming[k]; });
+        writeStore(all);
+        this.setState({ saved: all, note: (de ? 'Importiert: ' : 'Imported: ') + keys.length });
+      } catch (err) {
+        this.setState({ note: de ? 'Datei nicht lesbar' : 'Could not read that file' });
+      }
+    };
+    fr.readAsText(file);
+  };
+  saveProject = () => {
+    const name = (this.state.label || '').trim();
+    if (!name) { this.setState({ note: this.state.lang === 'de' ? 'Bitte zuerst eine Referenz eingeben' : 'Enter a reference first' }); return; }
+    const data = {};
+    FIELDS.forEach(k => { data[k] = this.state[k]; });
+    const all = readStore();
+    all[name] = { name, savedAt: Date.now(), data };
+    const ok = writeStore(all);
+    this.setState({
+      saved: all, pick: name,
+      note: ok ? (this.state.lang === 'de' ? 'Gespeichert' : 'Saved') : (this.state.lang === 'de' ? 'Speichern fehlgeschlagen' : 'Could not save')
+    });
+  };
+  loadProject = () => {
+    const rec = this.state.saved[this.state.pick];
+    if (!rec) return;
+    this.setState({ ...rec.data, note: (this.state.lang === 'de' ? 'Geladen: ' : 'Loaded: ') + rec.name });
+  };
+  deleteProject = () => {
+    const name = this.state.pick;
+    if (!name) return;
+    const all = readStore();
+    delete all[name];
+    writeStore(all);
+    this.setState({ saved: all, pick: '', note: (this.state.lang === 'de' ? 'Gelöscht: ' : 'Deleted: ') + name });
+  };
+  setPick(k) { return e => { if (k !== 'pick' && !this.allow(k)) return; this.setState({ [k]: e.target.value }); }; }
+  setNum(k, min, max, fallback) {
+    return e => {
+      if (!this.allow(k)) return;
+      let v = parseFloat(e.target.value);
+      if (!isFinite(v)) v = fallback;
+      this.setState({ [k]: Math.min(max, Math.max(min, v)) });
+    };
+  }
+  preset(n) { return () => { if (!this.allow('scenario')) return; this.setState({ ...PRESETS[n], active: n }); }; }
+  setLang(v) { return () => this.setState({ lang: v }); }
+
+  componentDidMount() {
+    this._sync = () => {
+      const a = document.getElementById('model');
+      const b = document.getElementById('footerband');
+      if (!a) return;
+      const edge = 74;
+      const overLight = a.getBoundingClientRect().top <= edge
+        && (!b || b.getBoundingClientRect().top > edge);
+      if (overLight !== this.state.hdrLight) this.setState({ hdrLight: overLight });
+    };
+    const sess = readSession();
+    if (sess && sess.role && sess.role !== 'guest') this.setState({ role: sess.role });
+    else if (guestUsed()) this.setState({ runSpent: true });
+    this.setState({ saved: readStore() });
+    this._keys = e => {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        if (this.state.role === 'admin') this.signOut();
+        else this.setState({ modal: 'admin', formCode: '', modalError: '' });
+      }
+      if (e.key === 'Escape' && this.state.modal) this.closeModal();
+    };
+    window.addEventListener('keydown', this._keys);
+    window.addEventListener('scroll', this._sync, { passive: true });
+    window.addEventListener('resize', this._sync, { passive: true });
+    this._sync();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._sync);
+    window.removeEventListener('resize', this._sync);
+    window.removeEventListener('keydown', this._keys);
+  }
+
+  btn(n) {
+    const on = this.state.active === n;
+    return 'font:inherit;font-size:11.5px;font-weight:700;padding:9px 4px;border-radius:3px;cursor:pointer;transition:all .12s;'
+      + (on ? 'background:var(--acc);color:var(--onAcc);border:1px solid var(--acc);' : 'background:transparent;color:var(--ink2);border:1px solid var(--fieldBd);');
+  }
+  smallBtn(kind) {
+    const base = 'font:inherit;font-size:11.5px;font-weight:700;padding:8px 14px;border-radius:999px;cursor:pointer;';
+    if (kind === 'primary') return base + 'background:var(--acc);color:var(--onAcc);border:1px solid var(--acc);';
+    return base + 'background:transparent;color:var(--ink2);border:1px solid var(--fieldBd);';
+  }
+  langBtn(v) {
+    const on = this.state.lang === v;
+    return 'font:inherit;font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:4px 9px;border:none;border-radius:2px;cursor:pointer;transition:color .35s ease;'
+      + (on ? 'background:var(--acc);color:var(--onAcc);'
+            : 'background:transparent;color:' + (this.state.hdrLight ? '#3d6377' : 'rgba(255,255,255,.78)') + ';');
+  }
+
+  renderVals() {
+    LANG = this.state.lang;
+    CUR = this.state.cur || '\u20ac';
+    const S = STR[LANG];
+    const l = this.state;
+    const rp = { immediate: [ 'in full from year one', 'ab dem ersten Jahr in voller Höhe' ],
+                 frontloaded: [ 'phased in, front-loaded', 'gestuft, front-lastig' ],
+                 linear: [ 'phased in straight-line', 'linear gestuft' ],
+                 backweighted: [ 'phased in, back-weighted', 'gestuft, back-lastig' ] }[this.state.ramp || 'linear'];
+    const rampProfile = LANG === 'de' ? rp[1] : rp[0];
+    const M = model(l);
+    const R = M.rows, yE = M.yE, n = M.n;
+    const irr = Math.pow(l.moic, 1 / l.hold) - 1;
+    const bits = [];
+    if (LANG === 'de') {
+      bits.push(Number(l.stake) >= 100 ? '100-%-Erwerb' : pct(l.stake, 0) + '-Erwerb');
+      if (Number(l.vendor) > 0) bits.push(pct(l.vendor, 0) + ' Verkäuferdarlehen');
+      if (Number(l.rollover) > 0) bits.push(pct(l.rollover, 0) + ' Rollover');
+      if (Number(l.vendor) === 0 && Number(l.rollover) === 0) bits.push('kein Verkäuferdarlehen, kein Rollover');
+    } else {
+      bits.push(Number(l.stake) >= 100 ? '100% acquisition' : pct(l.stake, 0) + ' stake');
+      if (Number(l.vendor) > 0) bits.push(pct(l.vendor, 0) + ' vendor loan');
+      if (Number(l.rollover) > 0) bits.push(pct(l.rollover, 0) + ' rollover');
+      if (Number(l.vendor) === 0 && Number(l.rollover) === 0) bits.push('no vendor loan or rollover');
+    }
+    const structureLine = bits.join(', ');
+    const green = 'var(--pos)', red = 'var(--neg)', ink = 'var(--ink2)', strong = 'var(--ink)';
+    const colInk = v => Math.abs(v) < 0.05 ? 'var(--mut)' : (v > 0 ? green : red);
+    const dExit = M.exitEv - BASE.exitEv, dEb = yE.ebitda - BASE.yE.ebitda, dRev = yE.rev - BASE.yE.rev;
+
+    const cols = R.map((r, i) => ({
+      label: i === 0 ? String(r.y) : r.y + 'E',
+      weight: i === R.length - 1 ? 800 : 700,
+      ink: i === R.length - 1 ? strong : ink
+    }));
+    const cellsOf = (f, bold) => R.map((r, i) => ({
+      t: f(r, i), weight: (bold || i === R.length - 1) ? 700 : 400,
+      ink: i === R.length - 1 ? strong : ink
+    }));
+    const planRows = [
+      { label: S.rCust, weight: 400, ink, cells: cellsOf(r => num(Math.round(r.cust))) },
+      { label: S.rArpu, weight: 400, ink, cells: cellsOf(r => mn(r.arpu)) },
+      { label: S.rRev, weight: 700, ink: strong, cells: cellsOf(r => mn(r.rev), true) },
+      { label: S.rEbitda, weight: 700, ink: strong, cells: cellsOf(r => mn(r.ebitda), true) },
+      { label: S.rMargin, weight: 400, ink, cells: cellsOf(r => pct(r.margin * 100)) },
+      { label: S.rUfcf, weight: 400, ink, cells: cellsOf(r => mn(r.ufcf)) },
+      { label: S.rDebt, weight: 400, ink, cells: cellsOf(r => mn(r.endDebt)) }
+    ];
+
+    const wMax = Math.max(M.exitEv, M.maxEntryEv, 1);
+    const W = (label, note, value, v, color, bold) => ({
+      label, note, value, width: Math.max(0.5, Math.abs(v) / wMax * 100), color,
+      weight: bold ? 700 : 400, ink: bold ? strong : ink
+    });
+    const waterfall = [
+      W(S.wExit, fill(S.wExitN, { w: pct(l.wacc), g: pct(l.tg) }), m1(M.exitEv), M.exitEv, 'var(--bar1)', true),
+      W(S.wDebt, fill(S.wDebtN, { d: m1(M.entryDebt), r: m1(M.totalRepaid) }), '−' + m1(M.exitDebt), M.exitDebt, 'var(--bar2)'),
+      W(S.wEq, S.wEqN, m1(M.exitEquity), M.exitEquity, 'var(--bar3)', true),
+      W(S.wDisc, fill(S.wDiscN, { m: mx(l.moic), h: l.hold, i: pct(irr * 100) }), '÷ ' + mx(l.moic), 0, 'transparent'),
+      W(S.wEntryEq, S.wEntryEqN, m1(M.equityTotal), M.equityTotal, 'var(--bar4)', true),
+      W(S.wAddDebt, fill(S.wAddDebtN, { l: mx(l.lev), e: m1(l.eb0) }), '+' + m1(M.entryDebt), M.entryDebt, 'var(--bar5)'),
+      W(S.wEv, S.wEvN, m1(M.maxEntryEv), M.maxEntryEv, 'var(--bar1)', true)
+    ];
+
+    const gWacc = [8, 9, 10, 11, 12], gMoic = [2.0, 2.5, 3.0, 3.5, 4.0];
+    const gVals = gMoic.map(mo => gWacc.map(w => model({ ...l, moic: mo, wacc: w }).maxMult));
+    const flat = gVals.flat();
+    const gLo = Math.min(...flat), gHi = Math.max(...flat);
+    const grid = gMoic.map((mo, i) => ({
+      label: mx(mo),
+      cells: gWacc.map((w, j) => {
+        const v = gVals[i][j];
+        const t = gHi > gLo ? (v - gLo) / (gHi - gLo) : 0.5;
+        const live = Math.abs(mo - l.moic) < 0.06 && Math.abs(w - l.wacc) < 0.13;
+        return {
+          v: mx(v), bg: 'color-mix(in srgb, var(--acc) ' + Math.round(8 + t * 62) + '%, transparent)',
+          ink: t > 0.62 ? 'var(--onHot)' : ink, weight: live ? 800 : 600,
+          ring: live ? '2px solid var(--neg)' : 'none'
+        };
+      })
+    }));
+    const gridCols = gWacc.map(w => ({ label: pct(w, 0) }));
+
+    const tor = [
+      { name: S.tArpu, note: S.tArpuN, k: 'arpu', d: 1 },
+      { name: S.tCust, note: S.tCustN, k: 'cust', d: 2 },
+      { name: S.tSyn, note: S.tSynN, k: 'syn', d: 2 },
+      { name: S.tInfl, note: S.tInflN, k: 'infl', d: -1 },
+      { name: S.tWacc, note: S.tWaccN, k: 'wacc', d: -0.5 },
+      { name: S.tMoic, note: S.tMoicN, k: 'moic', d: -0.25 },
+      { name: S.tLev, note: S.tLevN, k: 'lev', d: 0.5 },
+      { name: S.tInt, note: S.tIntN, k: 'int', d: -1 }
+    ].map(s => {
+      const a = model({ ...l, [s.k]: Math.max(0, l[s.k] + s.d) }).maxMult - M.maxMult;
+      const b = model({ ...l, [s.k]: Math.max(0, l[s.k] - s.d) }).maxMult - M.maxMult;
+      return { ...s, up: Math.max(a, b), dn: Math.min(a, b), mag: Math.max(Math.abs(a), Math.abs(b)) };
+    }).sort((a, b) => b.mag - a.mag);
+    const tMax = Math.max(...tor.map(s => s.mag), 0.1);
+
+    // ---- insider audit ----
+    const A = (label, formula, f, opts) => ({
+      label, formula, indent: (opts && opts.head) ? 0 : 14,
+      weight: (opts && (opts.head || opts.bold)) ? 700 : 400,
+      ink: (opts && opts.head) ? 'var(--neg)' : ((opts && opts.bold) ? strong : ink),
+      bg: (opts && opts.head) ? 'var(--headBg)' : 'transparent',
+      cells: R.map((r, i) => ({
+        t: f ? f(r, i) : '', weight: (opts && opts.bold) ? 700 : 400,
+        ink: i === R.length - 1 ? strong : ink
+      }))
+    });
+    const blank = () => '-';
+    const auditRows = [
+      A(S.aOp, '', null, { head: true }),
+      A(S.aCustG, 'c₍ₜ₋₁₎×(1+g_c)', r => num(Math.round(r.cust))),
+      A(S.aArpuG, 'a₍ₜ₋₁₎×(1+g_a)', r => mn(r.arpu, 2)),
+      A(S.aRev, 'cust×ARPU/1000', r => mn(r.rev, 2), { bold: true }),
+      A(S.aPre, '(' + pct(l.varShare, 0) + ' var + fix)×(1+i)^t', r => mn(r.pre, 2)),
+      A(S.aSyn, 'pre×syn%×phase', (r, i) => i === 0 ? blank() : '−' + mn(r.syn, 2)),
+      A(S.aOpex, 'pre − synergies', r => mn(r.opex, 2)),
+      A(S.aEbitda, 'revenue − opex', r => mn(r.ebitda, 2), { bold: true }),
+      A(S.aMarg, 'EBITDA/revenue', r => mn(r.margin * 100, 1)),
+      A(S.aCf, '', null, { head: true }),
+      A(S.aDa, pct(l.da) + ' × revenue', r => '−' + mn(r.da, 2)),
+      A(S.aEbit, 'EBITDA − D&A', r => mn(r.ebit, 2)),
+      A(S.aTax, pct(l.tax, 0) + ' × EBIT', r => '−' + mn(r.tax, 2)),
+      A(S.aNopat, 'EBIT − tax', r => mn(r.nopat, 2)),
+      A(S.aCapex, pct(l.capex) + ' × revenue', r => '−' + mn(r.capex, 2)),
+      A(S.aNwcB, pct(l.nwc) + ' × revenue', r => mn(r.nwc, 2)),
+      A(S.aDNwc, 'NWCₜ − NWC₍ₜ₋₁₎', (r, i) => i === 0 ? blank() : '−' + mn(r.dNwc, 2)),
+      A(S.aUfcf, 'NOPAT+D&A−capex−ΔNWC', r => mn(r.ufcf, 2), { bold: true }),
+      A(S.aDcf, '', null, { head: true }),
+      A(S.aDf, '1/(1+WACC)^t', (r, i) => i === 0 ? blank() : mn(r.df, 3)),
+      A(S.aPv, 'UFCF × df', (r, i) => i === 0 ? blank() : mn(r.pv, 2)),
+      A(S.aDebt, '', null, { head: true }),
+      A(S.aBegin, 'prior closing', (r, i) => i === 0 ? blank() : mn(r.beginDebt, 2)),
+      A(S.aInt, 'rate × opening', (r, i) => i === 0 ? blank() : '−' + mn(r.interest, 2)),
+      A(S.aLtax, pct(l.tax, 0) + '×(EBIT−interest)', (r, i) => i === 0 ? blank() : '−' + mn(r.levTax, 2)),
+      A(S.aLfcf, 'EBITDA−tax−capex−ΔNWC−int', (r, i) => i === 0 ? blank() : mn(r.lfcf, 2)),
+      A(S.aRepay, 'min(debt, LFCF×' + pct(l.sweep, 0) + ')', (r, i) => i === 0 ? blank() : '−' + mn(r.repay, 2)),
+      A(S.aEnd, 'opening − repaid', (r, i) => i === 0 ? mn(M.entryDebt, 2) : mn(r.endDebt, 2), { bold: true })
+    ];
+    const CA = (label, formula, value, bold) => ({
+      label, formula, value, weight: bold ? 700 : 400, ink: bold ? strong : ink
+    });
+    const auditCalc = [
+      CA(S.cPvOps, S.cPvOpsF, m1(M.pvOps)),
+      CA(S.cTv, S.cTvF, m1(M.exitEv), true),
+      CA(S.cTvPv, S.cTvPvF, m1(M.exitEv * M.exitDf)),
+      CA(S.cDcfToday, S.cDcfTodayF, m1(M.dcfToday), true),
+      CA(S.cExitDebt, S.cExitDebtF, m1(M.exitDebt)),
+      CA(S.cExitEq, S.cExitEqF, m1(M.exitEquity), true),
+      CA(S.cEntryEq, S.cEntryEqF, m1(M.maxEntryEquity)),
+      CA(S.cEntryDebt, S.cEntryDebtF, m1(M.entryDebt)),
+      CA(S.cFees, S.cFeesF, m1(M.fees)),
+      CA(S.cVendor, S.cVendorF, m1(M.vendorLoan)),
+      CA(S.cRoll, S.cRollF, m1(M.rollover)),
+      CA(S.cCheque, S.cChequeF, m1(M.sponsorCheque), true),
+      CA(S.cMaxEv, S.cMaxEvF, m1(M.maxEntryEv), true),
+      CA(S.cMult, S.cMultF, mx(M.maxMult), true)
+    ];
+    const minCover = Math.min(...M.fc.map(r => r.interest > 0.001 ? r.ebitda / r.interest : 99));
+    const K = (label, ok, value) => ({
+      label, value, dot: ok ? green : red, ink: ok ? green : red
+    });
+    const checks = [
+      K(S.kWacc, Number(l.wacc) > Number(l.tg), pct(l.wacc) + ' > ' + pct(l.tg)),
+      K(S.kEbitda, M.rows.every(r => r.ebitda > 0), M.rows.every(r => r.ebitda > 0) ? S.vYes : S.vNo),
+      K(S.kUfcf, M.fc.every(r => r.ufcf > 0), M.fc.every(r => r.ufcf > 0) ? S.vYes : S.vNo),
+      K(S.kDebt, M.exitDebt < 0.05, M.exitDebt < 0.05 ? S.vYes : m1(M.exitDebt)),
+      K(S.kEq, M.exitEquity > 0, M.exitEquity > 0 ? S.vYes : S.vNo),
+      K(S.kCover, minCover >= 3, minCover >= 98 ? '-' : mx(minCover)),
+      K(S.kPrem, M.maxMult <= M.exitMult, mx(M.maxMult) + ' / ' + mx(M.exitMult))
+    ];
+
+    const density = this.props.density || 'standard';
+    const analytics = this.props.analytics || 'both';
+    const prep = new Date(2026, 7, 12);
+
+    return {
+      zoom: density === 'compact' ? 0.9 : density === 'boardroom' ? 1.12 : 1,
+      insider: l.role === 'admin' || this.props.insiderMode === true,
+      showGrid: analytics === 'grid' || analytics === 'both',
+      showTornado: analytics === 'tornado' || analytics === 'both',
+
+      arpu: l.arpu, cust: l.cust, syn: l.syn, infl: l.infl,
+      moic: l.moic, lev: l.lev, wacc: l.wacc, int: l.int,
+      year0: l.year0, rev0: l.rev0, eb0: l.eb0, cust0: l.cust0, hold: l.hold,
+      onYear0: this.setNum('year0', 1990, 2100, 2026), onRev0: this.setNum('rev0', 0.1, 1e7, 14),
+      onEb0: this.setNum('eb0', 0, 1e7, 7), onCust0: this.setNum('cust0', 1, 1e8, 600),
+      onHold: this.setNum('hold', 1, 8, 4),
+      label: l.label || '', onLabel: this.setText('label'),
+      labelHint: LANG === 'de' ? 'z. B. Projektname' : 'e.g. project name',
+      refLine: l.label ? l.label + ' · ' : '',
+      cur: l.cur || '\u20ac', onCur: this.setPick('cur'),
+      varShare: l.varShare, onVarShare: this.setNum('varShare', 0, 100, 60),
+      varSharePct: pct(l.varShare, 0), fixedSharePct: pct(100 - Number(l.varShare), 0),
+      curUnit: LANG === 'de' ? 'Mio. ' + CUR : CUR + 'm',
+      tax: l.tax, onTax: this.setNum('tax', 0, 60, 30),
+      da: l.da, onDa: this.setNum('da', 0, 30, 3),
+      capex: l.capex, onCapex: this.setNum('capex', 0, 40, 3.5),
+      nwc: l.nwc, onNwc: this.setNum('nwc', -20, 50, 5),
+      tg: l.tg, onTg: this.setNum('tg', 0, 5, 2),
+      ramp: l.ramp || 'linear', onRamp: this.setPick('ramp'),
+      rampImmediate: LANG === 'de' ? 'Sofort (100 %)' : 'Immediate (100%)',
+      rampFront: LANG === 'de' ? 'Front-lastig' : 'Front-loaded',
+      rampLinear: LANG === 'de' ? 'Linear' : 'Linear',
+      rampBack: LANG === 'de' ? 'Back-lastig' : 'Back-weighted',
+      rampProfile: rampProfile,
+      stake: l.stake, onStake: this.setNum('stake', 1, 100, 100),
+      vendor: l.vendor, onVendor: this.setNum('vendor', 0, 40, 0),
+      rollover: l.rollover, onRollover: this.setNum('rollover', 0, 60, 0),
+      fees: l.fees, onFees: this.setNum('fees', 0, 10, 0),
+      sweep: l.sweep, onSweep: this.setNum('sweep', 0, 100, 100),
+      stakePct: pct(l.stake, 0), vendorPct: pct(l.vendor, 0), rolloverPct: pct(l.rollover, 0), sweepPct: pct(l.sweep, 0),
+      chequeLabel: m1(M.sponsorCheque), vendorLabel: m1(M.vendorLoan),
+      rolloverLabel: m1(M.rollover), feesLabel: m1(M.fees),
+      structureLine: structureLine,
+      isAdmin: l.role === 'admin',
+      isGuest: l.role === 'guest',
+      guestMessage: l.role === 'guest'
+        ? (l.runSpent
+            ? (LANG === 'de'
+                ? 'Die gezeigten Werte sind Demonstrationswerte. Sie haben Ihren einen freien Durchlauf genutzt - für weitere Änderungen melden Sie sich bitte an.'
+                : 'The figures shown are demonstrative. You have used your one free pass - sign in to keep adjusting.')
+            : (LANG === 'de'
+                ? 'Die gezeigten Werte sind Demonstrationswerte. Sie können jede Annahme und jeden Hebel einmal setzen; eine zweite Änderung desselben Werts erfordert eine Anmeldung.'
+                : 'The figures shown are demonstrative. You can set each assumption and lever once; changing the same one a second time requires signing in.'))
+        : '',
+      roleShow: l.role === 'guest' ? 'none' : 'inline-block',
+      roleLabel: l.role === 'admin' ? 'ADMIN' : (LANG === 'de' ? 'ANGEMELDET' : 'SIGNED IN'),
+      roleBg: l.role === 'admin' ? 'var(--acc)' : 'rgba(255,255,255,.16)',
+      roleInk: l.role === 'admin' ? 'var(--onAcc)' : '#ffffff',
+      showModal: !!l.modal,
+      modalIsSignIn: l.modal === 'signin',
+      modalIsAdmin: l.modal === 'admin',
+      modalKicker: l.modal === 'admin' ? (LANG === 'de' ? 'Interner Zugang' : 'Internal access') : 'ValueLens',
+      modalTitle: l.modal === 'admin'
+        ? (LANG === 'de' ? 'Zugangscode eingeben' : 'Enter the passcode')
+        : (LANG === 'de' ? 'Weiter mit vollem Zugriff' : 'Keep going with full access'),
+      modalBody: l.modal === 'admin'
+        ? (LANG === 'de' ? 'Der interne Modus zeigt gespeicherte Projekte und die vollständige Rechenkontrolle.' : 'Internal mode reveals saved projects and the full calculation control.')
+        : (LANG === 'de' ? 'Diesen Wert haben Sie in der Vorschau bereits gesetzt. Melden Sie sich an, um Annahmen und Hebel beliebig oft anzupassen.' : 'You have already set that value in the preview. Sign in to adjust assumptions and levers as often as you like.'),
+      modalCta: l.modal === 'admin' ? (LANG === 'de' ? 'Entsperren' : 'Unlock') : (LANG === 'de' ? 'Anmelden' : 'Sign in'),
+      modalCancel: LANG === 'de' ? 'Abbrechen' : 'Cancel',
+      modalError: l.modalError,
+      modalSubmit: this.submitModal, closeModal: this.closeModal, openSignIn: this.openSignIn,
+      btnModalGo: this.smallBtn('primary'), btnModalCancel: this.smallBtn(),
+      formName: l.formName, onFormName: this.setField('formName'),
+      formEmail: l.formEmail, onFormEmail: this.setField('formEmail'),
+      formCompany: l.formCompany, onFormCompany: this.setField('formCompany'),
+      formCode: l.formCode, onFormCode: this.setField('formCode'),
+      phName: LANG === 'de' ? 'Name' : 'Full name',
+      phEmail: LANG === 'de' ? 'E-Mail' : 'Work email',
+      phCompany: LANG === 'de' ? 'Unternehmen (optional)' : 'Company (optional)',
+      phCode: LANG === 'de' ? 'Zugangscode' : 'Passcode',
+      pick: l.pick, onPick: this.setPick('pick'),
+      pickHint: LANG === 'de' ? 'Projekt wählen…' : 'Select a project…',
+      savedList: Object.keys(l.saved).sort().map(k => ({
+        name: k,
+        text: k + '  ·  ' + new Date(l.saved[k].savedAt).toLocaleDateString(LANG === 'de' ? 'de-DE' : 'en-GB')
+      })),
+      doSave: this.saveProject, doLoad: this.loadProject, doDelete: this.deleteProject,
+      doExport: this.exportLibrary, doImport: this.importLibrary,
+      shareNote: LANG === 'de'
+        ? 'Projekte werden auf diesem Gerät gespeichert. Zum Teilen im Team: Bibliothek exportieren und die Datei im Datenraum ablegen - Kollegen importieren sie und sehen dieselben Projekte.'
+        : 'Projects are stored on this device. To share across the team, export the library and drop the file in the data room - colleagues import it and see the same projects.',
+      btnSave: this.smallBtn('primary'), btnLoad: this.smallBtn(), btnDelete: this.smallBtn(),
+      saveNote: l.note || '',
+
+      arpuPct: pct(l.arpu), custPct: pct(l.cust), synPct: pct(l.syn), inflPct: pct(l.infl),
+      waccPct: pct(l.wacc), intPct: pct(l.int), tgPct: pct(l.tg),
+      moicLabel: mx(l.moic), levLabel: mx(l.lev), holdLabel: String(l.hold),
+      irrLabel: pct(irr * 100), entryDebtLabel: m1(M.entryDebt),
+      exitYear: String(yE.y), firstYear: String(R[1] ? R[1].y : yE.y), tvYear: String(yE.y + 1),
+      prepDate: prep.toLocaleDateString(LANG === 'de' ? 'de-DE' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+
+      onArpu: this.set('arpu'), onCust: this.set('cust'), onSyn: this.set('syn'), onInfl: this.set('infl'),
+      onMoic: this.set('moic'), onLev: this.set('lev'), onWacc: this.set('wacc'), onInt: this.set('int'),
+      setConservative: this.preset('Conservative'), setBase: this.preset('Base'), setUpside: this.preset('Upside'),
+      reset: this.preset('Base'),
+      btnConservative: this.btn('Conservative'), btnBase: this.btn('Base'), btnUpside: this.btn('Upside'),
+      scenarioNote: l.active === 'Conservative' ? S.sCons : l.active === 'Base' ? S.sBase : l.active === 'Upside' ? S.sUps : S.sCustom,
+      setEN: this.setLang('en'), setDE: this.setLang('de'),
+      btnEN: this.langBtn('en'), btnDE: this.langBtn('de'),
+      eEN: LANG === 'en' ? 'inline' : 'none', eDE: LANG === 'de' ? 'inline' : 'none',
+      hdrColor: l.hdrLight ? 'rgba(245,239,239,.82)' : '#002536',
+      hdrImage: l.hdrLight ? 'none' : "linear-gradient(rgba(0,32,48,.62), rgba(0,32,48,.62)),url('bg-header.jpg')",
+      hdrShadow: l.hdrLight ? '0 1px 0 rgba(0,62,95,.10),0 8px 24px rgba(0,40,60,.10)' : '0 1px 0 rgba(255,255,255,.10),0 10px 30px rgba(0,20,30,.28)',
+      hdrInk: l.hdrLight ? '#003E5F' : '#ffffff',
+      hdrMuted: l.hdrLight ? '#3d6377' : 'rgba(255,255,255,.78)',
+      hdrLine: l.hdrLight ? 'rgba(0,62,95,.20)' : 'rgba(255,255,255,.22)',
+      hdrChip: l.hdrLight ? 'rgba(0,62,95,.07)' : 'rgba(255,255,255,.10)',
+      hdrDark: l.hdrLight ? 'none' : 'block', hdrLight: l.hdrLight ? 'block' : 'none',
+
+      maxMultLabel: mx(M.maxMult), maxEvLabel: m1(M.maxEntryEv),
+      eb0Label: m1(l.eb0), cust0Label: num(l.cust0),
+      arpu0Label: kk(M.arpu0),
+      margin0Label: pct(l.eb0 / l.rev0 * 100),
+      ebitdaExitLabel: m1(yE.ebitda), ebitdaExitDelta: Math.abs(dEb) < 0.05 ? '-' : sgn(dEb, v => mn(v)),
+      ebitdaExitDeltaColor: colInk(dEb),
+      exitEvLabel: m1(M.exitEv), exitEvDelta: Math.abs(dExit) < 0.05 ? '-' : sgn(dExit, v => mn(v)),
+      exitEvDeltaColor: colInk(dExit), exitMultLabel: mx(M.exitMult),
+      revExitLabel: m1(yE.rev), revExitDelta: Math.abs(dRev) < 0.05 ? '-' : sgn(dRev, v => mn(v)),
+      revExitDeltaColor: colInk(dRev),
+      custExitLabel: num(Math.round(yE.cust)),
+      arpuExitLabel: kk(yE.arpu),
+      opexExitLabel: m1(yE.opex), synExitLabel: '−' + m1(yE.syn),
+      marginExitLabel: pct(yE.margin * 100),
+      marginDelta: sgn((yE.margin - l.eb0 / l.rev0) * 100, v => dec(v, 1) + (LANG === 'de' ? ' PP' : 'pp')),
+
+      cols, planRows, waterfall, grid, gridCols, auditRows, auditCalc, checks,
+      tornado: tor.map(s => ({
+        name: s.name, note: s.note,
+        posW: Math.abs(s.up) / tMax * 48, negW: Math.abs(s.dn) / tMax * 48,
+        label: sgn(s.dn, v => dec(v, 2)) + ' / ' + sgn(s.up, v => dec(v, 2)) + 'x'
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
