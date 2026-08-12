@@ -849,11 +849,24 @@ const ROLE_STORE = 'valuelens.session.v1';
 // the Supabase `verify_passcode` RPC (see supabase-client.js and
 // supabase/migrations/0001_passcode_gate.sql).
 const GUEST_STORE = 'valuelens.guest.v1';
-function guestUsed() {
-  try { return JSON.parse(window.localStorage.getItem(GUEST_STORE) || 'null')?.used === true; } catch (e) { return false; }
+// A guest gets one pass: every assumption can be set once, and that progress
+// persists per browser so it is never handed back. We store WHICH levers have
+// been used rather than a single "used" bit - a bare flag locked the whole
+// tool on the next page load, leaving returning visitors unable to touch
+// anything. The older {used:true} shape is ignored on purpose, so browsers
+// carrying it are released rather than stuck.
+function readGuest() {
+  try {
+    const r = JSON.parse(window.localStorage.getItem(GUEST_STORE) || 'null');
+    return (r && typeof r === 'object' && r.locked && typeof r.locked === 'object') ? r : null;
+  } catch (e) { return null; }
 }
-function markGuestUsed() {
-  try { window.localStorage.setItem(GUEST_STORE, JSON.stringify({ used: true, at: Date.now() })); } catch (e) {}
+function guestLocks() { const g = readGuest(); return g ? g.locked : {}; }
+function guestSpent() { const g = readGuest(); return !!(g && g.spent); }
+function writeGuest(locked, spent) {
+  try {
+    window.localStorage.setItem(GUEST_STORE, JSON.stringify({ locked: locked || {}, spent: !!spent, at: Date.now() }));
+  } catch (e) {}
 }
 function readSession() {
   try { const r = JSON.parse(window.localStorage.getItem(ROLE_STORE) || 'null'); return (r && r.role) ? r : null; }
@@ -1081,20 +1094,20 @@ class Component extends DCLogic {
 
   allow(key) {
     if (this.state.role !== 'guest') return true;
-    if (this.state.runSpent || this.state.locked[key]) {
-      this.setState({ modal: 'signin', modalError: '' });
+    // Only the levers already spent are refused; the rest of the pass stays
+    // open, so a guest can still set an assumption they have not used yet.
+    if (this.state.locked[key]) {
+      writeGuest(this.state.locked, true);
+      this.setState({ modal: 'signin', modalError: '', runSpent: true });
       return false;
     }
     // a control stays adjustable while it is the one being worked on; moving to
     // another control finalises it, so every assumption can be set exactly once
     if (this.state.activeKey !== key) {
       const prev = this.state.activeKey;
-      this.setState(st => ({
-        activeKey: key,
-        locked: prev ? { ...st.locked, [prev]: true } : st.locked,
-        touched: { ...st.touched, [key]: true }
-      }));
-      markGuestUsed();
+      const locked = prev ? { ...this.state.locked, [prev]: true } : this.state.locked;
+      if (prev) writeGuest(locked, this.state.runSpent);
+      this.setState({ activeKey: key, locked: locked, touched: { ...this.state.touched, [key]: true } });
     }
     return true;
   }
@@ -1137,7 +1150,7 @@ class Component extends DCLogic {
         .catch(() => {});
     }
   };
-  signOut = () => { writeSession({ role: 'guest' }); this.setState({ role: 'guest', touched: {}, locked: {}, activeKey: '', runSpent: guestUsed(), modal: '' }); };
+  signOut = () => { writeSession({ role: 'guest' }); this.setState({ role: 'guest', touched: {}, locked: guestLocks(), activeKey: '', runSpent: guestSpent(), modal: '' }); };
   exportLibrary = () => {
     const all = readStore();
     const names = Object.keys(all);
@@ -1268,7 +1281,7 @@ class Component extends DCLogic {
     };
     const sess = readSession();
     if (sess && sess.role && sess.role !== 'guest') this.setState({ role: sess.role });
-    else if (guestUsed()) this.setState({ runSpent: true });
+    else this.setState({ locked: guestLocks(), runSpent: guestSpent() });
     this.setState({ saved: readStore() });
     if (sess && sess.role === 'admin' && sess.code) this.syncProjects(sess.code);
     this._keys = e => {
