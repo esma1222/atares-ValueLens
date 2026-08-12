@@ -14,12 +14,29 @@
 <style>
   html,body{margin:0;padding:0;background:#00263A;-webkit-font-smoothing:antialiased}
   *{box-sizing:border-box}
-  .vl{--bg:#F5EFEF;--card:#ffffff;--panel:#003E5F;--ink:#003E5F;--ink2:#3d6377;--mut:#5C7686;
+  .vl{--bg:#F5EFEF;--card:#ffffff;--panel:#003E5F;--ink:#003E5F;--ink2:#3d6377;--mut:#546F7F;
       --line:rgba(0,62,95,.10);--line2:rgba(0,62,95,.06);--fieldBg:#ffffff;--fieldBd:rgba(0,62,95,.20);
       --trk:rgba(0,62,95,.14);--acc:#00C3BF;--acc2:#007775;--onAcc:#003E5F;--onNeg:#ffffff;--pos:#0A8A55;--neg:#C9351F;
       --bar1:#003E5F;--bar2:rgba(243,72,50,.75);--bar3:#007775;--bar4:#00C3BF;--bar5:rgba(0,62,95,.35);
       --headBg:rgba(243,72,50,.05);--onHot:#003E5F;
-      --scrim:linear-gradient(rgba(0,32,48,.58), rgba(0,32,48,.58))}
+      --scrim:linear-gradient(rgba(0,32,48,.58), rgba(0,32,48,.58));
+      --minW:0px;--pad:32px;--shell:minmax(820px,1.6fr) 372px;--gap:22px;
+      --heroGrid:1.06fr .94fr;--heroGap:70px;--heroPadY:92px;--heroTitle:62px;--heroLead:18px;
+      --atGrid:1.15fr .85fr;--atGap:64px;--atTitle:34px;
+      --col3:1fr 1fr 1fr;--col2:1fr 1fr;--scen:repeat(3,1fr);
+      --kpi:52px;--kpiWrap:2 1 320px;--kpiCell:1 1 150px;
+      --panelPad:22px 26px;--stick:sticky;--stickTop:96px;--leverOrder:2;--mainOrder:1;
+      --showSm:inline;--formulaShow:inline;--treeNote:230px;--hdrWrap:nowrap}
+  @media (max-width:1400px){
+    .vl{--shell:1fr;--heroGrid:1fr;--heroGap:44px;--atGrid:1fr;--atGap:40px;
+        --stick:static;--stickTop:0px;--leverOrder:2;--mainOrder:1;--heroTitle:46px;--kpi:44px;
+        --kpiWrap:1 1 100%;--kpiCell:1 1 180px;--hdrWrap:wrap}
+  }
+  @media (max-width:860px){
+    .vl{--pad:18px;--gap:16px;--col3:1fr;--col2:1fr;--scen:1fr;--heroPadY:56px;--heroTitle:34px;
+        --heroLead:16px;--atTitle:26px;--kpi:38px;--kpiCell:1 1 100%;--panelPad:18px 16px;
+        --showSm:none;--formulaShow:none;--treeNote:0px;--ffLabel:130px;--torLabel:120px;--wfLabel:170px}
+  }
   @keyframes vlWave{
     0%{background-position:50% 50%, 18% 38%;background-size:cover,132% 132%}
     25%{background-position:50% 50%, 46% 62%;background-size:cover,146% 146%}
@@ -46,22 +63,22 @@
 </style>
 </helmet>
 
-<div class="vl" style="font-family:ui-sans-serif,system-ui,'Segoe UI',Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;min-width:1364px;zoom:{{ zoom }}">
+<div class="vl" style="font-family:ui-sans-serif,system-ui,'Segoe UI',Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;min-width:var(--minW);zoom:{{ zoom }}">
 
-  <div style="position:sticky;top:0;z-index:60;background-color:{{ hdrColor }};background-image:{{ hdrImage }};background-size:cover;background-position:center 22%;background-attachment:fixed;-webkit-backdrop-filter:blur(16px) saturate(1.25);backdrop-filter:blur(16px) saturate(1.25);box-shadow:{{ hdrShadow }};transition:background-color .45s ease,box-shadow .45s ease;padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+  <div style="position:sticky;top:0;z-index:60;background-color:{{ hdrColor }};background-image:{{ hdrImage }};background-size:cover;background-position:center 22%;background-attachment:fixed;-webkit-backdrop-filter:blur(16px) saturate(1.25);backdrop-filter:blur(16px) saturate(1.25);box-shadow:{{ hdrShadow }};transition:background-color .45s ease,box-shadow .45s ease;padding:14px var(--pad);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:var(--hdrWrap)">
     <div style="display:flex;align-items:center;gap:18px">
       <a href="https://atares.team/en/" target="_blank" rel="noopener" style="display:block">
         <img src="atares-logo-white.svg" alt="atares" style="height:34px;width:auto;display:{{ hdrDark }}"/>
         <img src="atares-logo-navy.svg" alt="atares" style="height:34px;width:auto;display:{{ hdrLight }}"/>
       </a>
       <span style="width:1px;height:26px;background:{{ hdrLine }}"></span>
-      <span style="font-size:10.5px;color:{{ hdrMuted }};letter-spacing:.14em;text-transform:uppercase">the digital M&amp;A boutique</span>
+      <span style="font-size:10.5px;color:{{ hdrMuted }};letter-spacing:.14em;text-transform:uppercase;display:var(--showSm)">the digital M&amp;A boutique</span>
     </div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
       <div style="display:flex;align-items:baseline">
         <span style="font-size:22px;font-weight:300;letter-spacing:-.01em;color:{{ hdrInk }}">Value</span><span style="font-size:22px;font-weight:800;letter-spacing:-.01em;color:#00C3BF">Lens</span>
       </div>
-      <span style="font-size:10px;letter-spacing:.1em;color:{{ hdrMuted }}"><span style="display:{{ eEN }}">See how operational upside translates into deal value</span><span style="display:{{ eDE }}">Wie operatives Potenzial zu Transaktionswert wird</span></span>
+      <span style="font-size:10px;letter-spacing:.1em;color:{{ hdrMuted }};display:var(--showSm)"><span style="display:{{ eEN }}">See how operational upside translates into deal value</span><span style="display:{{ eDE }}">Wie operatives Potenzial zu Transaktionswert wird</span></span>
     </div>
     <div style="display:flex;align-items:center;gap:14px">
       <span style="font-size:9.5px;font-weight:800;letter-spacing:.12em;padding:4px 9px;border-radius:2px;background:{{ roleBg }};color:{{ roleInk }};display:{{ roleShow }}">{{ roleLabel }}</span>
@@ -73,11 +90,11 @@
   </div>
 
   <div style="background-color:#00303F;background-image:linear-gradient(rgba(0,32,48,.74), rgba(0,32,48,.74)),url('bg-hero.jpg');background-size:cover;background-position:center;background-attachment:fixed;animation:vlWave 34s ease-in-out infinite;color:#fff">
-    <div style="max-width:1560px;margin:0 auto;padding:92px 32px 100px;display:grid;grid-template-columns:1.06fr .94fr;gap:70px;align-items:center">
+    <div style="max-width:1560px;margin:0 auto;padding:var(--heroPadY) var(--pad);display:grid;grid-template-columns:var(--heroGrid);gap:var(--heroGap);align-items:center">
       <div>
         <div style="font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#00C3BF"><span style="display:{{ eEN }}">ValueLens - value-lever &amp; price simulator</span><span style="display:{{ eDE }}">ValueLens - Werthebel- &amp; Preissimulator</span></div>
-        <div style="font-size:62px;font-weight:800;line-height:1.03;letter-spacing:-.035em;margin-top:20px;max-width:14ch;text-wrap:balance"><span style="display:{{ eEN }}">Know what a buyer can pay</span><span style="display:{{ eDE }}">Wissen, was ein Käufer zahlen kann</span></div>
-        <div style="font-size:18px;line-height:1.62;color:rgba(255,255,255,.84);margin-top:26px;max-width:54ch;text-wrap:pretty"><span style="display:{{ eEN }}">Most valuations end with a number. ValueLens starts with the levers behind it - pricing, customer growth, cost synergies - and runs the chain a financial sponsor runs backwards: forward the plan, value the exit, strip out the debt, and solve for the highest price they could still justify today.</span><span style="display:{{ eDE }}">Die meisten Bewertungen enden mit einer Zahl. ValueLens beginnt bei den Hebeln dahinter - Preis, Kundenwachstum, Kostensynergien - und rechnet die Kette, die ein Finanzinvestor rückwärts geht: Plan fortschreiben, Exit bewerten, Verschuldung abziehen und den höchsten heute vertretbaren Preis lösen.</span></div>
+        <div style="font-size:var(--heroTitle);font-weight:800;line-height:1.03;letter-spacing:-.035em;margin-top:20px;max-width:14ch;text-wrap:balance"><span style="display:{{ eEN }}">Know what a buyer can pay</span><span style="display:{{ eDE }}">Wissen, was ein Käufer zahlen kann</span></div>
+        <div style="font-size:var(--heroLead);line-height:1.62;color:rgba(255,255,255,.84);margin-top:26px;max-width:54ch;text-wrap:pretty"><span style="display:{{ eEN }}">Most valuations end with a number. ValueLens starts with the levers behind it - pricing, volume growth, cost synergies - and runs the chain a financial sponsor runs backwards: forward the plan, value the exit, strip out the debt, and solve for the highest price they could still justify today.</span><span style="display:{{ eDE }}">Die meisten Bewertungen enden mit einer Zahl. ValueLens beginnt bei den Hebeln dahinter - Preis, Menge, Kostensynergien - und rechnet die Kette, die ein Finanzinvestor rückwärts geht: Plan fortschreiben, Exit bewerten, Verschuldung abziehen und den höchsten heute vertretbaren Preis lösen.</span></div>
         <div style="display:flex;align-items:center;gap:18px;margin-top:36px">
           <a href="#model" style="display:inline-flex;align-items:center;gap:12px;background:var(--acc);color:var(--onAcc);font-size:16px;font-weight:700;padding:17px 34px;border-radius:999px;text-decoration:none"><span style="display:{{ eEN }}">Open the model</span><span style="display:{{ eDE }}">Modell öffnen</span><span style="font-size:17px">→</span></a>
           <a href="#assumptions" style="font-size:14px;font-weight:600;color:var(--acc)"><span style="display:{{ eEN }}">See the assumptions</span><span style="display:{{ eDE }}">Annahmen ansehen</span></a>
@@ -114,37 +131,94 @@
     </div>
   </div>
 
-  <div id="model" style="scroll-margin-top:88px;max-width:1560px;margin:0 auto;padding:38px 32px 0;display:grid;grid-template-columns:minmax(880px,1.6fr) 372px;gap:22px;align-items:start">
+  <div id="model" style="scroll-margin-top:88px;max-width:1560px;margin:0 auto;padding:34px var(--pad) 0;display:grid;grid-template-columns:var(--shell);gap:var(--gap);align-items:start">
 
-    <div style="display:flex;flex-direction:column;gap:22px;min-width:0">
+    <div style="order:var(--mainOrder);display:flex;flex-direction:column;gap:var(--gap);min-width:0">
 
       <div style="background-color:#00263A;background-image:var(--scrim),url('bg-kpi.jpg');background-size:cover;background-position:center;background-attachment:fixed;animation:vlWaveSlow 46s ease-in-out infinite;border-radius:4px;padding:26px;display:flex;flex-wrap:wrap;gap:26px;align-items:flex-end;color:#fff">
-        <div style="flex:2 1 320px;min-width:300px">
+        <div style="flex:var(--kpiWrap);min-width:260px">
           <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.80);margin-bottom:8px;white-space:nowrap"><span style="display:{{ eEN }}">Maximum entry multiple a sponsor could pay</span><span style="display:{{ eDE }}">Maximaler Einstiegsmultiplikator für einen Finanzinvestor</span></div>
           <div style="display:flex;align-items:baseline;gap:16px">
-            <div style="font-size:52px;font-weight:800;letter-spacing:-.035em;line-height:.95;font-variant-numeric:tabular-nums">{{ maxMultLabel }}</div>
+            <div style="font-size:var(--kpi);font-weight:800;letter-spacing:-.035em;line-height:.95;font-variant-numeric:tabular-nums">{{ maxMultLabel }}</div>
             <div style="font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:rgba(255,255,255,.75)">= {{ maxEvLabel }}</div>
           </div>
           <div style="font-size:11px;color:rgba(255,255,255,.72);margin-top:8px"><span style="display:{{ eEN }}">On base-year EBITDA of {{ eb0Label }} · at {{ moicLabel }} equity MOIC over {{ holdLabel }} years · {{ levLabel }} entry leverage · {{ structureLine }}</span><span style="display:{{ eDE }}">Auf Basisjahr-EBITDA von {{ eb0Label }} · bei {{ moicLabel }} Equity-MOIC über {{ holdLabel }} Jahre · {{ levLabel }} Einstiegs-Leverage · {{ structureLine }}</span></div>
+
         </div>
-        <div style="flex:1 1 150px;min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
+        <div style="flex:var(--kpiCell);min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
           <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.68);margin-bottom:6px">EBITDA {{ exitYear }}E</div>
           <div style="font-size:26px;font-weight:700;font-variant-numeric:tabular-nums">{{ ebitdaExitLabel }}</div>
           <div style="font-size:10.5px;color:rgba(255,255,255,.62);margin-top:4px;font-variant-numeric:tabular-nums">{{ ebitdaExitDelta }} <span style="display:{{ eEN }}">vs. base</span><span style="display:{{ eDE }}">ggü. Base</span></div>
         </div>
-        <div style="flex:1 1 150px;min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
+        <div style="flex:var(--kpiCell);min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
           <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.68);margin-bottom:6px"><span style="display:{{ eEN }}">Exit EV (DCF)</span><span style="display:{{ eDE }}">Exit-EV (DCF)</span></div>
           <div style="font-size:26px;font-weight:700;font-variant-numeric:tabular-nums">{{ exitEvLabel }}</div>
           <div style="font-size:10.5px;color:rgba(255,255,255,.62);margin-top:4px;font-variant-numeric:tabular-nums">{{ exitMultLabel }} EV/EBITDA</div>
         </div>
-        <div style="flex:1 1 150px;min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
+        <div style="flex:var(--kpiCell);min-width:140px;border-left:1px solid rgba(255,255,255,.16);padding-left:22px">
           <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.68);margin-bottom:6px"><span style="display:{{ eEN }}">Implied equity IRR</span><span style="display:{{ eDE }}">Impliziter Equity-IRR</span></div>
           <div style="font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:#00C3BF">{{ irrLabel }}</div>
           <div style="font-size:10.5px;color:rgba(255,255,255,.62);margin-top:4px"><span style="display:{{ eEN }}">at the target MOIC</span><span style="display:{{ eDE }}">beim Ziel-MOIC</span></div>
         </div>
       </div>
 
-      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px 18px">
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:var(--panelPad)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px">
+          <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">The alternatives at a glance</span><span style="display:{{ eDE }}">Die Alternativen auf einen Blick</span></div>
+          <div style="font-size:11px;color:var(--mut)"><span style="display:{{ eEN }}">Tap a case to drive the whole model from it</span><span style="display:{{ eDE }}">Fall antippen, um das gesamte Modell darauf zu stellen</span></div>
+        </div>
+        <div style="font-size:12.5px;line-height:1.6;color:var(--ink2);margin-bottom:18px;text-wrap:pretty">{{ glanceHeadline }}</div>
+
+        <div style="display:grid;grid-template-columns:var(--scen);gap:12px">
+          <sc-for list="{{ cases }}" as="c" hint-placeholder-count="3">
+            <div onClick="{{ c.pick }}" style="cursor:pointer;border:{{ c.border }};background:{{ c.bg }};border-radius:4px;padding:18px 20px;transition:border-color .18s ease">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+                <span style="font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:{{ c.nameInk }}">{{ c.name }}</span>
+                <span style="font-size:10px;font-weight:700;color:{{ c.tagInk }}">{{ c.tag }}</span>
+              </div>
+              <div style="display:flex;align-items:baseline;gap:10px;margin-top:12px">
+                <span style="font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;color:{{ c.valueInk }}">{{ c.mult }}</span>
+                <span style="font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink2)">{{ c.ev }}</span>
+              </div>
+              <div style="height:5px;border-radius:3px;background:var(--line2);margin-top:14px;overflow:hidden">
+                <div style="height:5px;border-radius:3px;background:{{ c.barInk }};width:{{ c.barW }}%"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-top:12px">
+                <span><span style="display:{{ eEN }}">EBITDA at exit</span><span style="display:{{ eDE }}">EBITDA im Exit</span></span><span style="font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums">{{ c.ebitda }}</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-top:5px">
+                <span><span style="display:{{ eEN }}">vs. base</span><span style="display:{{ eDE }}">ggü. Base</span></span><span style="font-weight:700;font-variant-numeric:tabular-nums;color:{{ c.deltaInk }}">{{ c.delta }}</span>
+              </div>
+              <div style="font-size:10.5px;line-height:1.5;color:var(--mut);margin-top:12px;padding-top:10px;border-top:1px solid var(--line2)">{{ c.note }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="margin-top:24px;padding-top:18px;border-top:1px solid var(--line)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span style="display:{{ eEN }}">What each lever is worth</span><span style="display:{{ eDE }}">Was jeder Hebel wert ist</span></div>
+            <div style="font-size:11px;color:var(--mut)"><span style="display:{{ eEN }}">Value at stake on the price, from the current setting</span><span style="display:{{ eDE }}">Wertbeitrag zum Preis, ausgehend von der aktuellen Einstellung</span></div>
+          </div>
+          <sc-for list="{{ impact }}" as="i" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:12px;padding:6px 0">
+              <div style="width:var(--torLabel,168px);flex:none;font-size:12px;font-weight:600">{{ i.name }}</div>
+              <div style="flex:1;height:16px;background:var(--line2);border-radius:3px;overflow:hidden">
+                <div style="height:16px;border-radius:3px;background:{{ i.ink }};width:{{ i.w }}%"></div>
+              </div>
+              <div style="width:96px;flex:none;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums">{{ i.value }}</div>
+            </div>
+          </sc-for>
+          <div style="font-size:10.5px;color:var(--mut);margin-top:12px">{{ impactNote }}</div>
+        </div>
+      </div>
+
+      <div onClick="{{ tgTree }}" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:15px 20px;cursor:pointer">
+        <span style="width:20px;height:20px;flex:none;border-radius:50%;background:{{ dotTree }};color:{{ dotInkTree }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;line-height:1">{{ icoTree }}</span>
+        <span style="flex:1;min-width:200px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Value-driver tree</span><span style="display:{{ eDE }}">Werttreiberbaum</span></span>
+        <span style="font-size:11.5px;color:var(--mut);font-variant-numeric:tabular-nums">{{ sumTree }}</span>
+      </div>
+      <sc-if value="{{ openTree }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:var(--panelPad)">
         <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
           <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Value-driver tree - EBITDA at exit</span><span style="display:{{ eDE }}">Werttreiberbaum - EBITDA im Exit-Jahr</span></div>
           <div style="font-size:11px;color:var(--mut)"><span style="display:{{ eEN }}">Base year held fixed; the levers act from {{ firstYear }} onwards</span><span style="display:{{ eDE }}">Basisjahr unverändert; die Hebel wirken ab {{ firstYear }}</span></div>
@@ -155,84 +229,102 @@
           <div style="display:flex;align-items:center;gap:16px;padding:11px 0;border-bottom:1px solid var(--line2)">
             <div style="width:5px;height:26px;background:var(--panel);border-radius:1px"></div>
             <div style="flex:1;font-size:15px;font-weight:700"><span style="display:{{ eEN }}">Exit enterprise value {{ exitYear }}</span><span style="display:{{ eDE }}">Exit-Unternehmenswert {{ exitYear }}</span></div>
-            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">terminal DCF: UFCF {{ tvYear }} / (WACC − g)</span><span style="display:{{ eDE }}">Terminal-DCF: UFCF {{ tvYear }} / (WACC − g)</span></div>
+            <div style="font-size:11px;color:var(--mut);width:var(--treeNote);overflow:hidden;display:var(--formulaShow)"><span style="display:{{ eEN }}">terminal DCF: UFCF {{ tvYear }} / (WACC − g)</span><span style="display:{{ eDE }}">Terminal-DCF: UFCF {{ tvYear }} / (WACC − g)</span></div>
             <div style="width:110px;text-align:right;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums">{{ exitEvLabel }}</div>
             <div style="width:78px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ exitEvDeltaColor }}">{{ exitEvDelta }}</div>
           </div>
 
           <div style="display:flex;align-items:center;gap:16px;padding:10px 0 10px 30px;border-bottom:1px solid var(--line2);border-left:2px solid var(--acc);margin-left:2px">
             <div style="flex:1;font-size:14px;font-weight:600">EBITDA {{ exitYear }}E</div>
-            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">revenue − Opex after cost synergies</span><span style="display:{{ eDE }}">Umsatz − Opex nach Kostensynergien</span></div>
+            <div style="font-size:11px;color:var(--mut);width:var(--treeNote);overflow:hidden;display:var(--formulaShow)"><span style="display:{{ eEN }}">revenue − Opex after cost synergies</span><span style="display:{{ eDE }}">Umsatz − Opex nach Kostensynergien</span></div>
             <div style="width:110px;text-align:right;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums">{{ ebitdaExitLabel }}</div>
             <div style="width:78px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ ebitdaExitDeltaColor }}">{{ ebitdaExitDelta }}</div>
           </div>
 
           <div style="display:flex;align-items:center;gap:16px;padding:9px 0 9px 60px;border-bottom:1px solid var(--line2);border-left:2px solid var(--acc);margin-left:2px">
             <div style="flex:1;font-size:13px"><span style="display:{{ eEN }}">Revenue {{ exitYear }}E</span><span style="display:{{ eDE }}">Umsatz {{ exitYear }}E</span></div>
-            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">customers × ARPU</span><span style="display:{{ eDE }}">Kunden × ARPU</span></div>
+            <div style="font-size:11px;color:var(--mut);width:var(--treeNote);overflow:hidden;display:var(--formulaShow)"><span style="display:{{ eEN }}">volume × price</span><span style="display:{{ eDE }}">Menge × Preis</span></div>
             <div style="width:110px;text-align:right;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums">{{ revExitLabel }}</div>
             <div style="width:78px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ revExitDeltaColor }}">{{ revExitDelta }}</div>
           </div>
 
           <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 90px;border-bottom:1px solid var(--line2);border-left:2px solid var(--acc);margin-left:2px">
-            <div style="flex:1;font-size:12.5px;color:var(--ink2)"><span style="display:{{ eEN }}">Paying customers</span><span style="display:{{ eDE }}">Zahlende Kunden</span></div>
-            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">{{ cust0Label }} in base year, {{ custPct }} p.a.</span><span style="display:{{ eDE }}">{{ cust0Label }} im Basisjahr, {{ custPct }} p. a.</span></div>
+            <div style="flex:1;font-size:12.5px;color:var(--ink2)">{{ volName }}</div>
+            <div style="font-size:11px;color:var(--mut);width:var(--treeNote);overflow:hidden;display:var(--formulaShow)"><span style="display:{{ eEN }}">{{ cust0Label }} in base year, {{ custPct }} p.a.</span><span style="display:{{ eDE }}">{{ cust0Label }} im Basisjahr, {{ custPct }} p. a.</span></div>
             <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ custExitLabel }}</div>
             <div style="width:78px"></div>
           </div>
 
           <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 90px;border-bottom:1px solid var(--line2);border-left:2px solid var(--acc);margin-left:2px">
-            <div style="flex:1;font-size:12.5px;color:var(--ink2)">ARPU</div>
-            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">{{ arpu0Label }} in base year, uplift {{ arpuPct }} p.a.</span><span style="display:{{ eDE }}">{{ arpu0Label }} im Basisjahr, Steigerung {{ arpuPct }} p. a.</span></div>
+            <div style="flex:1;font-size:12.5px;color:var(--ink2)">{{ priceName }}</div>
+            <div style="font-size:11px;color:var(--mut);width:var(--treeNote);overflow:hidden;display:var(--formulaShow)"><span style="display:{{ eEN }}">{{ arpu0Label }} in base year, uplift {{ arpuPct }} p.a.</span><span style="display:{{ eDE }}">{{ arpu0Label }} im Basisjahr, Steigerung {{ arpuPct }} p. a.</span></div>
             <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ arpuExitLabel }}</div>
             <div style="width:78px"></div>
           </div>
 
           <div style="display:flex;align-items:center;gap:16px;padding:9px 0 9px 60px;border-bottom:1px solid var(--line2);border-left:2px solid var(--neg);margin-left:2px">
             <div style="flex:1;font-size:13px"><span style="display:{{ eEN }}">Opex {{ exitYear }}E after synergies</span><span style="display:{{ eDE }}">Opex {{ exitYear }}E nach Synergien</span></div>
-            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">{{ varSharePct }} customer-variable, {{ fixedSharePct }} fixed, {{ inflPct }} inflation p.a.</span><span style="display:{{ eDE }}">{{ varSharePct }} kundenvariabel, {{ fixedSharePct }} fix, {{ inflPct }} Inflation p. a.</span></div>
+            <div style="font-size:11px;color:var(--mut);width:var(--treeNote);overflow:hidden;display:var(--formulaShow)"><span style="display:{{ eEN }}">{{ varSharePct }} volume-variable, {{ fixedSharePct }} fixed, {{ inflPct }} inflation p.a.</span><span style="display:{{ eDE }}">{{ varSharePct }} mengenvariabel, {{ fixedSharePct }} fix, {{ inflPct }} Inflation p. a.</span></div>
             <div style="width:110px;text-align:right;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums">{{ opexExitLabel }}</div>
             <div style="width:78px"></div>
           </div>
 
           <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 90px;border-bottom:1px solid var(--line2);border-left:2px solid var(--neg);margin-left:2px">
             <div style="flex:1;font-size:12.5px;color:var(--ink2)"><span style="display:{{ eEN }}">of which cost synergies</span><span style="display:{{ eDE }}">davon Kostensynergien</span></div>
-            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">{{ synPct }} of pre-synergy Opex, {{ rampProfile }}</span><span style="display:{{ eDE }}">{{ synPct }} der Opex vor Synergien, {{ rampProfile }}</span></div>
+            <div style="font-size:11px;color:var(--mut);width:var(--treeNote);overflow:hidden;display:var(--formulaShow)"><span style="display:{{ eEN }}">{{ synPct }} of pre-synergy Opex, {{ rampProfile }}</span><span style="display:{{ eDE }}">{{ synPct }} der Opex vor Synergien, {{ rampProfile }}</span></div>
             <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--pos)">{{ synExitLabel }}</div>
             <div style="width:78px"></div>
           </div>
 
           <div style="display:flex;align-items:center;gap:16px;padding:8px 0 8px 60px;border-left:2px solid var(--neg);margin-left:2px">
             <div style="flex:1;font-size:12.5px;color:var(--ink2)"><span style="display:{{ eEN }}">EBITDA margin {{ exitYear }}E</span><span style="display:{{ eDE }}">EBITDA-Marge {{ exitYear }}E</span></div>
-            <div style="font-size:11px;color:var(--mut);width:230px"><span style="display:{{ eEN }}">{{ margin0Label }} in base year · {{ marginDelta }} from the levers</span><span style="display:{{ eDE }}">{{ margin0Label }} im Basisjahr · {{ marginDelta }} aus den Hebeln</span></div>
+            <div style="font-size:11px;color:var(--mut);width:var(--treeNote);overflow:hidden;display:var(--formulaShow)"><span style="display:{{ eEN }}">{{ margin0Label }} in base year · {{ marginDelta }} from the levers</span><span style="display:{{ eDE }}">{{ margin0Label }} im Basisjahr · {{ marginDelta }} aus den Hebeln</span></div>
             <div style="width:110px;text-align:right;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">{{ marginExitLabel }}</div>
             <div style="width:78px"></div>
           </div>
         </div>
       </div>
+      </sc-if>
 
-      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px">
+      <div onClick="{{ tgPlan }}" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:15px 20px;cursor:pointer">
+        <span style="width:20px;height:20px;flex:none;border-radius:50%;background:{{ dotPlan }};color:{{ dotInkPlan }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;line-height:1">{{ icoPlan }}</span>
+        <span style="flex:1;min-width:200px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Operating plan</span><span style="display:{{ eDE }}">Operativer Plan</span></span>
+        <span style="font-size:11.5px;color:var(--mut);font-variant-numeric:tabular-nums">{{ sumPlan }}</span>
+      </div>
+      <sc-if value="{{ openPlan }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:var(--panelPad)">
         <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px">
           <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Operating plan</span><span style="display:{{ eDE }}">Operativer Plan</span></div>
           <div style="font-size:11px;color:var(--mut)"><span style="display:{{ eEN }}">{{ curUnit }} unless stated · debt schedule on a {{ sweepPct }} cash sweep</span><span style="display:{{ eDE }}">{{ curUnit }} sofern nicht anders angegeben · Schuldenplan mit {{ sweepPct }} Cash Sweep</span></div>
         </div>
+        <div style="overflow-x:auto">
+        <div style="min-width:640px">
         <div style="display:flex;align-items:center;gap:0;padding-bottom:8px;border-bottom:1px solid var(--line)">
-          <div style="flex:1;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span style="display:{{ eEN }}">Metric</span><span style="display:{{ eDE }}">Kennzahl</span></div>
+          <div style="flex:1;min-width:160px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span style="display:{{ eEN }}">Metric</span><span style="display:{{ eDE }}">Kennzahl</span></div>
           <sc-for list="{{ cols }}" as="c" hint-placeholder-count="5">
             <div style="width:104px;text-align:right;font-size:11.5px;font-weight:{{ c.weight }};color:{{ c.ink }}">{{ c.label }}</div>
           </sc-for>
         </div>
         <sc-for list="{{ planRows }}" as="r" hint-placeholder-count="7">
           <div style="display:flex;align-items:center;gap:0;padding:8px 0;border-bottom:1px solid var(--line2)">
-            <div style="flex:1;font-size:12.5px;font-weight:{{ r.weight }};color:{{ r.ink }}">{{ r.label }}</div>
+            <div style="flex:1;min-width:160px;font-size:12.5px;font-weight:{{ r.weight }};color:{{ r.ink }}">{{ r.label }}</div>
             <sc-for list="{{ r.cells }}" as="v" hint-placeholder-count="5">
-              <div style="width:104px;text-align:right;font-size:12.5px;font-weight:{{ v.weight }};font-variant-numeric:tabular-nums;color:{{ v.ink }}">{{ v.t }}</div>
+              <div style="width:104px;flex:none;text-align:right;font-size:12.5px;font-weight:{{ v.weight }};font-variant-numeric:tabular-nums;color:{{ v.ink }}">{{ v.t }}</div>
             </sc-for>
           </div>
         </sc-for>
+        </div>
+        </div>
       </div>
+      </sc-if>
 
-      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px">
+      <div onClick="{{ tgSolve }}" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:15px 20px;cursor:pointer">
+        <span style="width:20px;height:20px;flex:none;border-radius:50%;background:{{ dotSolve }};color:{{ dotInkSolve }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;line-height:1">{{ icoSolve }}</span>
+        <span style="flex:1;min-width:200px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Backsolve to today's price</span><span style="display:{{ eDE }}">Backsolve zum heutigen Preis</span></span>
+        <span style="font-size:11.5px;color:var(--mut);font-variant-numeric:tabular-nums">{{ sumSolve }}</span>
+      </div>
+      <sc-if value="{{ openSolve }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:var(--panelPad)">
         <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px">
           <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Backsolve - from exit value to today's price</span><span style="display:{{ eDE }}">Backsolve - vom Exit-Wert zum heutigen Preis</span></div>
           <div style="font-size:11px;color:var(--mut)">{{ curUnit }}</div>
@@ -240,7 +332,7 @@
         <div style="font-size:11px;color:var(--mut);margin-bottom:20px"><span style="display:{{ eEN }}">The chain a financial sponsor runs backwards: what the asset is worth at exit, what debt is left, and therefore the most they can pay today and still clear the return.</span><span style="display:{{ eDE }}">Die Kette, die ein Finanzinvestor rückwärts rechnet: Wert des Assets im Exit, verbleibende Verschuldung - und daraus der heute maximal zahlbare Preis bei erreichter Zielrendite.</span></div>
         <sc-for list="{{ waterfall }}" as="w" hint-placeholder-count="7">
           <div style="display:flex;align-items:center;gap:14px;padding:7px 0">
-            <div style="width:290px;flex:none">
+            <div style="width:var(--wfLabel,290px);flex:none">
               <div style="font-size:12.5px;font-weight:{{ w.weight }};color:{{ w.ink }}">{{ w.label }}</div>
               <div style="font-size:10px;color:var(--mut)">{{ w.note }}</div>
             </div>
@@ -255,11 +347,18 @@
           <div style="font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--acc)">{{ maxMultLabel }}</div>
         </div>
       </div>
+      </sc-if>
 
+      <div onClick="{{ tgSens }}" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:15px 20px;cursor:pointer">
+        <span style="width:20px;height:20px;flex:none;border-radius:50%;background:{{ dotSens }};color:{{ dotInkSens }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;line-height:1">{{ icoSens }}</span>
+        <span style="flex:1;min-width:200px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Sensitivity & payable multiple</span><span style="display:{{ eDE }}">Sensitivität & zahlbarer Multiplikator</span></span>
+        <span style="font-size:11.5px;color:var(--mut);font-variant-numeric:tabular-nums">{{ sumSens }}</span>
+      </div>
+      <sc-if value="{{ openSens }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-wrap:wrap;gap:22px">
 
         <sc-if value="{{ showGrid }}" hint-placeholder-val="{{ true }}">
-          <div style="flex:1 1 400px;min-width:380px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px">
+          <div style="flex:1 1 400px;min-width:380px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:var(--panelPad)">
             <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px"><span style="display:{{ eEN }}">Multiple a sponsor could pay</span><span style="display:{{ eDE }}">Zahlbarer Multiplikator</span></div>
             <div style="font-size:11px;color:var(--mut);margin-bottom:18px"><span style="display:{{ eEN }}">Max. entry EV / base-year EBITDA · target MOIC vs. exit WACC</span><span style="display:{{ eDE }}">Max. Einstiegs-EV / Basisjahr-EBITDA · Ziel-MOIC ggü. Exit-WACC</span></div>
             <div style="display:flex;align-items:flex-end;gap:0;margin-bottom:4px">
@@ -281,12 +380,12 @@
         </sc-if>
 
         <sc-if value="{{ showTornado }}" hint-placeholder-val="{{ true }}">
-          <div style="flex:1 1 400px;min-width:380px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px">
+          <div style="flex:1 1 400px;min-width:380px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:var(--panelPad)">
             <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px"><span style="display:{{ eEN }}">Sensitivity · which lever moves the price most</span><span style="display:{{ eDE }}">Sensitivität · welcher Hebel bewegt den Preis am stärksten</span></div>
             <div style="font-size:11px;color:var(--mut);margin-bottom:20px"><span style="display:{{ eEN }}">Δ maximum entry multiple from the current setting</span><span style="display:{{ eDE }}">Δ maximaler Einstiegsmultiplikator ggü. aktueller Einstellung</span></div>
             <sc-for list="{{ tornado }}" as="t" hint-placeholder-count="7">
               <div style="display:flex;align-items:center;height:38px">
-                <div style="width:150px;flex:none">
+                <div style="width:var(--torLabel,150px);flex:none">
                   <div style="font-size:12px;font-weight:600">{{ t.name }}</div>
                   <div style="font-size:10px;color:var(--mut)">{{ t.note }}</div>
                 </div>
@@ -301,8 +400,15 @@
           </div>
         </sc-if>
       </div>
+      </sc-if>
 
-      <div id="assumptions" style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:22px 26px;scroll-margin-top:96px">
+      <div onClick="{{ tgAssum }}" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:15px 20px;cursor:pointer">
+        <span style="width:20px;height:20px;flex:none;border-radius:50%;background:{{ dotAssum }};color:{{ dotInkAssum }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;line-height:1">{{ icoAssum }}</span>
+        <span style="flex:1;min-width:200px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Assumptions & deal structure</span><span style="display:{{ eDE }}">Annahmen & Transaktionsstruktur</span></span>
+        <span style="font-size:11.5px;color:var(--mut);font-variant-numeric:tabular-nums">{{ sumAssum }}</span>
+      </div>
+      <sc-if value="{{ openAssum }}" hint-placeholder-val="{{ false }}">
+      <div id="assumptions" style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:var(--panelPad);scroll-margin-top:96px">
         <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px">
           <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Assumptions</span><span style="display:{{ eDE }}">Annahmen</span></div>
           <div style="font-size:11px;color:var(--mut)"><span style="display:{{ eEN }}">{{ refLine }}Prepared {{ prepDate }} · millions unless stated</span><span style="display:{{ eDE }}">{{ refLine }}Erstellt {{ prepDate }} · Mio., sofern nicht anders vermerkt</span></div>
@@ -340,7 +446,7 @@
           </div>
         </sc-if>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px">
+        <div style="display:grid;grid-template-columns:var(--col3);gap:28px">
 
           <div>
             <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:14px"><span style="display:{{ eEN }}">Company &amp; base year</span><span style="display:{{ eDE }}">Unternehmen &amp; Basisjahr</span></div>
@@ -354,24 +460,31 @@
                 <option value="£">GBP £</option>
                 <option value="CHF ">CHF</option>
               </select>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Industry</span><span style="display:{{ eDE }}">Branche</span></span>
+              <select value="{{ industry }}" onChange="{{ onIndustry }}" style="font:inherit;font-size:12px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:2px;padding:6px 8px;width:100%;text-align:right">
+                <sc-for list="{{ industryOptions }}" as="o" hint-placeholder-count="7">
+                  <option value="{{ o.k }}">{{ o.text }}</option>
+                </sc-for>
+              </select>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Base year</span><span style="display:{{ eDE }}">Basisjahr</span></span>
               <input type="number" min="1990" max="2100" step="1" value="{{ year0 }}" onChange="{{ onYear0 }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Revenue (millions)</span><span style="display:{{ eDE }}">Umsatz (Mio.)</span></span>
               <input type="number" min="0.1" step="0.1" value="{{ rev0 }}" onChange="{{ onRev0 }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">EBITDA (millions)</span><span style="display:{{ eDE }}">EBITDA (Mio.)</span></span>
               <input type="number" min="0" step="0.1" value="{{ eb0 }}" onChange="{{ onEb0 }}"/>
-              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Customers (#)</span><span style="display:{{ eDE }}">Kunden (#)</span></span>
+              <span style="font-size:12.5px">{{ volNameUnit }}</span>
               <input type="number" min="1" step="10" value="{{ cust0 }}" onChange="{{ onCust0 }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Holding period (years)</span><span style="display:{{ eDE }}">Halteperiode (Jahre)</span></span>
               <input type="number" min="1" max="8" step="1" value="{{ hold }}" onChange="{{ onHold }}"/>
             </div>
-            <div style="margin-top:13px;font-size:10.5px;line-height:1.55;color:var(--mut)"><span style="display:{{ eEN }}">Entered from management information and held fixed; the levers act on later years only. Implied base-year ARPU {{ arpu0Label }}, EBITDA margin {{ margin0Label }}.</span><span style="display:{{ eDE }}">Aus den Management-Informationen übernommen und fix gehalten; die Hebel wirken nur auf die Folgejahre. Impliziter ARPU im Basisjahr {{ arpu0Label }}, EBITDA-Marge {{ margin0Label }}.</span></div>
+            <div style="margin-top:13px;font-size:10.5px;line-height:1.55;color:var(--ink2);padding:10px 12px;background:var(--line2);border-radius:3px">{{ driverNote }}</div>
+            <div style="margin-top:11px;font-size:10.5px;line-height:1.55;color:var(--mut)"><span style="display:{{ eEN }}">Entered from management information and held fixed; the levers act on later years only. Implied base-year {{ priceName }} {{ arpu0Label }}, EBITDA margin {{ margin0Label }}.</span><span style="display:{{ eDE }}">Aus den Management-Informationen übernommen und fix gehalten; die Hebel wirken nur auf die Folgejahre. {{ priceName }} im Basisjahr {{ arpu0Label }}, EBITDA-Marge {{ margin0Label }}.</span></div>
           </div>
 
           <div>
             <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:14px"><span style="display:{{ eEN }}">Operating &amp; cash-flow conventions</span><span style="display:{{ eDE }}">Operative &amp; Cashflow-Konventionen</span></div>
             <div style="display:grid;grid-template-columns:1fr 104px;gap:9px 14px;align-items:center">
-              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Opex customer-variable (%)</span><span style="display:{{ eDE }}">Opex kundenvariabel (%)</span></span>
+              <span style="font-size:12.5px"><span style="display:{{ eEN }}">Opex volume-variable (%)</span><span style="display:{{ eDE }}">Opex mengenvariabel (%)</span></span>
               <input type="number" min="0" max="100" step="5" value="{{ varShare }}" onChange="{{ onVarShare }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Tax rate (%)</span><span style="display:{{ eDE }}">Steuersatz (%)</span></span>
               <input type="number" min="0" max="60" step="0.5" value="{{ tax }}" onChange="{{ onTax }}"/>
@@ -418,11 +531,19 @@
           </div>
         </div>
 
-        <div style="margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:10.5px;color:var(--mut);line-height:1.6"><span style="display:{{ eEN }}">Illustrative and preliminary; prepared for discussion purposes only and not a valuation opinion, fairness opinion or recommendation. All inputs below are editable, so the tool can be pointed at any company. Revenue = customers × ARPU. Opex splits into a customer-variable and a fixed component and inflates annually; cost synergies are a one-off percentage reduction of the pre-synergy cost base, phased across the forecast on the selected profile, and therefore do not offset compounding inflation year on year. Unlevered free cash flow = NOPAT + D&amp;A − capex − change in net working capital. Exit enterprise value = terminal-year UFCF grown at g and capitalised at (WACC − g). Entry debt = leverage × base-year EBITDA, amortised on the stated cash sweep. Purchase price is solved so that sponsor exit proceeds ÷ sponsor equity equals the target money multiple, after transaction fees, any vendor loan (carried at face value, no accrual) and any management rollover; rolled equity and a partial stake share the upside pro-rata, so they scale the cheque rather than the return. Outputs are only as good as the inputs and should be replaced by an integrated financial model and confirmed in due diligence. © atares GmbH - strictly confidential.</span><span style="display:{{ eDE }}">Illustrativ und vorläufig; ausschließlich zu Diskussionszwecken erstellt und weder Wertgutachten noch Fairness Opinion oder Empfehlung. Alle Eingaben unten sind editierbar, sodass das Tool auf jedes Unternehmen angewendet werden kann. Umsatz = Kunden × ARPU. Die Opex teilen sich in einen kundenvariablen und einen fixen Anteil und werden jährlich inflationiert; Kostensynergien sind eine einmalige prozentuale Reduktion der Kostenbasis vor Synergien, gestuft nach dem gewählten Profil, und gleichen die kumulierende Inflation daher nicht Jahr für Jahr aus. Unlevered Free Cash Flow = NOPAT + Abschreibungen − Capex − Veränderung Working Capital. Exit-Unternehmenswert = UFCF des Terminaljahres, mit g fortgeschrieben und mit (WACC − g) kapitalisiert. Einstiegsverschuldung = Leverage × Basisjahr-EBITDA, Tilgung über den angegebenen Cash Sweep. Der Kaufpreis wird so gelöst, dass Exit-Erlös ÷ Eigenkapitaleinsatz des Investors dem Ziel-Kapitalmultiplikator entspricht - nach Transaktionskosten, etwaigem Verkäuferdarlehen (zum Nominalwert, ohne Verzinsung) und etwaigem Management-Rollover; mitrollierendes Equity und ein Teilerwerb partizipieren pro rata am Wertzuwachs und skalieren daher den Einsatz, nicht die Rendite. Die Ergebnisse sind nur so gut wie die Eingaben und sollten durch ein integriertes Finanzmodell ersetzt und in der Due Diligence bestätigt werden. © atares GmbH - streng vertraulich.</span></div>
+        <div style="margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:10.5px;color:var(--mut);line-height:1.6"><span style="display:{{ eEN }}">Illustrative and preliminary; prepared for discussion purposes only and not a valuation opinion, fairness opinion or recommendation. All inputs below are editable, so the tool can be pointed at any company. Revenue = volume × price, so price growth reaches EBITDA one for one while volume growth carries variable cost. Opex splits into a volume-variable and a fixed component and inflates annually; cost synergies are a one-off percentage reduction of the pre-synergy cost base, phased across the forecast on the selected profile, and therefore do not offset compounding inflation year on year. Unlevered free cash flow = NOPAT + D&amp;A − capex − change in net working capital. Exit enterprise value = terminal-year UFCF grown at g and capitalised at (WACC − g). Entry debt = leverage × base-year EBITDA, amortised on the stated cash sweep. Purchase price is solved so that sponsor exit proceeds ÷ sponsor equity equals the target money multiple, after transaction fees, any vendor loan (carried at face value, no accrual) and any management rollover; rolled equity and a partial stake share the upside pro-rata, so they scale the cheque rather than the return. Outputs are only as good as the inputs and should be replaced by an integrated financial model and confirmed in due diligence. © atares GmbH - strictly confidential.</span><span style="display:{{ eDE }}">Illustrativ und vorläufig; ausschließlich zu Diskussionszwecken erstellt und weder Wertgutachten noch Fairness Opinion oder Empfehlung. Alle Eingaben unten sind editierbar, sodass das Tool auf jedes Unternehmen angewendet werden kann. Umsatz = Menge × Preis; Preiswachstum erreicht das EBITDA eins zu eins, Mengenwachstum bringt variable Kosten mit. Die Opex teilen sich in einen mengenvariablen und einen fixen Anteil und werden jährlich inflationiert; Kostensynergien sind eine einmalige prozentuale Reduktion der Kostenbasis vor Synergien, gestuft nach dem gewählten Profil, und gleichen die kumulierende Inflation daher nicht Jahr für Jahr aus. Unlevered Free Cash Flow = NOPAT + Abschreibungen − Capex − Veränderung Working Capital. Exit-Unternehmenswert = UFCF des Terminaljahres, mit g fortgeschrieben und mit (WACC − g) kapitalisiert. Einstiegsverschuldung = Leverage × Basisjahr-EBITDA, Tilgung über den angegebenen Cash Sweep. Der Kaufpreis wird so gelöst, dass Exit-Erlös ÷ Eigenkapitaleinsatz des Investors dem Ziel-Kapitalmultiplikator entspricht - nach Transaktionskosten, etwaigem Verkäuferdarlehen (zum Nominalwert, ohne Verzinsung) und etwaigem Management-Rollover; mitrollierendes Equity und ein Teilerwerb partizipieren pro rata am Wertzuwachs und skalieren daher den Einsatz, nicht die Rendite. Die Ergebnisse sind nur so gut wie die Eingaben und sollten durch ein integriertes Finanzmodell ersetzt und in der Due Diligence bestätigt werden. © atares GmbH - streng vertraulich.</span></div>
       </div>
+      </sc-if>
 
       <sc-if value="{{ insider }}" hint-placeholder-val="{{ true }}">
-        <div style="background:var(--card);border:1px solid var(--neg);border-radius:4px;padding:22px 26px">
+        <div onClick="{{ tgAudit }}" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--neg);border-radius:4px;padding:15px 20px;cursor:pointer">
+          <span style="width:20px;height:20px;flex:none;border-radius:50%;background:{{ dotAudit }};color:{{ dotInkAudit }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;line-height:1">{{ icoAudit }}</span>
+          <span style="background:var(--neg);color:var(--onNeg);font-size:9.5px;font-weight:800;letter-spacing:.12em;padding:3px 8px;border-radius:2px">INTERNAL</span>
+          <span style="flex:1;min-width:200px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase"><span style="display:{{ eEN }}">Calculation control</span><span style="display:{{ eDE }}">Rechenkontrolle</span></span>
+          <span style="font-size:11.5px;color:var(--mut)"><span style="display:{{ eEN }}">Full audit trail</span><span style="display:{{ eDE }}">Vollständiger Prüfpfad</span></span>
+        </div>
+        <sc-if value="{{ openAudit }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--card);border:1px solid var(--neg);border-radius:4px;padding:var(--panelPad);margin-top:var(--gap)">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
             <div style="display:flex;align-items:center;gap:12px">
               <span style="background:var(--neg);color:var(--onNeg);font-size:9.5px;font-weight:800;letter-spacing:.12em;padding:3px 8px;border-radius:2px">INTERNAL</span>
@@ -432,25 +553,29 @@
           </div>
           <div style="font-size:11px;color:var(--mut);margin-bottom:18px"><span style="display:{{ eEN }}">Every line the model computes, in calculation order, so the arithmetic can be checked against the workbook before anything leaves the building.</span><span style="display:{{ eDE }}">Jede Rechenzeile des Modells in Rechenreihenfolge - zur Abstimmung gegen das Excel-Modell, bevor etwas das Haus verlässt.</span></div>
 
+          <div style="overflow-x:auto">
+          <div style="min-width:760px">
           <div style="display:flex;align-items:center;gap:0;padding-bottom:8px;border-bottom:1px solid var(--line)">
-            <div style="flex:1;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span style="display:{{ eEN }}">Line item</span><span style="display:{{ eDE }}">Position</span></div>
+            <div style="flex:1;min-width:230px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)"><span style="display:{{ eEN }}">Line item</span><span style="display:{{ eDE }}">Position</span></div>
             <sc-for list="{{ cols }}" as="c" hint-placeholder-count="5">
               <div style="width:96px;text-align:right;font-size:11px;font-weight:{{ c.weight }};color:{{ c.ink }}">{{ c.label }}</div>
             </sc-for>
           </div>
           <sc-for list="{{ auditRows }}" as="r" hint-placeholder-count="18">
             <div style="display:flex;align-items:center;gap:0;padding:5px 0;border-bottom:1px solid var(--line2);background:{{ r.bg }}">
-              <div style="flex:1;display:flex;align-items:baseline;gap:10px;padding-left:{{ r.indent }}px">
+              <div style="flex:1;min-width:230px;display:flex;align-items:baseline;gap:10px;padding-left:{{ r.indent }}px">
                 <span style="font-size:11.5px;font-weight:{{ r.weight }};color:{{ r.ink }}">{{ r.label }}</span>
                 <span style="font-size:10px;color:var(--mut);font-family:ui-monospace,SFMono-Regular,Menlo,monospace">{{ r.formula }}</span>
               </div>
               <sc-for list="{{ r.cells }}" as="v" hint-placeholder-count="5">
-                <div style="width:96px;text-align:right;font-size:11.5px;font-weight:{{ v.weight }};font-variant-numeric:tabular-nums;color:{{ v.ink }}">{{ v.t }}</div>
+                <div style="width:96px;flex:none;text-align:right;font-size:11.5px;font-weight:{{ v.weight }};font-variant-numeric:tabular-nums;color:{{ v.ink }}">{{ v.t }}</div>
               </sc-for>
             </div>
           </sc-for>
+          </div>
+          </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:22px">
+          <div style="display:grid;grid-template-columns:var(--col2);gap:26px;margin-top:22px">
             <div>
               <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:10px"><span style="display:{{ eEN }}">Backsolve arithmetic</span><span style="display:{{ eDE }}">Backsolve-Rechnung</span></div>
               <sc-for list="{{ auditCalc }}" as="a" hint-placeholder-count="8">
@@ -473,14 +598,15 @@
             </div>
           </div>
         </div>
+        </sc-if>
       </sc-if>
     </div>
 
-    <div style="position:sticky;top:96px;z-index:1;display:flex;flex-direction:column;gap:16px">
+    <div style="order:var(--leverOrder);position:var(--stick);top:var(--stickTop);z-index:1;display:flex;flex-direction:column;gap:16px">
 
       <div style="background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px 20px">
         <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:12px"><span style="display:{{ eEN }}">Scenario</span><span style="display:{{ eDE }}">Szenario</span></div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+        <div style="display:grid;grid-template-columns:var(--scen);gap:6px">
           <button onClick="{{ setConservative }}" style="{{ btnConservative }}"><span style="display:{{ eEN }}">Conservative</span><span style="display:{{ eDE }}">Konservativ</span></button>
           <button onClick="{{ setBase }}" style="{{ btnBase }}">Base</button>
           <button onClick="{{ setUpside }}" style="{{ btnUpside }}">Upside</button>
@@ -496,20 +622,20 @@
 
         <div style="display:flex;flex-direction:column;gap:5px">
           <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">ARPU / price uplift p.a.</span><span style="display:{{ eDE }}">ARPU / Preissteigerung p. a.</span></span>
+            <span style="font-size:12.5px;font-weight:600">{{ priceGrowthLabel }}</span>
             <span style="font-size:13px;font-weight:800;color:var(--acc2);font-variant-numeric:tabular-nums">{{ arpuPct }}</span>
           </div>
           <input type="range" min="0" max="10" step="0.25" value="{{ arpu }}" onChange="{{ onArpu }}" style="width:100%;height:16px;margin:2px 0"/>
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>0%</span><span><span style="display:{{ eEN }}">price realisation + upsell</span><span style="display:{{ eDE }}">Preisdurchsetzung + Upsell</span></span><span>10%</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>0%</span><span style="font-weight:600;color:var(--acc2)">{{ priceHint }}</span><span>10%</span></div>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:5px">
           <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Net customer growth p.a.</span><span style="display:{{ eDE }}">Netto-Kundenwachstum p. a.</span></span>
+            <span style="font-size:12.5px;font-weight:600">{{ volGrowthLabel }}</span>
             <span style="font-size:13px;font-weight:800;color:var(--acc2);font-variant-numeric:tabular-nums">{{ custPct }}</span>
           </div>
           <input type="range" min="0" max="20" step="0.5" value="{{ cust }}" onChange="{{ onCust }}" style="width:100%;height:16px;margin:2px 0"/>
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>0%</span><span><span style="display:{{ eEN }}">new logos net of churn</span><span style="display:{{ eDE }}">Neukunden abzgl. Churn</span></span><span>20%</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>0%</span><span style="font-weight:600;color:var(--acc2)">{{ volHint }}</span><span>20%</span></div>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:5px">
@@ -599,12 +725,12 @@
   </div>
 
   <div style="margin-top:56px;background:#ffffff;border-top:1px solid var(--line)">
-    <div style="max-width:1560px;margin:0 auto;padding:76px 32px;display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:start">
+    <div style="max-width:1560px;margin:0 auto;padding:76px var(--pad);display:grid;grid-template-columns:var(--atGrid);gap:var(--atGap);align-items:start">
       <div>
         <div style="margin-bottom:34px">
           <img src="atares-logo-navy.svg" alt="atares" style="height:44px;width:auto;display:block"/>
         </div>
-        <div style="font-size:34px;font-weight:800;line-height:1.18;letter-spacing:-.02em;color:var(--acc);max-width:24ch;text-wrap:balance"><span style="display:{{ eEN }}">Your M&amp;A Partner from First Assessment to Final Closing</span><span style="display:{{ eDE }}">Ihr M&amp;A-Partner von der ersten Einschätzung bis zum Closing</span></div>
+        <div style="font-size:var(--atTitle);font-weight:800;line-height:1.18;letter-spacing:-.02em;color:var(--acc);max-width:24ch;text-wrap:balance"><span style="display:{{ eEN }}">Your M&amp;A Partner from First Assessment to Final Closing</span><span style="display:{{ eDE }}">Ihr M&amp;A-Partner von der ersten Einschätzung bis zum Closing</span></div>
         <div style="display:flex;flex-direction:column;gap:18px;margin-top:26px;max-width:64ch">
           <p style="margin:0;font-size:15px;line-height:1.68;color:var(--ink2);text-wrap:pretty"><span style="display:{{ eEN }}">atares is the digital M&amp;A boutique for technology-driven midcap companies in Germany, with offices in Munich. In more than 20 years, our team has advised on over 200 tech transactions and built a reputation for combining strategic rigor with founder-level empathy.</span><span style="display:{{ eDE }}">atares ist die digitale M&amp;A-Boutique für technologiegetriebene Midcap-Unternehmen in Deutschland, mit Büros in München. In über 20 Jahren hat unser Team mehr als 200 Tech-Transaktionen begleitet und sich einen Ruf für die Verbindung von strategischer Präzision mit Verständnis auf Augenhöhe erarbeitet.</span></p>
           <p style="margin:0;font-size:15px;line-height:1.68;color:var(--ink2);text-wrap:pretty"><span style="display:{{ eEN }}">Our deep personal network of strategists, private equity investors, and M&amp;A advisors across Europe, North and South America, and Asia, together with highly specialized market expertise and a strong focus on outcomes, makes atares a sought-after partner for the tech champions of tomorrow.</span><span style="display:{{ eDE }}">Unser enges persönliches Netzwerk aus Strategen, Private-Equity-Investoren und M&amp;A-Beratern in Europa, Nord- und Südamerika sowie Asien macht atares - gemeinsam mit hoch spezialisierter Marktexpertise und klarem Ergebnisfokus - zum gefragten Partner für die Tech-Champions von morgen.</span></p>
@@ -676,7 +802,7 @@
   </sc-if>
 
   <div id="footerband" style="background-color:#00263A;background-image:var(--scrim),url('bg-footer.jpg');background-size:cover;background-position:center;background-attachment:fixed;animation:vlWave 52s ease-in-out infinite">
-    <div style="max-width:760px;margin:0 auto;padding:64px 32px 56px;display:flex;flex-direction:column;align-items:center;gap:26px;text-align:center">
+    <div style="max-width:760px;margin:0 auto;padding:64px var(--pad) 56px;display:flex;flex-direction:column;align-items:center;gap:26px;text-align:center">
       <a href="https://atares.team/en/" target="_blank" rel="noopener" style="display:block">
         <img src="atares-logo-white.svg" alt="atares" style="height:46px;width:auto;display:block"/>
       </a>
@@ -696,8 +822,27 @@ const CONV = {
   varShare: 60, tax: 30, da: 3.0, capex: 3.5, nwc: 5.0, tg: 2.0, ramp: 'linear',
   sweep: 100, stake: 100, vendor: 0, rollover: 0, fees: 0
 };
-const BASEYR = { year0: 2026, rev0: 14.0, eb0: 7.0, cust0: 600, hold: 4, cur: '\u20ac', label: '' };
+const BASEYR = { year0: 2026, rev0: 14.0, eb0: 7.0, cust0: 600, hold: 4, cur: '\u20ac', label: '', industry: 'other' };
 const RAMPS = { immediate: 0, frontloaded: 0.55, linear: 1, backweighted: 1.7 };
+// Price growth carries no incremental cost, so it drops into EBITDA one-for-one.
+// Volume growth pulls the customer-variable share of the cost base with it.
+// Each industry brings its own vocabulary and its own cost structure.
+const INDUSTRIES = {
+  software:  { en:'Software / SaaS', de:'Software / SaaS', volEn:'Subscribers', volDe:'Abonnenten',
+               prEn:'ARPU', prDe:'ARPU', varShare:35, capex:3.5, nwc:-5, da:3 },
+  edtech:    { en:'Education / EdTech', de:'Bildung / EdTech', volEn:'Customers', volDe:'Kunden',
+               prEn:'ARPU', prDe:'ARPU', varShare:45, capex:4, nwc:0, da:3 },
+  services:  { en:'Professional services', de:'Dienstleistungen', volEn:'Billable FTEs', volDe:'Fakturierbare FTE',
+               prEn:'Day rate', prDe:'Tagessatz', varShare:70, capex:2, nwc:12, da:2 },
+  industrial:{ en:'Manufacturing / industrial', de:'Industrie / Produktion', volEn:'Units shipped', volDe:'Abgesetzte Einheiten',
+               prEn:'Average selling price', prDe:'Durchschnittlicher Verkaufspreis', varShare:75, capex:7, nwc:18, da:5 },
+  health:    { en:'Healthcare', de:'Gesundheitswesen', volEn:'Cases treated', volDe:'Behandelte Fälle',
+               prEn:'Average fee per case', prDe:'Durchschnittliches Fallhonorar', varShare:60, capex:6, nwc:8, da:4 },
+  consumer:  { en:'Consumer / distribution', de:'Konsum / Handel', volEn:'Transactions', volDe:'Transaktionen',
+               prEn:'Average basket', prDe:'Durchschnittlicher Bon', varShare:80, capex:3, nwc:10, da:3 },
+  other:     { en:'Other / as entered', de:'Sonstige / wie erfasst', volEn:'Volume units', volDe:'Mengeneinheiten',
+               prEn:'Average price', prDe:'Durchschnittspreis', varShare:60, capex:3.5, nwc:5, da:3 }
+};
 const STORE = 'valuelens.projects.v1';
 const ROLE_STORE = 'valuelens.session.v1';
 // The admin passcode is not stored in this file: it is verified server-side by
@@ -717,7 +862,7 @@ function readSession() {
 function writeSession(o) {
   try { window.localStorage.setItem(ROLE_STORE, JSON.stringify(o)); } catch (e) {}
 }
-const FIELDS = ['label','cur','year0','rev0','eb0','cust0','hold','varShare','tax','da','capex','nwc','tg','ramp',
+const FIELDS = ['label','cur','industry','year0','rev0','eb0','cust0','hold','varShare','tax','da','capex','nwc','tg','ramp',
   'stake','vendor','rollover','fees','sweep','arpu','cust','syn','infl','moic','lev','wacc','int','active'];
 function readStore() {
   try { const r = JSON.parse(window.localStorage.getItem(STORE) || '{}'); return (r && typeof r === 'object') ? r : {}; }
@@ -931,7 +1076,8 @@ const fill = (s, o) => Object.keys(o).reduce((a, k) => a.split('{' + k + '}').jo
 
 class Component extends DCLogic {
   state = { ...BASEYR, ...CONV, ...PRESETS.Base, ...FIN, active: 'Base', lang: 'en', hdrLight: false, pick: '', saved: {}, note: '',
-    role: 'guest', touched: {}, locked: {}, activeKey: '', runSpent: false, modal: '', formName: '', formEmail: '', formCompany: '', formCode: '', modalError: '' };
+    role: 'guest', touched: {}, locked: {}, activeKey: '', runSpent: false, modal: '',
+    open: { tree: false, plan: false, solve: false, sens: false, assum: false, audit: false }, formName: '', formEmail: '', formCompany: '', formCode: '', modalError: '' };
 
   allow(key) {
     if (this.state.role !== 'guest') return true;
@@ -956,6 +1102,7 @@ class Component extends DCLogic {
   setText(k) { return e => { if (!this.allow(k)) return; this.setState({ [k]: e.target.value }); }; }
 
   setField(k) { return e => this.setState({ [k]: e.target.value, modalError: '' }); }
+  toggle(k) { return () => this.setState(st => ({ open: { ...st.open, [k]: !st.open[k] } })); }
   openSignIn = () => this.setState({ modal: 'signin', modalError: '' });
   closeModal = () => this.setState({ modal: '', modalError: '', formCode: '' });
   submitModal = () => {
@@ -1091,6 +1238,13 @@ class Component extends DCLogic {
     if (key && window.WTTAuth) window.WTTAuth.deleteProject(key, name).catch(() => {});
   };
   setPick(k) { return e => { if (k !== 'pick' && !this.allow(k)) return; this.setState({ [k]: e.target.value }); }; }
+  setIndustry = e => {
+    if (!this.allow('industry')) return;
+    const key = e.target.value;
+    const d = INDUSTRIES[key];
+    if (!d) { this.setState({ industry: key }); return; }
+    this.setState({ industry: key, varShare: d.varShare, capex: d.capex, nwc: d.nwc, da: d.da });
+  };
   setNum(k, min, max, fallback) {
     return e => {
       if (!this.allow(k)) return;
@@ -1158,6 +1312,9 @@ class Component extends DCLogic {
     CUR = this.state.cur || '\u20ac';
     const S = STR[LANG];
     const l = this.state;
+    const IND = INDUSTRIES[l.industry] || INDUSTRIES.other;
+    const volName = LANG === 'de' ? IND.volDe : IND.volEn;
+    const priceName = LANG === 'de' ? IND.prDe : IND.prEn;
     const rp = { immediate: [ 'in full from year one', 'ab dem ersten Jahr in voller Höhe' ],
                  frontloaded: [ 'phased in, front-loaded', 'gestuft, front-lastig' ],
                  linear: [ 'phased in straight-line', 'linear gestuft' ],
@@ -1193,8 +1350,8 @@ class Component extends DCLogic {
       ink: i === R.length - 1 ? strong : ink
     }));
     const planRows = [
-      { label: S.rCust, weight: 400, ink, cells: cellsOf(r => num(Math.round(r.cust))) },
-      { label: S.rArpu, weight: 400, ink, cells: cellsOf(r => mn(r.arpu)) },
+      { label: volName + ' (#)', weight: 400, ink, cells: cellsOf(r => num(Math.round(r.cust))) },
+      { label: priceName + (LANG === 'de' ? ' (Tsd.)' : ' (000s)'), weight: 400, ink, cells: cellsOf(r => mn(r.arpu)) },
       { label: S.rRev, weight: 700, ink: strong, cells: cellsOf(r => mn(r.rev), true) },
       { label: S.rEbitda, weight: 700, ink: strong, cells: cellsOf(r => mn(r.ebitda), true) },
       { label: S.rMargin, weight: 400, ink, cells: cellsOf(r => pct(r.margin * 100)) },
@@ -1237,8 +1394,8 @@ class Component extends DCLogic {
     const gridCols = gWacc.map(w => ({ label: pct(w, 0) }));
 
     const tor = [
-      { name: S.tArpu, note: S.tArpuN, k: 'arpu', d: 1 },
-      { name: S.tCust, note: S.tCustN, k: 'cust', d: 2 },
+      { name: LANG === 'de' ? 'Preiswachstum' : 'Price growth', note: S.tArpuN, k: 'arpu', d: 1 },
+      { name: LANG === 'de' ? 'Mengenwachstum' : 'Volume growth', note: S.tCustN, k: 'cust', d: 2 },
       { name: S.tSyn, note: S.tSynN, k: 'syn', d: 2 },
       { name: S.tInfl, note: S.tInflN, k: 'infl', d: -1 },
       { name: S.tWacc, note: S.tWaccN, k: 'wacc', d: -0.5 },
@@ -1251,6 +1408,67 @@ class Component extends DCLogic {
       return { ...s, up: Math.max(a, b), dn: Math.min(a, b), mag: Math.max(Math.abs(a), Math.abs(b)) };
     }).sort((a, b) => b.mag - a.mag);
     const tMax = Math.max(...tor.map(s => s.mag), 0.1);
+    const topLeverName = tor[0] ? tor[0].name : '';
+
+    // ---- the alternatives, priced on the current assumptions ----
+    const caseDefs = [
+      { key: 'Conservative', en: 'Conservative', de: 'Konservativ',
+        nEn: 'No growth, no synergies, no cost inflation - the do-nothing anchor.',
+        nDe: 'Kein Wachstum, keine Synergien, keine Kosteninflation - der Do-nothing-Anker.' },
+      { key: 'Base', en: 'Base', de: 'Base',
+        nEn: 'Management information as provided.', nDe: 'Management-Informationen wie bereitgestellt.' },
+      { key: 'Upside', en: 'Upside', de: 'Upside',
+        nEn: 'Operating levers c. 25% better, cost inflation c. 25% lower.',
+        nDe: 'Operative Hebel rd. 25 % besser, Kosteninflation rd. 25 % niedriger.' }
+    ];
+    const runs = caseDefs.map(d => ({ d: d, m: model({ ...l, ...PRESETS[d.key] }) }));
+    const baseRun = runs[1].m;
+    const evMax = Math.max(...runs.map(r => r.m.maxEntryEv), 0.01);
+    const cases = runs.map(r => {
+      const on = l.active === r.d.key;
+      const dv = r.m.maxEntryEv - baseRun.maxEntryEv;
+      return {
+        name: LANG === 'de' ? r.d.de : r.d.en,
+        note: LANG === 'de' ? r.d.nDe : r.d.nEn,
+        mult: mx(r.m.maxMult), ev: m1(r.m.maxEntryEv), ebitda: m1(r.m.yE.ebitda),
+        delta: Math.abs(dv) < 0.05 ? '-' : sgn(dv, v => m1(v)),
+        deltaInk: Math.abs(dv) < 0.05 ? 'var(--mut)' : (dv > 0 ? 'var(--pos)' : 'var(--neg)'),
+        barW: Math.max(3, r.m.maxEntryEv / evMax * 100),
+        barInk: on ? 'var(--acc)' : 'var(--bar5)',
+        border: on ? '2px solid var(--acc)' : '1px solid var(--line)',
+        bg: on ? 'var(--line2)' : 'transparent',
+        nameInk: on ? 'var(--acc2)' : 'var(--ink2)',
+        valueInk: 'var(--ink)',
+        tag: on ? (LANG === 'de' ? 'AKTIV' : 'LIVE') : '',
+        tagInk: 'var(--acc2)',
+        pick: this.preset(r.d.key)
+      };
+    });
+    const spread = runs[2].m.maxEntryEv - runs[0].m.maxEntryEv;
+    const glanceHeadline = LANG === 'de'
+      ? 'Zwischen dem Do-nothing-Fall und dem Upside liegen ' + m1(spread) + ' Kaufpreis - ' + mx(runs[0].m.maxMult) + ' gegenüber ' + mx(runs[2].m.maxMult) + ' auf dasselbe Basisjahr-EBITDA. Den größten Einzelbeitrag leistet: ' + topLeverName + '.'
+      : 'The gap between doing nothing and the upside case is ' + m1(spread) + ' of purchase price - ' + mx(runs[0].m.maxMult) + ' against ' + mx(runs[2].m.maxMult) + ' on the same base-year EBITDA. The single biggest contributor is ' + topLeverName + '.';
+
+    // ---- value at stake per lever, in money ----
+    const impSteps = [
+      { name: LANG === 'de' ? 'Preiswachstum' : 'Price growth', k: 'arpu', d: 1 }, { name: LANG === 'de' ? 'Mengenwachstum' : 'Volume growth', k: 'cust', d: 2 },
+      { name: S.tSyn, k: 'syn', d: 2 }, { name: S.tInfl, k: 'infl', d: -1 },
+      { name: S.tWacc, k: 'wacc', d: -0.5 }, { name: S.tLev, k: 'lev', d: 0.5 },
+      { name: S.tInt, k: 'int', d: -1 }
+    ].map(x => {
+      const hi = model({ ...l, [x.k]: Math.max(0, l[x.k] + Math.abs(x.d)) }).maxEntryEv;
+      const lo = model({ ...l, [x.k]: Math.max(0, l[x.k] - Math.abs(x.d)) }).maxEntryEv;
+      return { name: x.name, swing: Math.abs(hi - lo) };
+    }).sort((a, b) => b.swing - a.swing);
+    const impMax = Math.max(...impSteps.map(x => x.swing), 0.01);
+    const impact = impSteps.map((x, i) => ({
+      name: x.name, value: m1(x.swing),
+      w: Math.max(2, x.swing / impMax * 100),
+      ink: i === 0 ? 'var(--acc)' : (i < 3 ? 'var(--acc2)' : 'var(--bar5)')
+    }));
+    const impactNote = LANG === 'de'
+      ? 'Preisspanne bei einer kleinen Bewegung des jeweiligen Hebels in beide Richtungen - die Reihenfolge zeigt, worauf sich Verhandlung und Due Diligence konzentrieren sollten.'
+      : 'Price range from moving each lever a small step either way - the order shows where negotiation and diligence should concentrate.';
 
     // ---- insider audit ----
     const A = (label, formula, f, opts) => ({
@@ -1266,9 +1484,9 @@ class Component extends DCLogic {
     const blank = () => '-';
     const auditRows = [
       A(S.aOp, '', null, { head: true }),
-      A(S.aCustG, 'c₍ₜ₋₁₎×(1+g_c)', r => num(Math.round(r.cust))),
-      A(S.aArpuG, 'a₍ₜ₋₁₎×(1+g_a)', r => mn(r.arpu, 2)),
-      A(S.aRev, 'cust×ARPU/1000', r => mn(r.rev, 2), { bold: true }),
+      A(volName, 'q₍ₜ₋₁₎×(1+g_q)', r => num(Math.round(r.cust))),
+      A(priceName, 'p₍ₜ₋₁₎×(1+g_p)', r => mn(r.arpu, 2)),
+      A(S.aRev, 'volume × price', r => mn(r.rev, 2), { bold: true }),
       A(S.aPre, '(' + pct(l.varShare, 0) + ' var + fix)×(1+i)^t', r => mn(r.pre, 2)),
       A(S.aSyn, 'pre×syn%×phase', (r, i) => i === 0 ? blank() : '−' + mn(r.syn, 2)),
       A(S.aOpex, 'pre − synergies', r => mn(r.opex, 2)),
@@ -1422,6 +1640,17 @@ class Component extends DCLogic {
       btnSave: this.smallBtn('primary'), btnLoad: this.smallBtn(), btnDelete: this.smallBtn(),
       saveNote: l.note || '',
 
+      industry: l.industry, onIndustry: this.setIndustry,
+      industryOptions: Object.keys(INDUSTRIES).map(k => ({ k: k, text: LANG === 'de' ? INDUSTRIES[k].de : INDUSTRIES[k].en })),
+      volName: volName, priceName: priceName,
+      volNameUnit: volName + ' (#)',
+      priceGrowthLabel: (LANG === 'de' ? 'Preiswachstum p. a.' : 'Price growth p.a.'),
+      volGrowthLabel: (LANG === 'de' ? 'Mengenwachstum p. a.' : 'Volume growth p.a.'),
+      priceHint: LANG === 'de' ? 'fließt 1:1 ins EBITDA' : 'drops 1:1 into EBITDA',
+      volHint: LANG === 'de' ? 'zieht variable Kosten mit' : 'pulls variable cost with it',
+      driverNote: LANG === 'de'
+        ? 'Preis und Menge wirken unterschiedlich: Preiswachstum erhöht das EBITDA eins zu eins, Mengenwachstum bringt ' + pct(l.varShare, 0) + ' mengenvariable Kosten mit. Die Branchenwahl setzt Kostenstruktur, Capex und Working Capital.'
+        : 'Price and volume behave differently: price growth lifts EBITDA one for one, while volume growth carries ' + pct(l.varShare, 0) + ' of volume-variable cost with it. The industry choice sets the cost structure, capex and working capital.',
       arpuPct: pct(l.arpu), custPct: pct(l.cust), synPct: pct(l.syn), inflPct: pct(l.infl),
       waccPct: pct(l.wacc), intPct: pct(l.int), tgPct: pct(l.tg),
       moicLabel: mx(l.moic), levLabel: mx(l.lev), holdLabel: String(l.hold),
@@ -1463,6 +1692,25 @@ class Component extends DCLogic {
       marginExitLabel: pct(yE.margin * 100),
       marginDelta: sgn((yE.margin - l.eb0 / l.rev0) * 100, v => dec(v, 1) + (LANG === 'de' ? ' PP' : 'pp')),
 
+      openTree: l.open.tree, openPlan: l.open.plan, openSolve: l.open.solve,
+      openSens: l.open.sens, openAssum: l.open.assum, openAudit: l.open.audit,
+      tgTree: this.toggle('tree'), tgPlan: this.toggle('plan'), tgSolve: this.toggle('solve'),
+      tgSens: this.toggle('sens'), tgAssum: this.toggle('assum'), tgAudit: this.toggle('audit'),
+      icoTree: l.open.tree ? '\u2212' : '+', icoPlan: l.open.plan ? '\u2212' : '+',
+      icoSolve: l.open.solve ? '\u2212' : '+', icoSens: l.open.sens ? '\u2212' : '+',
+      icoAssum: l.open.assum ? '\u2212' : '+', icoAudit: l.open.audit ? '\u2212' : '+',
+      dotTree: l.open.tree ? 'var(--acc)' : 'var(--line2)', dotInkTree: l.open.tree ? 'var(--onAcc)' : 'var(--ink2)',
+      dotPlan: l.open.plan ? 'var(--acc)' : 'var(--line2)', dotInkPlan: l.open.plan ? 'var(--onAcc)' : 'var(--ink2)',
+      dotSolve: l.open.solve ? 'var(--acc)' : 'var(--line2)', dotInkSolve: l.open.solve ? 'var(--onAcc)' : 'var(--ink2)',
+      dotSens: l.open.sens ? 'var(--acc)' : 'var(--line2)', dotInkSens: l.open.sens ? 'var(--onAcc)' : 'var(--ink2)',
+      dotAssum: l.open.assum ? 'var(--acc)' : 'var(--line2)', dotInkAssum: l.open.assum ? 'var(--onAcc)' : 'var(--ink2)',
+      dotAudit: l.open.audit ? 'var(--neg)' : 'var(--line2)', dotInkAudit: l.open.audit ? 'var(--onNeg)' : 'var(--ink2)',
+      sumTree: 'EBITDA ' + yE.y + 'E ' + m1(yE.ebitda) + '  ·  ' + (LANG === 'de' ? 'Exit-EV ' : 'exit EV ') + m1(M.exitEv),
+      sumPlan: R[1].y + '-' + yE.y + '  ·  ' + (LANG === 'de' ? 'Umsatz ' : 'revenue ') + m1(yE.rev),
+      sumSolve: (LANG === 'de' ? 'max. Preis ' : 'max price ') + m1(M.maxEntryEv) + '  ·  ' + mx(M.maxMult),
+      sumSens: (LANG === 'de' ? 'stärkster Hebel: ' : 'biggest lever: ') + topLeverName,
+      sumAssum: (l.label ? l.label + '  ·  ' : '') + (LANG === 'de' ? 'Basisjahr ' : 'base year ') + l.year0,
+      cases, impact, glanceHeadline, impactNote,
       cols, planRows, waterfall, grid, gridCols, auditRows, auditCalc, checks,
       tornado: tor.map(s => ({
         name: s.name, note: s.note,
