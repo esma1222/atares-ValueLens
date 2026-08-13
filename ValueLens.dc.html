@@ -849,6 +849,12 @@ const ROLE_STORE = 'valuelens.session.v1';
 // the Supabase `verify_passcode` RPC (see supabase-client.js and
 // supabase/migrations/0001_passcode_gate.sql).
 const GUEST_STORE = 'valuelens.guest.v1';
+
+// TEMPORARY - testing only. While this is false, guests may change every
+// assumption as often as they like and are never asked to sign in. Set it back
+// to true to restore the one-pass limit; all the machinery below is intact and
+// nothing else needs changing.
+const GUEST_LIMIT = false;
 // A guest gets one pass: every assumption can be set once, and that progress
 // persists per browser so it is never handed back. We store WHICH levers have
 // been used rather than a single "used" bit - a bare flag locked the whole
@@ -861,8 +867,10 @@ function readGuest() {
     return (r && typeof r === 'object' && r.locked && typeof r.locked === 'object') ? r : null;
   } catch (e) { return null; }
 }
-function guestLocks() { const g = readGuest(); return g ? g.locked : {}; }
-function guestSpent() { const g = readGuest(); return !!(g && g.spent); }
+// While the limit is off, previously stored progress is not applied - otherwise
+// a browser that had already spent its pass would still be told so.
+function guestLocks() { if (!GUEST_LIMIT) return {}; const g = readGuest(); return g ? g.locked : {}; }
+function guestSpent() { if (!GUEST_LIMIT) return false; const g = readGuest(); return !!(g && g.spent); }
 function writeGuest(locked, spent) {
   try {
     window.localStorage.setItem(GUEST_STORE, JSON.stringify({ locked: locked || {}, spent: !!spent, at: Date.now() }));
@@ -1093,6 +1101,7 @@ class Component extends DCLogic {
     open: { tree: false, plan: false, solve: false, sens: false, assum: false, audit: false }, formName: '', formEmail: '', formCompany: '', formCode: '', modalError: '' };
 
   allow(key) {
+    if (!GUEST_LIMIT) return true;
     if (this.state.role !== 'guest') return true;
     // Only the levers already spent are refused; the rest of the pass stays
     // open, so a guest can still set an assumption they have not used yet.
