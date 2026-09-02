@@ -446,21 +446,15 @@
         </sc-if>
 
         <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ true }}">
-          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px;padding:14px 18px;background:var(--line2);border-radius:3px;border-left:3px solid var(--acc)">
-            <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc2)"><span style="display:{{ eEN }}">Preview</span><span style="display:{{ eDE }}">Vorschau</span></span>
-            <span style="flex:1;min-width:320px;font-size:12px;line-height:1.5;color:var(--ink2)">{{ guestMessage }}</span>
-            <button onClick="{{ openSignIn }}" style="{{ btnSave }}"><span style="display:{{ eEN }}">Sign in for full access</span><span style="display:{{ eDE }}">Anmelden für Vollzugriff</span></button>
-          </div>
-        </sc-if>
-
-        <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ true }}">
-          <div onClick="{{ onLockedArea }}" class="lkrow" style="margin-bottom:20px;padding:16px 18px;border:1px dashed var(--fieldBd);border-radius:4px;background:var(--line2)">
-            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px">
+          <div style="margin-bottom:20px;padding:16px 18px;background:var(--line2);border-radius:3px;border-left:3px solid var(--acc)">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:9px">
+              <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc2)"><span style="display:{{ eEN }}">Preview</span><span style="display:{{ eDE }}">Vorschau</span></span>
               <span style="font-size:12.5px;font-weight:700;letter-spacing:.04em"><span style="display:{{ eEN }}">Advanced operational modelling</span><span style="display:{{ eDE }}">Erweiterte operative Modellierung</span></span>
               <span class="lkchip">&#128274;<span style="display:{{ eEN }}">Locked</span><span style="display:{{ eDE }}">Gesperrt</span></span>
             </div>
-            <div style="font-size:11.5px;line-height:1.6;color:var(--ink2);max-width:78ch"><span style="display:{{ eEN }}">Build a more detailed value creation case using industry-specific operating drivers - subscribers, billable FTEs, units shipped, cases treated - alongside the cost, cash-flow and deal-structure assumptions shown below. The standard assumptions are applied to your figures in the meantime.</span><span style="display:{{ eDE }}">Erstellen Sie einen detaillierteren Wertsteigerungsfall mit branchenspezifischen operativen Treibern - Abonnenten, fakturierbare FTE, abgesetzte Einheiten, behandelte Faelle - samt der unten gezeigten Kosten-, Cashflow- und Strukturannahmen. Bis dahin gelten die Standardannahmen.</span></div>
-            <button onClick="{{ openSignIn }}" style="{{ btnSave }};margin-top:12px"><span style="display:{{ eEN }}">Unlock advanced modelling</span><span style="display:{{ eDE }}">Erweiterte Modellierung freischalten</span></button>
+            <div style="font-size:12px;line-height:1.6;color:var(--ink2);max-width:84ch">{{ guestMessage }}</div>
+            <div style="font-size:11.5px;line-height:1.6;color:var(--mut);max-width:84ch;margin-top:7px"><span style="display:{{ eEN }}">Sign up to build a more detailed case on industry-specific operating drivers - subscribers, billable FTEs, units shipped, cases treated - alongside the cost, cash-flow and deal-structure assumptions below.</span><span style="display:{{ eDE }}">Registrieren Sie sich, um einen detaillierteren Fall auf branchenspezifischen operativen Treibern aufzubauen - Abonnenten, fakturierbare FTE, abgesetzte Einheiten, behandelte Faelle - samt der Kosten-, Cashflow- und Strukturannahmen unten.</span></div>
+            <button onClick="{{ openSignIn }}" style="{{ btnSave }};margin-top:13px"><span style="display:{{ eEN }}">Unlock advanced modelling</span><span style="display:{{ eDE }}">Erweiterte Modellierung freischalten</span></button>
           </div>
         </sc-if>
 
@@ -1699,15 +1693,18 @@ class Component extends DCLogic {
       advLock: !this.isAuthed(),
       eGuest: this.isAuthed() ? 'none' : 'inline-flex',
       onLockedArea: this.isAuthed() ? undefined : this.openSignIn,
-      guestMessage: l.role === 'guest'
-        ? (l.runSpent
-            ? (LANG === 'de'
-                ? 'Die gezeigten Werte sind Demonstrationswerte. Sie haben Ihren einen freien Durchlauf genutzt - für weitere Änderungen melden Sie sich bitte an.'
-                : 'The figures shown are demonstrative. You have used your one free pass - sign in to keep adjusting.')
+      guestMessage: l.role !== 'guest' ? ''
+        : (GUEST_LIMIT
+            ? (l.runSpent
+                ? (LANG === 'de'
+                    ? 'Die gezeigten Werte sind Demonstrationswerte. Sie haben Ihren einen freien Durchlauf genutzt - für weitere Änderungen melden Sie sich bitte an.'
+                    : 'The figures shown are demonstrative. You have used your one free pass - sign in to keep adjusting.')
+                : (LANG === 'de'
+                    ? 'Die gezeigten Werte sind Demonstrationswerte. Sie können jede Annahme und jeden Hebel einmal setzen; eine zweite Änderung desselben Werts erfordert eine Anmeldung.'
+                    : 'The figures shown are demonstrative. You can set each assumption and lever once; changing the same one a second time requires signing in.'))
             : (LANG === 'de'
-                ? 'Die gezeigten Werte sind Demonstrationswerte. Sie können jede Annahme und jeden Hebel einmal setzen; eine zweite Änderung desselben Werts erfordert eine Anmeldung.'
-                : 'The figures shown are demonstrative. You can set each assumption and lever once; changing the same one a second time requires signing in.'))
-        : '',
+                ? 'Die gezeigten Werte sind Demonstrationswerte. Umsatz, EBITDA und die drei Werthebel - Preis, Menge und Synergien - können Sie beliebig oft anpassen. Alle weiteren Annahmen behalten ihre Standardwerte, bis Sie sich registrieren.'
+                : 'The figures shown are demonstrative. Revenue, EBITDA and the three value drivers - price, volume and synergies - are yours to adjust as often as you like. Every other assumption keeps its standard value until you sign up.')),
       roleShow: l.role === 'guest' ? 'none' : 'inline-block',
       roleLabel: l.role === 'admin' ? 'ADMIN' : (LANG === 'de' ? 'ANGEMELDET' : 'SIGNED IN'),
       roleBg: l.role === 'admin' ? 'var(--acc)' : 'rgba(255,255,255,.16)',
