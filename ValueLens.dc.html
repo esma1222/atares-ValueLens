@@ -495,8 +495,13 @@
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Holding period (years)</span><span style="display:{{ eDE }}">Halteperiode (Jahre)</span></span>
               <input disabled="{{ advLock }}" type="number" min="1" max="8" step="1" value="{{ hold }}" onChange="{{ onHold }}"/>
             </div>
-            <div style="margin-top:13px;font-size:10.5px;line-height:1.55;color:var(--ink2);padding:10px 12px;background:var(--line2);border-radius:3px">{{ driverNote }}</div>
-            <div style="margin-top:11px;font-size:10.5px;line-height:1.55;color:var(--mut)"><span style="display:{{ eEN }}">Entered from management information and held fixed; the levers act on later years only. Implied base-year {{ priceName }} {{ arpu0Label }}, EBITDA margin {{ margin0Label }}.</span><span style="display:{{ eDE }}">Aus den Management-Informationen übernommen und fix gehalten; die Hebel wirken nur auf die Folgejahre. {{ priceName }} im Basisjahr {{ arpu0Label }}, EBITDA-Marge {{ margin0Label }}.</span></div>
+            <!-- Both notes belong to the signed-up model: the first is tied to the
+                 industry choice, and the second prints an implied base-year price
+                 derived from the volume units a free user never enters. -->
+            <sc-if value="{{ isAuthed }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-top:13px;font-size:10.5px;line-height:1.55;color:var(--ink2);padding:10px 12px;background:var(--line2);border-radius:3px">{{ driverNote }}</div>
+              <div style="margin-top:11px;font-size:10.5px;line-height:1.55;color:var(--mut)"><span style="display:{{ eEN }}">Entered from management information and held fixed; the levers act on later years only. Implied base-year {{ priceName }} {{ arpu0Label }}, EBITDA margin {{ margin0Label }}.</span><span style="display:{{ eDE }}">Aus den Management-Informationen übernommen und fix gehalten; die Hebel wirken nur auf die Folgejahre. {{ priceName }} im Basisjahr {{ arpu0Label }}, EBITDA-Marge {{ margin0Label }}.</span></div>
+            </sc-if>
           </div>
 
           <div>
