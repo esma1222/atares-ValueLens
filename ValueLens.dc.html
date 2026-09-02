@@ -810,7 +810,7 @@
               <input type="checkbox" checked="{{ formConsent }}" onChange="{{ onFormConsent }}" style="margin-top:3px;flex:none"/>
               <span style="font-size:11px;line-height:1.55;color:var(--ink2)"><span style="display:{{ eEN }}">I agree that atares GmbH will send me newsletters by e-mail. I can revoke this consent at any time free of charge by clicking on the "Unsubscribe" link, which I find in every newsletter issue.</span><span style="display:{{ eDE }}">Ich bin damit einverstanden, dass mir die atares GmbH Newsletter per E-Mail zusendet. Diese Einwilligung kann ich jederzeit kostenfrei durch Klick auf den "Abmelden"-Link widerrufen, den ich in jeder Newsletter-Ausgabe finde.</span></span>
             </label>
-            <div style="font-size:10.5px;line-height:1.55;color:var(--mut)"><span style="display:{{ eEN }}">Registering also subscribes you to TechSpheres, the monthly atares tech M&amp;A briefing.</span><span style="display:{{ eDE }}">Mit der Registrierung abonnieren Sie auch TechSpheres, das monatliche atares Tech-M&amp;A-Briefing.</span></div>
+            <div style="font-size:10.5px;line-height:1.55;color:var(--mut)"><span style="display:{{ eEN }}">Optional: TechSpheres is the monthly atares tech M&amp;A briefing. ValueLens works either way - leave this unticked and you simply will not receive it.</span><span style="display:{{ eDE }}">Optional: TechSpheres ist das monatliche atares Tech-M&amp;A-Briefing. ValueLens funktioniert unabhaengig davon - ohne Haken erhalten Sie es einfach nicht.</span></div>
           </div>
         </sc-if>
 
@@ -1216,10 +1216,9 @@ class Component extends DCLogic {
       this.setState({ modalError: de ? 'Vor- und Nachname sowie eine gültige E-Mail-Adresse erforderlich' : 'First name, last name and a valid email address are required' });
       return;
     }
-    if (!this.state.formConsent) {
-      this.setState({ modalError: de ? 'Bitte stimmen Sie dem Newsletter-Versand zu' : 'Please agree to receive the newsletter' });
-      return;
-    }
+    // The newsletter is a separate, optional opt-in: ValueLens sign-up does not
+    // depend on it, and the tick is recorded either way so only those who did
+    // consent can later be synced to the newsletter provider.
     const company = this.state.formCompany.trim();
     writeSession({ role: 'user', name: name, email: email, company: company });
     this.setState({ role: 'user', runSpent: false, locked: {}, activeKey: '', modal: '', modalError: '' });

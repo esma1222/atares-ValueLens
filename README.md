@@ -112,10 +112,15 @@ values ('atares team', extensions.crypt(lower('NEW_CODE'), extensions.gen_salt('
 ## TechSpheres newsletter integration — NOT connected
 
 Sign-up collects the fields the atares TechSpheres form asks for — **salutation,
-first name, last name, email** — plus an explicit consent tick, and stores them
-in `public.leads` (`salutation`, `first_name`, `last_name`,
-`newsletter_consent`). The consent wording is taken verbatim from the existing
-atares.team newsletter form.
+first name, last name, email** — and stores them in `public.leads`
+(`salutation`, `first_name`, `last_name`, `newsletter_consent`).
+
+**The newsletter is optional and does not gate ValueLens.** Registering requires
+first name, last name and a valid email; the newsletter tick is a separate
+opt-in, unticked by default, and sign-up succeeds without it. Only leads with
+`newsletter_consent = true` may be synced to the newsletter provider. The
+consent wording is taken verbatim from the existing atares.team newsletter
+form.
 
 **No Mailchimp/newsletter integration exists in this repository**, and no API
 credentials are present, so nothing is pushed to the newsletter provider yet.
