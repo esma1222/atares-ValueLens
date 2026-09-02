@@ -9,16 +9,38 @@ hood, see `support.js`).
 `ValueLens.dc.html` is the application. Open it in a browser, or deploy the repo
 to any static host. EN/DE toggle in the header.
 
-## Access model
+## Access model — free vs registered
 
-| Role | How you get it | What it allows |
+ValueLens has two levels. The calculation engine is the same for both; the
+difference is which inputs a user may edit.
+
+| Role | How you get it | Model |
 | --- | --- | --- |
-| `guest` | default | one exploratory run; each assumption can be set once |
-| `user` | sign-in modal (name + email + company) | unrestricted sliders |
-| `admin` | passcode | unrestricted, plus the saved-project library |
+| `guest` | default, no sign-up | **Free model:** Revenue + EBITDA -> price, volume, synergy |
+| `user` | sign-up modal | **Full model:** every assumption editable |
+| `admin` | passcode | Full model plus the saved-project library |
 
-Roles and the guest allowance are held in `localStorage`
-(`valuelens.session.v1`, `valuelens.guest.v1`).
+### Free model
+
+A guest edits five things: current **Revenue**, current **EBITDA**, and the
+three value drivers **price impact**, **volume impact** and **cost synergies**.
+Everything else keeps its standard value, stays visible, and is shown disabled
+with a lock chip and a sign-up CTA.
+
+No volume-unit input is required. That is safe because the engine is
+scale-invariant in `cust0`: revenue is `cust x arpu` where `arpu0 = rev0/cust0`,
+so `cust0` cancels out of every output. Hiding it changes no number.
+
+The price/volume economics the free model advertises are the engine's existing
+behaviour, not a second calculation:
+
+- **Price** raises revenue with no extra cost, so it flows to EBITDA at 100%.
+- **Volume** scales the volume-variable share of the cost base with it, so it
+  flows through at the contribution margin (`1 - varShare x opex/revenue`).
+
+`ADV_KEYS` in `ValueLens.dc.html` lists the locked assumptions. The guard lives
+in `allow()`, so the rule holds even if the disabled attributes are stripped in
+the browser.
 
 ## Data captured in Supabase
 
@@ -68,8 +90,9 @@ supabase db push
 ```
 
 …or paste the migrations in `supabase/migrations/` into the Supabase dashboard
-**SQL Editor** and run them in order (`0001` then `0002`). Both are idempotent,
-so re-running them is safe. Verify with:
+**SQL Editor** and run them in order (`0001`, `0002`, `0003`) — or
+just run `supabase/setup.sql`, which is all of them concatenated. All are
+idempotent, so re-running is safe. Verify with:
 
 ```sql
 select public.verify_passcode('atares2026');  -- expect: true
@@ -85,6 +108,35 @@ update public.access_codes set active = false;
 insert into public.access_codes (label, code_hash)
 values ('atares team', extensions.crypt(lower('NEW_CODE'), extensions.gen_salt('bf', 10)));
 ```
+
+## TechSpheres newsletter integration — NOT connected
+
+Sign-up collects the fields the atares TechSpheres form asks for — **salutation,
+first name, last name, email** — plus an explicit consent tick, and stores them
+in `public.leads` (`salutation`, `first_name`, `last_name`,
+`newsletter_consent`). The consent wording is taken verbatim from the existing
+atares.team newsletter form.
+
+**No Mailchimp/newsletter integration exists in this repository**, and no API
+credentials are present, so nothing is pushed to the newsletter provider yet.
+Leads are captured in Supabase and wait there: `leads.newsletter_synced_at` is
+null until something syncs them.
+
+To connect it, the following is still required — none of it can be guessed:
+
+| Needed | Why |
+| --- | --- |
+| Provider confirmation (Mailchimp or other) | determines the API to call |
+| API key | server-side auth |
+| Audience / list ID | which list to subscribe to |
+| Merge-field names for salutation / first / last | Mailchimp defaults are `FNAME`/`LNAME`; the salutation field is custom |
+| Single vs double opt-in | decides whether to send `subscribed` or `pending` |
+| Confirmation that the ValueLens consent text satisfies the same legal basis | the wording is reused, the context is new |
+
+Recommended shape once available: a Supabase Edge Function triggered on insert
+into `leads`, holding the API key as a secret and stamping
+`newsletter_synced_at` on success. The API key must not go in the browser —
+`supabase-client.js` ships to every visitor.
 
 ## Deployment
 

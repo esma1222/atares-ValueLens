@@ -60,6 +60,13 @@
   input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
   input[type=number]{font:inherit;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:2px;padding:6px 8px;width:100%;text-align:right;font-variant-numeric:tabular-nums}
   input[type=number]:focus{outline:none;border-color:var(--acc)}
+  /* Locked (sign-up required) controls: visible and readable, clearly not editable. */
+  input[type=number]:disabled,select:disabled,input[type=text]:disabled{background:var(--line2);color:var(--mut);border-style:dashed;cursor:not-allowed;opacity:1}
+  input[type=range]:disabled{cursor:not-allowed;opacity:.45}
+  input[type=range]:disabled::-webkit-slider-thumb{background:var(--mut)}
+  input[type=range]:disabled::-moz-range-thumb{background:var(--mut)}
+  .lkrow{cursor:pointer}
+  .lkchip{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc2);white-space:nowrap}
 </style>
 </helmet>
 
@@ -446,6 +453,17 @@
           </div>
         </sc-if>
 
+        <sc-if value="{{ isGuest }}" hint-placeholder-val="{{ true }}">
+          <div onClick="{{ onLockedArea }}" class="lkrow" style="margin-bottom:20px;padding:16px 18px;border:1px dashed var(--fieldBd);border-radius:4px;background:var(--line2)">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px">
+              <span style="font-size:12.5px;font-weight:700;letter-spacing:.04em"><span style="display:{{ eEN }}">Advanced operational modelling</span><span style="display:{{ eDE }}">Erweiterte operative Modellierung</span></span>
+              <span class="lkchip">&#128274;<span style="display:{{ eEN }}">Locked</span><span style="display:{{ eDE }}">Gesperrt</span></span>
+            </div>
+            <div style="font-size:11.5px;line-height:1.6;color:var(--ink2);max-width:78ch"><span style="display:{{ eEN }}">Build a more detailed value creation case using industry-specific operating drivers - subscribers, billable FTEs, units shipped, cases treated - alongside the cost, cash-flow and deal-structure assumptions shown below. The standard assumptions are applied to your figures in the meantime.</span><span style="display:{{ eDE }}">Erstellen Sie einen detaillierteren Wertsteigerungsfall mit branchenspezifischen operativen Treibern - Abonnenten, fakturierbare FTE, abgesetzte Einheiten, behandelte Faelle - samt der unten gezeigten Kosten-, Cashflow- und Strukturannahmen. Bis dahin gelten die Standardannahmen.</span></div>
+            <button onClick="{{ openSignIn }}" style="{{ btnSave }};margin-top:12px"><span style="display:{{ eEN }}">Unlock advanced modelling</span><span style="display:{{ eDE }}">Erweiterte Modellierung freischalten</span></button>
+          </div>
+        </sc-if>
+
         <div style="display:grid;grid-template-columns:var(--col3);gap:28px">
 
           <div>
@@ -461,43 +479,43 @@
                 <option value="CHF ">CHF</option>
               </select>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Industry</span><span style="display:{{ eDE }}">Branche</span></span>
-              <select value="{{ industry }}" onChange="{{ onIndustry }}" style="font:inherit;font-size:12px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:2px;padding:6px 8px;width:100%;text-align:right">
+              <select disabled="{{ advLock }}" value="{{ industry }}" onChange="{{ onIndustry }}" style="font:inherit;font-size:12px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:2px;padding:6px 8px;width:100%;text-align:right">
                 <sc-for list="{{ industryOptions }}" as="o" hint-placeholder-count="7">
                   <option value="{{ o.k }}">{{ o.text }}</option>
                 </sc-for>
               </select>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Base year</span><span style="display:{{ eDE }}">Basisjahr</span></span>
-              <input type="number" min="1990" max="2100" step="1" value="{{ year0 }}" onChange="{{ onYear0 }}"/>
+              <input disabled="{{ advLock }}" type="number" min="1990" max="2100" step="1" value="{{ year0 }}" onChange="{{ onYear0 }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Revenue (millions)</span><span style="display:{{ eDE }}">Umsatz (Mio.)</span></span>
               <input type="number" min="0.1" step="0.1" value="{{ rev0 }}" onChange="{{ onRev0 }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">EBITDA (millions)</span><span style="display:{{ eDE }}">EBITDA (Mio.)</span></span>
               <input type="number" min="0" step="0.1" value="{{ eb0 }}" onChange="{{ onEb0 }}"/>
               <span style="font-size:12.5px">{{ volNameUnit }}</span>
-              <input type="number" min="1" step="10" value="{{ cust0 }}" onChange="{{ onCust0 }}"/>
+              <input disabled="{{ advLock }}" type="number" min="1" step="10" value="{{ cust0 }}" onChange="{{ onCust0 }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Holding period (years)</span><span style="display:{{ eDE }}">Halteperiode (Jahre)</span></span>
-              <input type="number" min="1" max="8" step="1" value="{{ hold }}" onChange="{{ onHold }}"/>
+              <input disabled="{{ advLock }}" type="number" min="1" max="8" step="1" value="{{ hold }}" onChange="{{ onHold }}"/>
             </div>
             <div style="margin-top:13px;font-size:10.5px;line-height:1.55;color:var(--ink2);padding:10px 12px;background:var(--line2);border-radius:3px">{{ driverNote }}</div>
             <div style="margin-top:11px;font-size:10.5px;line-height:1.55;color:var(--mut)"><span style="display:{{ eEN }}">Entered from management information and held fixed; the levers act on later years only. Implied base-year {{ priceName }} {{ arpu0Label }}, EBITDA margin {{ margin0Label }}.</span><span style="display:{{ eDE }}">Aus den Management-Informationen übernommen und fix gehalten; die Hebel wirken nur auf die Folgejahre. {{ priceName }} im Basisjahr {{ arpu0Label }}, EBITDA-Marge {{ margin0Label }}.</span></div>
           </div>
 
           <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:14px"><span style="display:{{ eEN }}">Operating &amp; cash-flow conventions</span><span style="display:{{ eDE }}">Operative &amp; Cashflow-Konventionen</span></div>
-            <div style="display:grid;grid-template-columns:1fr 104px;gap:9px 14px;align-items:center">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:14px"><span style="display:{{ eEN }}">Operating &amp; cash-flow conventions</span><span style="display:{{ eDE }}">Operative &amp; Cashflow-Konventionen</span><span class="lkchip" style="display:{{ eGuest }};margin-left:8px">&#128274;<span style="display:{{ eEN }}">Sign up to edit</span><span style="display:{{ eDE }}">Anmelden zum Bearbeiten</span></span></div>
+            <div onClick="{{ onLockedArea }}" style="display:grid;grid-template-columns:1fr 104px;gap:9px 14px;align-items:center">
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Opex volume-variable (%)</span><span style="display:{{ eDE }}">Opex mengenvariabel (%)</span></span>
-              <input type="number" min="0" max="100" step="5" value="{{ varShare }}" onChange="{{ onVarShare }}"/>
+              <input disabled="{{ advLock }}" type="number" min="0" max="100" step="5" value="{{ varShare }}" onChange="{{ onVarShare }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Tax rate (%)</span><span style="display:{{ eDE }}">Steuersatz (%)</span></span>
-              <input type="number" min="0" max="60" step="0.5" value="{{ tax }}" onChange="{{ onTax }}"/>
+              <input disabled="{{ advLock }}" type="number" min="0" max="60" step="0.5" value="{{ tax }}" onChange="{{ onTax }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">D&amp;A (% of revenue)</span><span style="display:{{ eDE }}">Abschreibungen (% Umsatz)</span></span>
-              <input type="number" min="0" max="30" step="0.5" value="{{ da }}" onChange="{{ onDa }}"/>
+              <input disabled="{{ advLock }}" type="number" min="0" max="30" step="0.5" value="{{ da }}" onChange="{{ onDa }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Capex (% of revenue)</span><span style="display:{{ eDE }}">Capex (% Umsatz)</span></span>
-              <input type="number" min="0" max="40" step="0.5" value="{{ capex }}" onChange="{{ onCapex }}"/>
+              <input disabled="{{ advLock }}" type="number" min="0" max="40" step="0.5" value="{{ capex }}" onChange="{{ onCapex }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Working capital (% of revenue)</span><span style="display:{{ eDE }}">Working Capital (% Umsatz)</span></span>
-              <input type="number" min="-20" max="50" step="0.5" value="{{ nwc }}" onChange="{{ onNwc }}"/>
+              <input disabled="{{ advLock }}" type="number" min="-20" max="50" step="0.5" value="{{ nwc }}" onChange="{{ onNwc }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Terminal growth (%)</span><span style="display:{{ eDE }}">Ewiges Wachstum (%)</span></span>
-              <input type="number" min="0" max="5" step="0.25" value="{{ tg }}" onChange="{{ onTg }}"/>
+              <input disabled="{{ advLock }}" type="number" min="0" max="5" step="0.25" value="{{ tg }}" onChange="{{ onTg }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Synergy phasing</span><span style="display:{{ eDE }}">Synergie-Stufung</span></span>
-              <select value="{{ ramp }}" onChange="{{ onRamp }}" style="font:inherit;font-size:12px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:2px;padding:6px 8px;width:100%;text-align:right">
+              <select disabled="{{ advLock }}" value="{{ ramp }}" onChange="{{ onRamp }}" style="font:inherit;font-size:12px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:2px;padding:6px 8px;width:100%;text-align:right">
                 <option value="immediate">{{ rampImmediate }}</option>
                 <option value="frontloaded">{{ rampFront }}</option>
                 <option value="linear">{{ rampLinear }}</option>
@@ -508,18 +526,18 @@
           </div>
 
           <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:14px"><span style="display:{{ eEN }}">Deal structure</span><span style="display:{{ eDE }}">Transaktionsstruktur</span></div>
-            <div style="display:grid;grid-template-columns:1fr 104px;gap:9px 14px;align-items:center">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:14px"><span style="display:{{ eEN }}">Deal structure</span><span style="display:{{ eDE }}">Transaktionsstruktur</span><span class="lkchip" style="display:{{ eGuest }};margin-left:8px">&#128274;<span style="display:{{ eEN }}">Sign up to edit</span><span style="display:{{ eDE }}">Anmelden zum Bearbeiten</span></span></div>
+            <div onClick="{{ onLockedArea }}" style="display:grid;grid-template-columns:1fr 104px;gap:9px 14px;align-items:center">
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Stake acquired (%)</span><span style="display:{{ eDE }}">Erworbener Anteil (%)</span></span>
-              <input type="number" min="1" max="100" step="1" value="{{ stake }}" onChange="{{ onStake }}"/>
+              <input disabled="{{ advLock }}" type="number" min="1" max="100" step="1" value="{{ stake }}" onChange="{{ onStake }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Vendor loan (% of EV)</span><span style="display:{{ eDE }}">Verkäuferdarlehen (% EV)</span></span>
-              <input type="number" min="0" max="40" step="1" value="{{ vendor }}" onChange="{{ onVendor }}"/>
+              <input disabled="{{ advLock }}" type="number" min="0" max="40" step="1" value="{{ vendor }}" onChange="{{ onVendor }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Management rollover (% of equity)</span><span style="display:{{ eDE }}">Management-Rollover (% Equity)</span></span>
-              <input type="number" min="0" max="60" step="1" value="{{ rollover }}" onChange="{{ onRollover }}"/>
+              <input disabled="{{ advLock }}" type="number" min="0" max="60" step="1" value="{{ rollover }}" onChange="{{ onRollover }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Transaction fees (% of EV)</span><span style="display:{{ eDE }}">Transaktionskosten (% EV)</span></span>
-              <input type="number" min="0" max="10" step="0.25" value="{{ fees }}" onChange="{{ onFees }}"/>
+              <input disabled="{{ advLock }}" type="number" min="0" max="10" step="0.25" value="{{ fees }}" onChange="{{ onFees }}"/>
               <span style="font-size:12.5px"><span style="display:{{ eEN }}">Cash sweep (%)</span><span style="display:{{ eDE }}">Cash Sweep (%)</span></span>
-              <input type="number" min="0" max="100" step="5" value="{{ sweep }}" onChange="{{ onSweep }}"/>
+              <input disabled="{{ advLock }}" type="number" min="0" max="100" step="5" value="{{ sweep }}" onChange="{{ onSweep }}"/>
             </div>
             <div style="display:flex;flex-direction:column;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line2)">
               <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:var(--ink2)"><span style="display:{{ eEN }}">Sponsor equity cheque</span><span style="display:{{ eDE }}">Eigenkapitaleinsatz Investor</span></span><span style="font-weight:700;font-variant-numeric:tabular-nums">{{ chequeLabel }}</span></div>
@@ -649,46 +667,46 @@
 
         <div style="display:flex;flex-direction:column;gap:5px">
           <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Cost inflation p.a.</span><span style="display:{{ eDE }}">Kosteninflation p. a.</span></span>
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Cost inflation p.a.</span><span style="display:{{ eDE }}">Kosteninflation p. a.</span><span class="lkchip" style="display:{{ eGuest }};margin-left:6px">&#128274;</span></span>
             <span style="font-size:13px;font-weight:800;color:var(--acc2);font-variant-numeric:tabular-nums">{{ inflPct }}</span>
           </div>
-          <input type="range" min="0" max="6" step="0.25" value="{{ infl }}" onChange="{{ onInfl }}" style="width:100%;height:16px;margin:2px 0"/>
+          <input disabled="{{ advLock }}" type="range" min="0" max="6" step="0.25" value="{{ infl }}" onChange="{{ onInfl }}" style="width:100%;height:16px;margin:2px 0"/>
           <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>0%</span><span><span style="display:{{ eEN }}">compounds on the whole cost base</span><span style="display:{{ eDE }}">kumuliert auf die gesamte Kostenbasis</span></span><span>6%</span></div>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:5px;padding-top:16px;border-top:1px solid var(--line)">
           <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Target equity MOIC</span><span style="display:{{ eDE }}">Ziel-Equity-MOIC</span></span>
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Target equity MOIC</span><span style="display:{{ eDE }}">Ziel-Equity-MOIC</span><span class="lkchip" style="display:{{ eGuest }};margin-left:6px">&#128274;</span></span>
             <span style="font-size:13px;font-weight:800;color:var(--neg);font-variant-numeric:tabular-nums">{{ moicLabel }}</span>
           </div>
-          <input type="range" min="1.5" max="5" step="0.1" value="{{ moic }}" onChange="{{ onMoic }}" style="width:100%;height:16px;margin:2px 0"/>
+          <input disabled="{{ advLock }}" type="range" min="1.5" max="5" step="0.1" value="{{ moic }}" onChange="{{ onMoic }}" style="width:100%;height:16px;margin:2px 0"/>
           <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>1.5x</span><span><span style="display:{{ eEN }}">= {{ irrLabel }} IRR over {{ holdLabel }} yrs</span><span style="display:{{ eDE }}">= {{ irrLabel }} IRR über {{ holdLabel }} J.</span></span><span>5.0x</span></div>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:5px">
           <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Entry leverage (debt / EBITDA)</span><span style="display:{{ eDE }}">Einstiegs-Leverage (Debt / EBITDA)</span></span>
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Entry leverage (debt / EBITDA)</span><span style="display:{{ eDE }}">Einstiegs-Leverage (Debt / EBITDA)</span><span class="lkchip" style="display:{{ eGuest }};margin-left:6px">&#128274;</span></span>
             <span style="font-size:13px;font-weight:800;color:var(--neg);font-variant-numeric:tabular-nums">{{ levLabel }}</span>
           </div>
-          <input type="range" min="0" max="6" step="0.25" value="{{ lev }}" onChange="{{ onLev }}" style="width:100%;height:16px;margin:2px 0"/>
+          <input disabled="{{ advLock }}" type="range" min="0" max="6" step="0.25" value="{{ lev }}" onChange="{{ onLev }}" style="width:100%;height:16px;margin:2px 0"/>
           <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>0.0x</span><span><span style="display:{{ eEN }}">= {{ entryDebtLabel }} entry debt</span><span style="display:{{ eDE }}">= {{ entryDebtLabel }} Einstiegsdebt</span></span><span>6.0x</span></div>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:5px">
           <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Exit WACC</span><span style="display:{{ eDE }}">Exit-WACC</span></span>
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Exit WACC</span><span style="display:{{ eDE }}">Exit-WACC</span><span class="lkchip" style="display:{{ eGuest }};margin-left:6px">&#128274;</span></span>
             <span style="font-size:13px;font-weight:800;color:var(--neg);font-variant-numeric:tabular-nums">{{ waccPct }}</span>
           </div>
-          <input type="range" min="7" max="14" step="0.25" value="{{ wacc }}" onChange="{{ onWacc }}" style="width:100%;height:16px;margin:2px 0"/>
+          <input disabled="{{ advLock }}" type="range" min="7" max="14" step="0.25" value="{{ wacc }}" onChange="{{ onWacc }}" style="width:100%;height:16px;margin:2px 0"/>
           <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>7%</span><span><span style="display:{{ eEN }}">terminal growth {{ tgPct }}</span><span style="display:{{ eDE }}">ewiges Wachstum {{ tgPct }}</span></span><span>14%</span></div>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:5px">
           <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Cash interest rate</span><span style="display:{{ eDE }}">Zinssatz (cash)</span></span>
+            <span style="font-size:12.5px;font-weight:600"><span style="display:{{ eEN }}">Cash interest rate</span><span style="display:{{ eDE }}">Zinssatz (cash)</span><span class="lkchip" style="display:{{ eGuest }};margin-left:6px">&#128274;</span></span>
             <span style="font-size:13px;font-weight:800;color:var(--neg);font-variant-numeric:tabular-nums">{{ intPct }}</span>
           </div>
-          <input type="range" min="3" max="12" step="0.25" value="{{ int }}" onChange="{{ onInt }}" style="width:100%;height:16px;margin:2px 0"/>
+          <input disabled="{{ advLock }}" type="range" min="3" max="12" step="0.25" value="{{ int }}" onChange="{{ onInt }}" style="width:100%;height:16px;margin:2px 0"/>
           <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mut)"><span>3%</span><span><span style="display:{{ eEN }}">on beginning-of-year debt</span><span style="display:{{ eDE }}">auf Anfangsbestand Debt</span></span><span>12%</span></div>
         </div>
       </div>
@@ -779,9 +797,22 @@
 
         <sc-if value="{{ modalIsSignIn }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px">
-            <input type="text" placeholder="{{ phName }}" value="{{ formName }}" onChange="{{ onFormName }}" style="font:inherit;font-size:13px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:3px;padding:11px 12px;width:100%;text-align:left"/>
+            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2)">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="vlsal" value="mr" checked="{{ salIsMr }}" onChange="{{ onFormSalutation }}"/><span style="display:{{ eEN }}">Mr.</span><span style="display:{{ eDE }}">Herr</span></label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="vlsal" value="ms" checked="{{ salIsMs }}" onChange="{{ onFormSalutation }}"/><span style="display:{{ eEN }}">Ms.</span><span style="display:{{ eDE }}">Frau</span></label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="vlsal" value="diverse" checked="{{ salIsDiverse }}" onChange="{{ onFormSalutation }}"/><span style="display:{{ eEN }}">Diverse</span><span style="display:{{ eDE }}">Divers</span></label>
+            </div>
+            <div style="display:grid;grid-template-columns:var(--col2);gap:10px">
+              <input type="text" placeholder="{{ phFirst }}" value="{{ formFirst }}" onChange="{{ onFormFirst }}" style="font:inherit;font-size:13px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:3px;padding:11px 12px;width:100%;text-align:left"/>
+              <input type="text" placeholder="{{ phLast }}" value="{{ formLast }}" onChange="{{ onFormLast }}" style="font:inherit;font-size:13px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:3px;padding:11px 12px;width:100%;text-align:left"/>
+            </div>
             <input type="text" placeholder="{{ phEmail }}" value="{{ formEmail }}" onChange="{{ onFormEmail }}" style="font:inherit;font-size:13px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:3px;padding:11px 12px;width:100%;text-align:left"/>
             <input type="text" placeholder="{{ phCompany }}" value="{{ formCompany }}" onChange="{{ onFormCompany }}" style="font:inherit;font-size:13px;color:var(--ink);background:var(--fieldBg);border:1px solid var(--fieldBd);border-radius:3px;padding:11px 12px;width:100%;text-align:left"/>
+            <label style="display:flex;align-items:flex-start;gap:9px;margin-top:4px;cursor:pointer">
+              <input type="checkbox" checked="{{ formConsent }}" onChange="{{ onFormConsent }}" style="margin-top:3px;flex:none"/>
+              <span style="font-size:11px;line-height:1.55;color:var(--ink2)"><span style="display:{{ eEN }}">I agree that atares GmbH will send me newsletters by e-mail. I can revoke this consent at any time free of charge by clicking on the "Unsubscribe" link, which I find in every newsletter issue.</span><span style="display:{{ eDE }}">Ich bin damit einverstanden, dass mir die atares GmbH Newsletter per E-Mail zusendet. Diese Einwilligung kann ich jederzeit kostenfrei durch Klick auf den "Abmelden"-Link widerrufen, den ich in jeder Newsletter-Ausgabe finde.</span></span>
+            </label>
+            <div style="font-size:10.5px;line-height:1.55;color:var(--mut)"><span style="display:{{ eEN }}">Registering also subscribes you to TechSpheres, the monthly atares tech M&amp;A briefing.</span><span style="display:{{ eDE }}">Mit der Registrierung abonnieren Sie auch TechSpheres, das monatliche atares Tech-M&amp;A-Briefing.</span></div>
           </div>
         </sc-if>
 
@@ -855,6 +886,15 @@ const GUEST_STORE = 'valuelens.guest.v1';
 // to true to restore the one-pass limit; all the machinery below is intact and
 // nothing else needs changing.
 const GUEST_LIMIT = false;
+
+// The free model is Revenue + EBITDA -> price, volume and synergy. Everything
+// below stays visible and keeps its standard value, but only a signed-up user
+// may edit it. Guarding the keys here (not just disabling the inputs) means the
+// rule holds even if the markup is tampered with in the browser.
+const ADV_KEYS = ['industry', 'year0', 'cust0', 'hold',
+  'varShare', 'tax', 'da', 'capex', 'nwc', 'tg', 'ramp',
+  'stake', 'vendor', 'rollover', 'fees', 'sweep',
+  'infl', 'moic', 'lev', 'wacc', 'int'];
 // A guest gets one pass: every assumption can be set once, and that progress
 // persists per browser so it is never handed back. We store WHICH levers have
 // been used rather than a single "used" bit - a bare flag locked the whole
@@ -1098,9 +1138,17 @@ const fill = (s, o) => Object.keys(o).reduce((a, k) => a.split('{' + k + '}').jo
 class Component extends DCLogic {
   state = { ...BASEYR, ...CONV, ...PRESETS.Base, ...FIN, active: 'Base', lang: 'en', hdrLight: false, pick: '', saved: {}, note: '',
     role: 'guest', touched: {}, locked: {}, activeKey: '', runSpent: false, modal: '',
-    open: { tree: false, plan: false, solve: false, sens: false, assum: false, audit: false }, formName: '', formEmail: '', formCompany: '', formCode: '', modalError: '' };
+    open: { tree: false, plan: false, solve: false, sens: false, assum: false, audit: false }, formSalutation: 'mr', formFirst: '', formLast: '', formEmail: '', formCompany: '', formCode: '', formConsent: false, modalError: '' };
+
+  isAuthed() { return this.state.role === 'user' || this.state.role === 'admin'; }
 
   allow(key) {
+    // Advanced assumptions are read-only until sign-up, whatever the preview
+    // allowance below happens to be.
+    if (!this.isAuthed() && ADV_KEYS.indexOf(key) !== -1) {
+      this.setState({ modal: 'signin', modalError: '' });
+      return false;
+    }
     if (!GUEST_LIMIT) return true;
     if (this.state.role !== 'guest') return true;
     // Only the levers already spent are refused; the rest of the pass stays
@@ -1124,6 +1172,8 @@ class Component extends DCLogic {
   setText(k) { return e => { if (!this.allow(k)) return; this.setState({ [k]: e.target.value }); }; }
 
   setField(k) { return e => this.setState({ [k]: e.target.value, modalError: '' }); }
+  onSalutation = e => this.setState({ formSalutation: e.target.value, modalError: '' });
+  toggleConsent = e => this.setState({ formConsent: !!e.target.checked, modalError: '' });
   toggle(k) { return () => this.setState(st => ({ open: { ...st.open, [k]: !st.open[k] } })); }
   // "See the assumptions" must open the section as well as jump to it. The
   // panel body is behind an sc-if, so relying on the href alone did nothing
@@ -1161,9 +1211,15 @@ class Component extends DCLogic {
       });
       return;
     }
-    const name = this.state.formName.trim(), email = this.state.formEmail.trim();
-    if (!name || !/.+@.+\..+/.test(email)) {
-      this.setState({ modalError: de ? 'Name und eine gültige E-Mail-Adresse erforderlich' : 'Name and a valid email address are required' });
+    const first = this.state.formFirst.trim(), last = this.state.formLast.trim();
+    const email = this.state.formEmail.trim();
+    const name = (first + ' ' + last).trim();
+    if (!first || !last || !/.+@.+\..+/.test(email)) {
+      this.setState({ modalError: de ? 'Vor- und Nachname sowie eine gültige E-Mail-Adresse erforderlich' : 'First name, last name and a valid email address are required' });
+      return;
+    }
+    if (!this.state.formConsent) {
+      this.setState({ modalError: de ? 'Bitte stimmen Sie dem Newsletter-Versand zu' : 'Please agree to receive the newsletter' });
       return;
     }
     const company = this.state.formCompany.trim();
@@ -1171,8 +1227,13 @@ class Component extends DCLogic {
     this.setState({ role: 'user', runSpent: false, locked: {}, activeKey: '', modal: '', modalError: '' });
     // Fire-and-forget: a capture failure must never block someone signing in.
     if (window.WTTAuth) {
-      window.WTTAuth.captureLead({ name: name, email: email, company: company, lang: this.state.lang })
-        .catch(() => {});
+      window.WTTAuth.captureLead({
+        name: name, email: email, company: company, lang: this.state.lang,
+        salutation: this.state.formSalutation, first: first, last: last,
+        // consent is required above, so this is always true here; stored
+        // explicitly because it is the record of what the user agreed to
+        consent: this.state.formConsent
+      }).catch(() => {});
     }
   };
   signOut = () => { writeSession({ role: 'guest' }); this.setState({ role: 'guest', touched: {}, locked: guestLocks(), activeKey: '', runSpent: guestSpent(), modal: '' }); };
@@ -1628,6 +1689,11 @@ class Component extends DCLogic {
       structureLine: structureLine,
       isAdmin: l.role === 'admin',
       isGuest: l.role === 'guest',
+      // free vs signed-up experience
+      isAuthed: this.isAuthed(),
+      advLock: !this.isAuthed(),
+      eGuest: this.isAuthed() ? 'none' : 'inline-flex',
+      onLockedArea: this.isAuthed() ? undefined : this.openSignIn,
       guestMessage: l.role === 'guest'
         ? (l.runSpent
             ? (LANG === 'de'
@@ -1656,11 +1722,17 @@ class Component extends DCLogic {
       modalError: l.modalError,
       modalSubmit: this.submitModal, closeModal: this.closeModal, openSignIn: this.openSignIn,
       btnModalGo: this.smallBtn('primary'), btnModalCancel: this.smallBtn(),
-      formName: l.formName, onFormName: this.setField('formName'),
+      formFirst: l.formFirst, onFormFirst: this.setField('formFirst'),
+      formLast: l.formLast, onFormLast: this.setField('formLast'),
+      formConsent: l.formConsent, onFormConsent: this.toggleConsent,
+      onFormSalutation: this.onSalutation,
+      salIsMr: l.formSalutation === 'mr', salIsMs: l.formSalutation === 'ms',
+      salIsDiverse: l.formSalutation === 'diverse',
       formEmail: l.formEmail, onFormEmail: this.setField('formEmail'),
       formCompany: l.formCompany, onFormCompany: this.setField('formCompany'),
       formCode: l.formCode, onFormCode: this.setField('formCode'),
-      phName: LANG === 'de' ? 'Name' : 'Full name',
+      phFirst: LANG === 'de' ? 'Vorname *' : 'First name *',
+      phLast: LANG === 'de' ? 'Nachname *' : 'Last name *',
       phEmail: LANG === 'de' ? 'E-Mail' : 'Work email',
       phCompany: LANG === 'de' ? 'Unternehmen (optional)' : 'Company (optional)',
       phCode: LANG === 'de' ? 'Zugangscode' : 'Passcode',

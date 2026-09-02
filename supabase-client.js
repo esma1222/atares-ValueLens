@@ -67,7 +67,12 @@
         p_name: lead.name,
         p_email: lead.email,
         p_company: lead.company || null,
-        p_lang: lead.lang || null
+        p_lang: lead.lang || null,
+        // TechSpheres newsletter fields (salutation / first / last / consent)
+        p_salutation: lead.salutation || null,
+        p_first_name: lead.first || null,
+        p_last_name: lead.last || null,
+        p_newsletter_consent: lead.consent === true
       });
     },
 
